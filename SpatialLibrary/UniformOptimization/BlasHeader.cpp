@@ -20,6 +20,7 @@
 #include <cvode/cvode_diag.h>
 #include <nlopt.hpp>
 #include "BlasHeader.h"
+#include <sstream>
 
 using namespace std;
 
@@ -40,14 +41,14 @@ struct inData {
 
 // This takes the model state and calculates the amount of phosphorylated species
 double pYcalc (N_Vector state, struct rates p) {
-    double pY = Ith(state,1) + Ith(state,2) + Ith(state,3) + Ith(state,4) + 2*Ith(state,5) +
+    double pYa = Ith(state,1) + Ith(state,2) + Ith(state,3) + Ith(state,4) + 2*Ith(state,5) +
     internalFrac*(Ith(state,7) + Ith(state,8) + Ith(state,9) + Ith(state,10) + 2*Ith(state,11));
     
-    pY *= p.scaleA;
+    pYa *= p.scaleA;
     
-    pY += 2*Ith(state,6) + internalFrac*(2*Ith(state,12));
+    pYa += 2*Ith(state,6) + internalFrac*(2*Ith(state,12));
     
-    return pY;
+    return pYa;
 }
 
 // This takes the model state and calculates the total amount of receptor in a cell
@@ -249,11 +250,14 @@ int AXL_react_diff(realtype t, N_Vector xx , N_Vector dxxdt, void *user_data) {
 
 
 void errorPrint(string In) {
-    ofstream errfile;
+    if (print_CV_err == 2) {
     
-    errfile.open ("error.txt", ios::app);
-    errfile << In << endl;
-    errfile.close();
+        ofstream errfile;
+        
+        errfile.open ("error.txt", ios::app);
+        errfile << In << endl;
+        errfile.close();
+    }
 }
 
 
@@ -312,7 +316,6 @@ int check_flag(void *flagvalue, char *funcname, int opt) {
 }
 
 /// Get and print some final statistics
-/// \param *cvode_mem solver memory
 void PrintFinalStats(void *cvode_mem) {
     long int nst, nfe, nsetups, nje, nfeLS, nni, ncfn, netf, nge;
     int flag;
@@ -406,7 +409,7 @@ int solver_setup (void **cvode_mem, N_Vector init, void *params, N_Vector abstol
     }
     
     CVodeSetMaxNumSteps(*cvode_mem, 2E6);
-    CVodeSetMinStep(*cvode_mem,0);
+    CVodeSetMinStep(*cvode_mem, 1e-20);
     CVodeSetMaxStep(*cvode_mem,1000);
     
     return 0;
@@ -725,14 +728,13 @@ extern "C" int matlabEntry(double *dataPtr, double *pIn, int nIn) {
 
 /// Function for fitting a parameter set from R
 extern "C" void rEntry(double *dataPtr, const double *pIn) {
-    atomic<bool> done;
-    
     param_type pInSlice;
     for (size_t jj = 0; jj < pInSlice.size(); jj++) {
         pInSlice[jj] = pIn[jj];
+        cout << pIn[jj] << endl;
     }
     
-    calcErrorRef(pInSlice,dataPtr, &done);
+    *dataPtr = calcError(pInSlice);
 }
 
 /// Calculate phosphorylation at time points measured

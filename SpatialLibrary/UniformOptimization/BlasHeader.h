@@ -10,6 +10,12 @@
 #define __UniformOptimization__HelperFunctions__
 
 #include <array>
+#include <sundials/sundials_dense.h> /* definitions DlsMat DENSE_ELEM */
+#include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
+#include <cvode/cvode_impl.h>
+#include <cvode/cvode_dense.h>       /* prototype for CVDense */
+#include <cvode/cvode_lapack.h>
+#include <cvode/cvode_diag.h>
 
 using namespace std;
 
@@ -17,8 +23,8 @@ using namespace std;
 #define autocrineT 10000
 #define maxR 1.0
 #define print_CV_err 2
-#define rel_tol 1E-6 // Relative tolerance of the solver
-#define abs_tol 1E-6
+#define rel_tol 1E-4 // Relative tolerance of the solver
+#define abs_tol 1E-4
 #define SELECTED_MODEL AXL_react
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
 #define NELEMS(x)  (sizeof(x) / sizeof(x[0]))
@@ -27,7 +33,7 @@ using namespace std;
 
 extern double diffD[Nspecies];
 
-typedef array< double , 20 > param_type;
+typedef array< double , 19 > param_type;
 
 struct rates {
     double Binding1;   ///< Forward binding rate for Ig1
@@ -110,5 +116,6 @@ extern "C" int matlabDiffTPS(double *, double , double *, int , double , double 
 extern "C" int matlabDiffTPS_pY(double *, double , double *, int , double , double *, double *, int, double *, double, double, int);
 extern "C" int matlabDiffTPS_pYavg(double *, double, double *, int, double , double *, double *, int, double *, double, double, int);
 extern "C" void rEntry(double *, const double *);
+double calcError (param_type);
 
 #endif /* defined(__UniformOptimization__HelperFunctions__) */

@@ -15,7 +15,6 @@
 #include <fstream>
 
 #include "BlasHeader.h"
-#include "Fitting.h"
 
 using namespace nlopt;
 using namespace std;
