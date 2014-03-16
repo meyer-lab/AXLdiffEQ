@@ -10,11 +10,11 @@
 #include <iostream>
 #include <vector>
 #include <thread>
-#include <mutex>
 #include <atomic>
 #include <fstream>
-
 #include "BlasHeader.h"
+#include "ReactionCode.h"
+#include "ModelRunning.h"
 
 using namespace nlopt;
 using namespace std;
@@ -89,7 +89,7 @@ void calcOptimizer(double seed) {
         xx.push_back(minn[ii] + (maxx[ii] - minn[ii]) * uniRnd(generator));
     }
     
-    opt opter = opt(algorithm::GN_CRS2_LM, (unsigned int) minn.size());
+    opt opter = opt(algorithm::GD_STOGO_RAND, (unsigned int) minn.size());
     opter.set_lower_bounds(minn);
     opter.set_upper_bounds(maxx);
     opter.set_population(1000);
@@ -102,16 +102,69 @@ void calcOptimizer(double seed) {
     mtx.unlock();
 }
 
+
+void testDiffModel () {
+    const size_t gridSize = 100;
+    
+    double tps[] = {30};
+    double data[1];
+    double GasIn[gridSize];
+    
+    double params[] = {1.2, 0.054435, 0.042, 24.392, 0.00081113, 0.34571, 0.0010493, 0.017322, 1e-06, 3.183, 0.0056061, 0.002045, 0.1, 0.0085047, 1, 0.0019396, 0.058122, 155.7, 359.46};
+    
+    for (int ii = 0; ii < gridSize; ii++) {
+        GasIn[ii] = ((double) rand()) / ((double) RAND_MAX);
+    }
+    
+    double dIn[] = {0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    
+    cout << matlabDiffTPS_pYavg(data, 359.46, GasIn, gridSize, 0.001, params, tps, 1, dIn, 1, 1, 0) << endl;
+}
+
+
+
 int main()
 {
-//    std::thread threads[8];
+//    std::thread threads[20];
 //    
 //    for (int i=0; i < NELEMS(threads); ++i)
 //        threads[i] = std::thread(calcOptimizer,random());
 //    
 //    for (auto& th : threads) th.join();
+//    
+//    double in[] = {0.6,
+//        2.2822811E-05,
+//        1.0904953E-05,
+//        1.0436166E-03, // Binding params
+//        
+//        1.6057974E-02,
+//        1.4127670E+00,
+//        3.0836805E+03,
+//        1.6612537E-02, // xFwd Rev
+//        
+//        1.2994370E+00, // AXLint1
+//        6.0380584E+00, // AXLint2
+//        
+//        1.2561171E-01, // scaleA
+//        
+//        1.3818834E-01,
+//        1.2482924E-01,
+//        2.8639311E-01,
+//        4.4657377E-01,
+//        
+//        2.1667962E-02,
+//        1.9510010E-01,
+//        7.7814510E+03,
+//        1.1154666E+04};
+//
+//    cout << calcError(in) << endl;
     
-    param_type in = {0.6,
+    /*for (int ii = 1; ii <= 100; ii++) {
+        cout << "Test " << ii << " of 100." << endl;
+        testDiffModel();
+    }*/
+    
+    double in[] = {0.6,
         2.2822811E-05,
         1.0904953E-05,
         1.0436166E-03, // Binding params
@@ -130,13 +183,13 @@ int main()
         1.2482924E-01,
         2.8639311E-01,
         4.4657377E-01,
-        
-        2.1667962E-02,
-        1.9510010E-01,
         7.7814510E+03,
-        1.1154666E+04};
+        2.1667962E-02};
     
-    cout << calcError(in) << endl;
+    
+    
+    cout << calcErrorOneCellLine (0, in);
+    
     
     return 0;
 }
