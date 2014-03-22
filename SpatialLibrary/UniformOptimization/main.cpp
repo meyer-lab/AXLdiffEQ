@@ -16,7 +16,8 @@
 #include "ReactionCode.h"
 #include "ModelRunning.h"
 
-using namespace nlopt;
+
+//using namespace nlopt;
 using namespace std;
 
 mutex mtx;
@@ -70,16 +71,13 @@ double calcErrorOptLog (vector<double> x) {
     return calcError(inner);
 }
 
-void calcOptimizer(double seed) {
+void calcOptimizer(unsigned int seed) {
     double ff = 0;
     fBest = 1E10;
     vector<double> xx;
     
     vector<double> minn = {-1,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-5,-3,-3, -5, -5, 0, 0};
     vector<double> maxx = {1 ,5 ,1 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 ,5 , 5, 5, 0, 0, 1, 1, 5, 5};
-    
-    cout << minn.size() << endl;
-    cout << maxx.size() << endl;
     
     default_random_engine generator;
     generator.seed(seed);
@@ -89,10 +87,11 @@ void calcOptimizer(double seed) {
         xx.push_back(minn[ii] + (maxx[ii] - minn[ii]) * uniRnd(generator));
     }
     
-    opt opter = opt(algorithm::GD_STOGO_RAND, (unsigned int) minn.size());
+    nlopt::opt opter = nlopt::opt(nlopt::algorithm::GD_STOGO_RAND, (unsigned int) minn.size());
     opter.set_lower_bounds(minn);
     opter.set_upper_bounds(maxx);
     opter.set_population(1000);
+    opter.set_maxtime(60);
     opter.set_min_objective(calcErrorOptLog, nullptr);
     
     int flag = opter.optimize(xx, ff);
@@ -125,13 +124,38 @@ void testDiffModel () {
 
 int main()
 {
-//    std::thread threads[20];
+//    std::thread threads[1];
 //    
 //    for (int i=0; i < NELEMS(threads); ++i)
 //        threads[i] = std::thread(calcOptimizer,random());
 //    
 //    for (auto& th : threads) th.join();
+//
+//    param_type in = {0.6, 2.2822811E-05, 1.0904953E-05, 1.0436166E-03, // Binding params
+//        1.6057974E-02,
+//        1.4127670E+00,
+//        3.0836805E+03,
+//        1.6612537E-02, // xFwd Rev
+//        1.2994370E+00, // AXLint1
+//        6.0380584E+00, // AXLint2
+//        1.2561171E-01, // scaleA
+//        1.3818834E-01,
+//        1.2482924E-01,
+//        2.8639311E-01,
+//        4.4657377E-01,
+//        2.1667962E-02,
+//        1.9510010E-01,
+//        7.7814510E+03,
+//        1.1154666E+04};
 //    
+//    for (int ii = 0; ii < 100; ii++) calcError(in);
+//    cout << calcError(in) << endl;
+    
+    for (int ii = 1; ii <= 100; ii++) {
+        cout << "Test " << ii << " of 100." << endl;
+        testDiffModel();
+    }
+    
 //    double in[] = {0.6,
 //        2.2822811E-05,
 //        1.0904953E-05,
@@ -151,44 +175,13 @@ int main()
 //        1.2482924E-01,
 //        2.8639311E-01,
 //        4.4657377E-01,
-//        
-//        2.1667962E-02,
-//        1.9510010E-01,
 //        7.7814510E+03,
-//        1.1154666E+04};
-//
-//    cout << calcError(in) << endl;
+//        2.1667962E-02};
+//    
+//    
+//    for (int ii = 0; ii < 1; ii++) cout << calcErrorOneCellLine (0, in) << endl;
     
-    /*for (int ii = 1; ii <= 100; ii++) {
-        cout << "Test " << ii << " of 100." << endl;
-        testDiffModel();
-    }*/
-    
-    double in[] = {0.6,
-        2.2822811E-05,
-        1.0904953E-05,
-        1.0436166E-03, // Binding params
-        
-        1.6057974E-02,
-        1.4127670E+00,
-        3.0836805E+03,
-        1.6612537E-02, // xFwd Rev
-        
-        1.2994370E+00, // AXLint1
-        6.0380584E+00, // AXLint2
-        
-        1.2561171E-01, // scaleA
-        
-        1.3818834E-01,
-        1.2482924E-01,
-        2.8639311E-01,
-        4.4657377E-01,
-        7.7814510E+03,
-        2.1667962E-02};
-    
-    
-    
-    cout << calcErrorOneCellLine (0, in);
+    //calcOptimizer(0);
     
     
     return 0;

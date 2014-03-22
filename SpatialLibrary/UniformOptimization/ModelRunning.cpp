@@ -84,6 +84,7 @@ void calcProfile (N_Vector outData, N_Vector outStim, N_Vector outStimTot, struc
         
         /* Free integrator memory */
         CVodeFree(&cvode_mem);
+        delete params.JacP;
     }
     
     
@@ -119,6 +120,7 @@ void calcProfile (N_Vector outData, N_Vector outStim, N_Vector outStimTot, struc
         
         /* Free integrator memory */
         CVodeFree(&cvode_mem);
+        delete params.JacP;
     }
     
     /* Free y and abstol vectors */
@@ -154,6 +156,7 @@ double errorFuncOpt (N_Vector fitt, const double *pYmeas, const double *errorMea
     opter.set_min_objective(errorOpt,&dataS);
     opter.set_xtol_rel(1E-5);
     nlopt::result flag = opter.optimize(xx, ff);
+    
     
     if (flag < 0) throw runtime_error(string("Error during error optimization step."));
     
@@ -269,8 +272,12 @@ void initState( N_Vector init, struct rates params, double autocrine) {
         throw runtime_error(string("Integration failure at initial condition."));
     }
     
+    long int nJac;
+    CVDlsGetNumJacEvals(cvode_mem, &nJac);
+    
     /* Free integrator memory */
     CVodeFree(&cvode_mem);
+    delete params.JacP;
 }
 
 

@@ -12,7 +12,7 @@
 #include "ReactionCode.h"
 
 #define autocrineT 10000
-#define print_CV_err 2
+#define print_CV_err 1
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
 #define NELEMS(x)  (sizeof(x) / sizeof(x[0]))
 #define DoseTime 240

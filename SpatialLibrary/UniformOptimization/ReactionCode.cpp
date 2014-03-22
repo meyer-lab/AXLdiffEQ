@@ -8,8 +8,14 @@
 
 #include "ReactionCode.h"
 #include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
+#include <sundials/sundials_dense.h>
 #include <string>
 #include <array>
+#include <vector>
+#include <cppad/cppad.hpp>
+#include <string>
+#include <stdexcept>
+
 
 using namespace std;
 
@@ -18,6 +24,7 @@ double degImpair = 1;
 const double internalFrac = 0.5;
 double diffD[Nspecies];
 const double fgMgConv = 135.2;
+
 
 int AXL_react(realtype t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     struct rates *r = (struct rates *) user_data;
@@ -162,7 +169,7 @@ double totCalc (N_Vector state) {
 struct rates Param(param_type params) {
     struct rates out;
     
-    for (size_t ii = 0; ii < params.size(); ii++) {
+    for (size_t ii = 0; ii < 15; ii++) {
         if (params[ii] < 0) throw invalid_argument(string("An input model parameter is outside the physical range."));
     }
     
@@ -189,6 +196,8 @@ struct rates Param(param_type params) {
     out.xFwd5 = out.xFwd3*out.Binding1/out.Binding2;
     out.xFwd6 = out.xFwd3*out.Binding2/out.xFwd1;
     out.xRev6 = out.xRev3*out.Unbinding2/out.xRev1;
+    out.JacP = nullptr;
+    
     
     return out;
 }
