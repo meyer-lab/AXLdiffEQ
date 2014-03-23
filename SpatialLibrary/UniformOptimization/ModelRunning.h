@@ -12,7 +12,7 @@
 #include "ReactionCode.h"
 
 #define autocrineT 10000
-#define print_CV_err 1
+#define print_CV_err 0
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
 #define NELEMS(x)  (sizeof(x) / sizeof(x[0]))
 #define DoseTime 240
@@ -72,7 +72,7 @@ static const double DoseTotErr[][7] = {
 
 double calcError (param_type);
 void errorLogger (std::exception *);
-void initState(N_Vector, struct rates, double);
+void*initState(N_Vector, struct rates, double);
 void diffusionSolution(double *, double, double *, int, double, double *, double *, int, double *, double, double);
 void calcErrorRef (param_type, double *, std::atomic<bool> *);
 void calcProfileSet (double *, double *, struct rates, int, double, double, double, int);

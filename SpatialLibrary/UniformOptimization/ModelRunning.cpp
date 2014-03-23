@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Aaron Meyer. All rights reserved.
 //
 
-#include <sundials/sundials_nvector.h>
-#include <cvode/cvode.h>
+#include "sundials_nvector.h"
+#include "cvode.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -31,17 +31,18 @@ void calcProfile (N_Vector outData, N_Vector outStim, N_Vector outStimTot, struc
     N_Vector init_state = N_VNew_Serial(Nspecies);
     N_Vector state = N_VNew_Serial(Nspecies);
     
-    realtype t;
+    double t;
     
     void *cvode_mem = NULL;
     int flag;
     
     // Initialize state based on autocrine ligand
     try {
-        initState(init_state, params, autocrine);
+        cvode_mem = initState(init_state, params, autocrine);
     } catch (exception &e) {
         N_VDestroy_Serial(state);
         N_VDestroy_Serial(init_state);
+        CVodeFree(&cvode_mem);
         throw;
     }
     
@@ -56,11 +57,11 @@ void calcProfile (N_Vector outData, N_Vector outStim, N_Vector outStimTot, struc
         t = 0;
         
         try {
-            cvode_mem = solver_setup (state, &params, AXL_react);
-            if (cvode_mem == NULL) throw runtime_error(string("Uncaught NULL return from solver_setup."));
+            solverReset(cvode_mem, state);
         } catch (exception &e) {
             N_VDestroy_Serial(state);
             N_VDestroy_Serial(init_state);
+            CVodeFree(&cvode_mem);
             throw;
         }
         
@@ -81,10 +82,6 @@ void calcProfile (N_Vector outData, N_Vector outStim, N_Vector outStimTot, struc
             
             Ith(outData,stimuli*NELEMS(times) + ii) = pYcalc(state,params);
         }
-        
-        /* Free integrator memory */
-        CVodeFree(&cvode_mem);
-        delete params.JacP;
     }
     
     
@@ -99,11 +96,11 @@ void calcProfile (N_Vector outData, N_Vector outStim, N_Vector outStimTot, struc
         t = 0;
         
         try {
-            cvode_mem = solver_setup (state, &params, AXL_react);
-            if (cvode_mem == NULL) throw runtime_error(string("Uncaught NULL return from solver_setup."));
+            solverReset(cvode_mem, state);
         } catch (exception &e) {
             N_VDestroy_Serial(state);
             N_VDestroy_Serial(init_state);
+            CVodeFree(&cvode_mem);
             throw;
         }
         
@@ -117,28 +114,43 @@ void calcProfile (N_Vector outData, N_Vector outStim, N_Vector outStimTot, struc
         
         Ith(outStim,stimuli) = pYcalc(state,params)/totCalc(state);
         Ith(outStimTot,stimuli) = totCalc(state);
-        
-        /* Free integrator memory */
-        CVodeFree(&cvode_mem);
-        delete params.JacP;
     }
     
     /* Free y and abstol vectors */
     N_VDestroy_Serial(state);
     N_VDestroy_Serial(init_state);
+    CVodeFree(&cvode_mem);
 }
 
 double errorOpt(unsigned n, const double *x, double *grad, void *data) {
-    struct inData dataS;
+    struct inData *dataS = (struct inData *) data;
     double xx = 0;
     
-    memcpy(&dataS, data, sizeof(dataS));
+    for (int ii = 0; ii < NV_LENGTH_S(dataS->fitt); ii++) {
+        xx += pow((((double) Ith(dataS->fitt,ii) * x[0]) - dataS->pYmeas[ii]) / dataS->errorMeas[ii], 2);
+    }
     
-    for (int ii = 0; ii < NV_LENGTH_S(dataS.fitt); ii++) {
-        xx += pow((((double) Ith(dataS.fitt,ii) * x[0]) - dataS.pYmeas[ii]) / dataS.errorMeas[ii], 2);
+    if (grad) {
+        grad[0] = 0;
+        
+        for (int ii = 0; ii < NV_LENGTH_S(dataS->fitt); ii++) {
+            grad[0] += 2*((((double) Ith(dataS->fitt,ii) * x[0]) - dataS->pYmeas[ii]) / dataS->errorMeas[ii]);
+        }
     }
     
     return xx;
+}
+
+double initialCondition (struct inData *dataS) {
+    double meas = 0;
+    double fit = 0;
+    
+    for (int ii = 0; ii < NV_LENGTH_S(dataS->fitt); ii++) {
+        meas += Ith(dataS->fitt,ii);
+        fit += dataS->pYmeas[ii];
+    }
+    
+    return fit / meas;
 }
 
 double errorFuncOpt (N_Vector fitt, const double *pYmeas, const double *errorMeas) {
@@ -148,15 +160,14 @@ double errorFuncOpt (N_Vector fitt, const double *pYmeas, const double *errorMea
     dataS.errorMeas = errorMeas;
     
     double ff = 0;
-    vector<double> xx = {0.0000001};
+    vector<double> xx = {initialCondition(&dataS)};
     
     nlopt::opt opter = nlopt::opt(nlopt::algorithm::LN_COBYLA, 1);
-    opter.set_lower_bounds(0);
-    opter.set_upper_bounds(1E9);
+    opter.set_lower_bounds(xx[0]/2);
+    opter.set_upper_bounds(xx[0]*2);
     opter.set_min_objective(errorOpt,&dataS);
-    opter.set_xtol_rel(1E-5);
+    opter.set_xtol_rel(1E-8);
     nlopt::result flag = opter.optimize(xx, ff);
-    
     
     if (flag < 0) throw runtime_error(string("Error during error optimization step."));
     
@@ -252,10 +263,10 @@ void calcErrorRef (param_type params, double *out, atomic<bool> *done) {
 
 
 // Calculate the initial state by waiting a long time with autocrine Gas
-void initState( N_Vector init, struct rates params, double autocrine) {
+void *initState( N_Vector init, struct rates params, double autocrine) {
     endoImpair = 1.0;
     degImpair = 1.0;
-    realtype t;
+    double t;
     
     for (int ii = 0; ii < Nspecies ; ii++) Ith(init,ii) = 0;
     
@@ -272,12 +283,8 @@ void initState( N_Vector init, struct rates params, double autocrine) {
         throw runtime_error(string("Integration failure at initial condition."));
     }
     
-    long int nJac;
-    CVDlsGetNumJacEvals(cvode_mem, &nJac);
-    
     /* Free integrator memory */
-    CVodeFree(&cvode_mem);
-    delete params.JacP;
+    return cvode_mem;
 }
 
 
@@ -288,14 +295,14 @@ void calcProfileSet (double *outData, double *tps, struct rates params, int nTps
     
     N_Vector state = N_VNew_Serial(Nspecies);
     
-    realtype t; ///< Time position of the solver.
+    double t; ///< Time position of the solver.
     
     void *cvode_mem = NULL;
     int flag;
     
     // Initialize state based on autocrine ligand
     try {
-        initState(state, params, autocrine);
+        cvode_mem = initState(state, params, autocrine);
     } catch (exception &e) {
         N_VDestroy_Serial(state);
         throw;
@@ -306,10 +313,10 @@ void calcProfileSet (double *outData, double *tps, struct rates params, int nTps
     t = 0;
     
     try {
-        cvode_mem = solver_setup (state, &params, AXL_react);
-        if (cvode_mem == NULL) throw runtime_error(string("Uncaught NULL return from solver_setup in calcProfileSet."));
+        solverReset(cvode_mem, state);
     } catch (exception &e) {
         N_VDestroy_Serial(state);
+        CVodeFree(&cvode_mem);
         throw;
     }
     
@@ -369,7 +376,7 @@ void errorLogger (exception *e) {
 void diffusionSolution(double *dataPtr, double AXLin, double *GasIn, int gridIn, double autocrine, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn) {
     
     // Common
-    realtype t = 0;
+    double t = 0;
     void *cvode_mem = NULL;
     int flag;
     
@@ -390,11 +397,13 @@ void diffusionSolution(double *dataPtr, double AXLin, double *GasIn, int gridIn,
     
     // Initialize state based on autocrine ligand
     try {
-        initState(init_state, pInS, autocrine);
+        cvode_mem = initState(init_state, pInS, autocrine);
     } catch (exception &e) {
         N_VDestroy_Serial(init_state);
         throw;
     }
+    
+    CVodeFree(&cvode_mem);
     
     endoImpair = endoImpairIn;
     degImpair = degImpairIn;

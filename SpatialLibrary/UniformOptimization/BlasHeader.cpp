@@ -83,7 +83,7 @@ extern "C" int matlabEntry(double *dataPtr, double *pIn, int nIn) {
     return 0;
 }
 
-extern "C" double calcErrorOneCellLine (int cellLine, double *pIn) {
+extern "C" double calcErrorOneCellLine (int cellLine, const double *pIn) {
     const size_t numPs = 17;
     
     param_type pInTemp;
@@ -94,9 +94,9 @@ extern "C" double calcErrorOneCellLine (int cellLine, double *pIn) {
     }
     
     struct rates pInC = Param(pInTemp);
-    pInC.expression = pIn[15];
+    pInC.expression = pIn[16];
     
-    return calcErrorOneLine (pInC, (size_t) cellLine, pIn[16]);
+    return calcErrorOneLine (pInC, (size_t) cellLine, pIn[15]);
 }
 
 /// Function for fitting a parameter set from R

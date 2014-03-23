@@ -7,12 +7,10 @@
 //
 
 #include "ReactionCode.h"
-#include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
-#include <sundials/sundials_dense.h>
+#include "nvector_serial.h"  /* serial N_Vector types, fcts., macros */
 #include <string>
 #include <array>
 #include <vector>
-#include <cppad/cppad.hpp>
 #include <string>
 #include <stdexcept>
 
@@ -26,10 +24,10 @@ double diffD[Nspecies];
 const double fgMgConv = 135.2;
 
 
-int AXL_react(realtype t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
+int AXL_react(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     struct rates *r = (struct rates *) user_data;
-    realtype* x_d = NV_DATA_S(xIn);
-    realtype* dxdt_d = NV_DATA_S(dxdtIn);
+    double* x_d = NV_DATA_S(xIn);
+    double* dxdt_d = NV_DATA_S(dxdtIn);
     
     // 0 Gas6   // 1 AXL   // 2 A1    // 3 A2
     // 4 A12    // 5 D1    // 6 D2    // 7 AXLi
@@ -37,27 +35,27 @@ int AXL_react(realtype t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     
     dxdt_d[0] = 0;
     
-    realtype dR1 = r->Binding1 * x_d[1] * x_d[0] - r->Unbinding1 * x_d[2];
-    realtype dR2 = r->Binding2 * x_d[1] * x_d[0] - r->Unbinding2 * x_d[3];
-    realtype dR3 = r->Binding2 * x_d[2] * x_d[0] - r->Unbinding2 * x_d[4];
-    realtype dR4 = r->Binding1 * x_d[3] * x_d[0] - r->Unbinding1 * x_d[4];
-    realtype dR5 = r->xFwd1 * x_d[1] * x_d[2] - r->xRev1 * x_d[5];
-    realtype dR6 = r->xFwd2 * x_d[1] * x_d[3] - r->xRev2 * x_d[5];
-    realtype dR7 = r->xFwd3 * x_d[1] * x_d[4] - r->xRev3 * x_d[6];
-    realtype dR8 = r->xFwd4 * x_d[2] * x_d[2] - r->xRev4 * x_d[6];
-    realtype dR9 = r->xFwd5 * x_d[3] * x_d[3] - r->xRev5 * x_d[6];
-    realtype dR11 = r->xFwd6 * x_d[0] * x_d[5] - r->xRev6 * x_d[6];
+    double dR1 = r->Binding1 * x_d[1] * x_d[0] - r->Unbinding1 * x_d[2];
+    double dR2 = r->Binding2 * x_d[1] * x_d[0] - r->Unbinding2 * x_d[3];
+    double dR3 = r->Binding2 * x_d[2] * x_d[0] - r->Unbinding2 * x_d[4];
+    double dR4 = r->Binding1 * x_d[3] * x_d[0] - r->Unbinding1 * x_d[4];
+    double dR5 = r->xFwd1 * x_d[1] * x_d[2] - r->xRev1 * x_d[5];
+    double dR6 = r->xFwd2 * x_d[1] * x_d[3] - r->xRev2 * x_d[5];
+    double dR7 = r->xFwd3 * x_d[1] * x_d[4] - r->xRev3 * x_d[6];
+    double dR8 = r->xFwd4 * x_d[2] * x_d[2] - r->xRev4 * x_d[6];
+    double dR9 = r->xFwd5 * x_d[3] * x_d[3] - r->xRev5 * x_d[6];
+    double dR11 = r->xFwd6 * x_d[0] * x_d[5] - r->xRev6 * x_d[6];
     
-    realtype dR32 = r->Binding1 * x_d[7] * x_d[13] / 623 - r->Unbinding1 * x_d[8];
-    realtype dR33 = r->Binding2 * x_d[7] * x_d[13] / 623 - r->Unbinding2 * x_d[9];
-    realtype dR34 = r->Binding2 * x_d[8] * x_d[13] / 623 - r->Unbinding2 * x_d[10];
-    realtype dR35 = r->Binding1 * x_d[9] * x_d[13] / 623 - r->Unbinding1 * x_d[10];
-    realtype dR36 = r->xFwd1 * x_d[7] * x_d[8] - r->xRev1 * x_d[11];
-    realtype dR37 = r->xFwd2 * x_d[7] * x_d[9] - r->xRev2 * x_d[11];
-    realtype dR38 = r->xFwd3 * x_d[7] * x_d[10] - r->xRev3 * x_d[12];
-    realtype dR39 = r->xFwd4 * x_d[8] * x_d[8] - r->xRev4 * x_d[12]; // Checked
-    realtype dR40 = r->xFwd5 * x_d[9] * x_d[9] - r->xRev5 * x_d[12]; // Checked
-    realtype dR41 = r->xFwd6 * x_d[13] * x_d[11] / 623 - r->xRev6 * x_d[12]; // Checked
+    double dR32 = r->Binding1 * x_d[7] * x_d[13] / 623 - r->Unbinding1 * x_d[8];
+    double dR33 = r->Binding2 * x_d[7] * x_d[13] / 623 - r->Unbinding2 * x_d[9];
+    double dR34 = r->Binding2 * x_d[8] * x_d[13] / 623 - r->Unbinding2 * x_d[10];
+    double dR35 = r->Binding1 * x_d[9] * x_d[13] / 623 - r->Unbinding1 * x_d[10];
+    double dR36 = r->xFwd1 * x_d[7] * x_d[8] - r->xRev1 * x_d[11];
+    double dR37 = r->xFwd2 * x_d[7] * x_d[9] - r->xRev2 * x_d[11];
+    double dR38 = r->xFwd3 * x_d[7] * x_d[10] - r->xRev3 * x_d[12];
+    double dR39 = r->xFwd4 * x_d[8] * x_d[8] - r->xRev4 * x_d[12]; // Checked
+    double dR40 = r->xFwd5 * x_d[9] * x_d[9] - r->xRev5 * x_d[12]; // Checked
+    double dR41 = r->xFwd6 * x_d[13] * x_d[11] / 623 - r->xRev6 * x_d[12]; // Checked
     
     dxdt_d[1] = - dR7 - dR6 - dR5 - dR1 - dR2 + r->expression; // AXL
     dxdt_d[2] = -2*(dR8) - dR5 + dR1 - dR3                   ; // AXLgas1
@@ -92,9 +90,9 @@ int AXL_react(realtype t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
 }
 
 
-int AXL_react_diff(realtype t, N_Vector xx , N_Vector dxxdt, void *user_data) {
-    realtype* xx_d = NV_DATA_S(xx);
-    realtype* dxxdt_d = NV_DATA_S(dxxdt);
+int AXL_react_diff(double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
+    double* xx_d = NV_DATA_S(xx);
+    double* dxxdt_d = NV_DATA_S(dxxdt);
     size_t pos, spec;
     size_t grid_size = (size_t) NV_LENGTH_S(xx)/Nspecies;
     double dRdRMaxRMaxR = maxR*maxR*(1.0/grid_size)*(1.0/grid_size);
@@ -196,8 +194,6 @@ struct rates Param(param_type params) {
     out.xFwd5 = out.xFwd3*out.Binding1/out.Binding2;
     out.xFwd6 = out.xFwd3*out.Binding2/out.xFwd1;
     out.xRev6 = out.xRev3*out.Unbinding2/out.xRev1;
-    out.JacP = nullptr;
-    
     
     return out;
 }
