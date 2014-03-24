@@ -90,10 +90,10 @@ double calcErrorOptOneLog (unsigned n, const double *x, double *grad, void *data
     return calcErrorOneCellLine (*line, xIn);
 }
 
-double bumpOptim(vector<double> minn, vector<double> maxx, vector<double> &xx, double strength,
+void bumpOptim(vector<double> minn, vector<double> maxx, vector<double> xx, double *ff, double strength,
                  unsigned int seed, nlopt_func minFun, void *data) {
-    double ff;
     
+    double outVal;
     default_random_engine generator;
     generator.seed(seed);
     normal_distribution<double> normRnd(0,strength);
@@ -112,9 +112,9 @@ double bumpOptim(vector<double> minn, vector<double> maxx, vector<double> &xx, d
     opter.set_xtol_rel(1E-6);
     opter.set_ftol_rel(1E-5);
     opter.set_min_objective(minFun, data);
-    opter.optimize(xx, ff);
+    opter.optimize(xx, outVal);
     
-    return ff;
+    *ff = outVal;
 }
 
 

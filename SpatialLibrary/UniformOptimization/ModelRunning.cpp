@@ -460,3 +460,32 @@ void diffusionSolution(double *dataPtr, double AXLin, double *GasIn, int gridIn,
     CVodeFree(&cvode_mem);
 }
 
+
+
+
+
+
+//void testDiffModel () {
+//    const size_t gridSize = 100;
+//    
+//    double tps[] = {30};
+//    double data[1];
+//    double GasIn[gridSize];
+//    
+//    double params[] = {1.2, 0.054435, 0.042, 24.392, 0.00081113, 0.34571, 0.0010493, 0.017322, 1e-06, 3.183, 0.0056061, 0.002045, 0.1, 0.0085047, 1, 0.0019396, 0.058122, 155.7, 359.46};
+//    
+//    for (int ii = 0; ii < gridSize; ii++) GasIn[ii] = ((double) rand()) / ((double) RAND_MAX);
+//    
+//    double dIn[] = {0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+//    
+//    cout << matlabDiffTPS_pYavg(data, 359.46, GasIn, gridSize, 0.001, params, tps, 1, dIn, 1, 1, 0) << endl;
+//}
+
+
+
+
+
+
+
+
+
