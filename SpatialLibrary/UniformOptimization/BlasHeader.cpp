@@ -7,13 +7,14 @@
 
 #include <queue>
 #include <iostream>
-#include <thread>
+#include <boost/thread/thread.hpp>
 #include "CVodeHelpers.h"
 #include "ReactionCode.h"
 #include "ModelRunning.h"
 #include "BlasHeader.h"
 
 using namespace std;
+using namespace boost;
 
 /// Queue for multithreaded evaluation of parameter sets
 struct queT {
@@ -36,7 +37,7 @@ extern "C" int matlabEntry(double *dataPtr, double *pIn, int nIn) {
     const int nThreads = 8;
     queue<queT> runThese;
     thread t[nThreads];
-    atomic<bool> done[nThreads];
+    atomic<bool> *done = new atomic<bool>(nThreads);
     queT in;
     
     for (size_t ii = 0; ii < (size_t) abs(nIn); ii++) {
@@ -50,14 +51,11 @@ extern "C" int matlabEntry(double *dataPtr, double *pIn, int nIn) {
         in.out = &dataPtr[ii];
         runThese.push(in);
      }
-
     
     for (int ii = 0; ii < nThreads; ii++) {
-        
         // End if the queue is empty
         if (runThese.size() == 0) break;
-        
-        t[ii] = std::thread(calcErrorRef,runThese.front().In,runThese.front().out, &done[ii]);
+        t[ii] = thread(calcErrorRef,runThese.front().In,runThese.front().out, &done[ii]);
         runThese.pop();
     }
     
@@ -71,7 +69,7 @@ extern "C" int matlabEntry(double *dataPtr, double *pIn, int nIn) {
             if (done[ii] == true) {
                 t[ii].join();
                 done[ii] = false;
-                t[ii] = std::thread(calcErrorRef,runThese.front().In,runThese.front().out, &done[ii]);
+                t[ii] = thread(calcErrorRef,runThese.front().In,runThese.front().out, &done[ii]);
                 runThese.pop();
             }
         }
@@ -80,6 +78,59 @@ extern "C" int matlabEntry(double *dataPtr, double *pIn, int nIn) {
     // Clear out the last running threads
     for (int ii = 0; ii < std::min(nThreads,nIn); ii++) t[ii].join();
     
+    delete done;
+    return 0;
+}
+
+extern "C" int matlabEntryWithSi(double *dataPtr, double *pIn, int nIn) {
+    const int nThreads = 8;
+    queue<queT> runThese;
+    thread t[nThreads];
+    atomic<bool> *done = new atomic<bool>(nThreads);
+    queT in;
+
+    for (size_t ii = 0; ii < (size_t) abs(nIn); ii++) {
+        param_type pInSlice;
+
+        for (size_t jj = 0; jj < pInSlice.size(); jj++) {
+            pInSlice[jj] = pIn[(size_t) ii*pInSlice.size() + jj];
+        }
+
+        in.In = pInSlice;
+        in.out = &dataPtr[ii];
+        runThese.push(in);
+     }
+
+
+    for (int ii = 0; ii < nThreads; ii++) {
+
+        // End if the queue is empty
+        if (runThese.size() == 0) break;
+
+        t[ii] = thread(calcErrorRefWithSi,runThese.front().In,runThese.front().out, &done[ii]);
+        runThese.pop();
+    }
+
+    while (runThese.size() > 0) {
+        for (int ii = 0; ii < nThreads; ii++) {
+
+            // End if the queue is empty
+            if (runThese.size() == 0) break;
+
+
+            if (done[ii] == true) {
+                t[ii].join();
+                done[ii] = false;
+                t[ii] = thread(calcErrorRefWithSi,runThese.front().In,runThese.front().out, &done[ii]);
+                runThese.pop();
+            }
+        }
+    }
+
+    // Clear out the last running threads
+    for (int ii = 0; ii < std::min(nThreads,nIn); ii++) t[ii].join();
+
+    delete done;
     return 0;
 }
 
@@ -117,7 +168,7 @@ extern "C" int calcProfileMatlab(double *dataPtr, double *params, double *tps, i
     
     try {
         calcProfileSet (dataPtr, tps, Param(pIn), nTps, autocrine, AXL, GasStim, frac);
-    } catch (exception &e) {
+    } catch (std::exception &e) {
         errorLogger(&e);
         return 1;
     }
@@ -129,7 +180,7 @@ extern "C" int matlabDiffTPS(double *dataPtr, double AXLin, double *GasIn, int g
     
     try {
         diffusionSolution(dataPtr, AXLin, GasIn, gridIn, autocrine, params, tps, nTps, dIn, endoImpairIn, degImpairIn);
-    } catch (exception &e) {
+    } catch (std::exception &e) {
         cout << "Failed twice." << endl;
         errorLogger(&e);
         return 1;

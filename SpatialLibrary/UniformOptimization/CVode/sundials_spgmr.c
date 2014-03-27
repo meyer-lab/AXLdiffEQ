@@ -437,19 +437,17 @@ int SpgmrSolve(SpgmrMem mem, void *A_data, N_Vector x, N_Vector b,
 void SpgmrFree(SpgmrMem mem)
 {
   int i, l_max;
-  double **Hes, *givens, *yg;
+  double **Hes;
   
   if (mem == NULL) return;
 
   l_max  = mem->l_max;
   Hes    = mem->Hes;
-  givens = mem->givens;
-  yg     = mem->yg;
 
   for (i = 0; i <= l_max; i++) {free(Hes[i]); Hes[i] = NULL;}
   free(Hes); Hes = NULL;
-  free(mem->givens); givens = NULL; 
-  free(mem->yg); yg = NULL;
+  free(mem->givens);
+  free(mem->yg);
 
   N_VDestroyVectorArray(mem->V, l_max+1);
   N_VDestroy(mem->xcor);

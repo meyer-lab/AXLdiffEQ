@@ -10,6 +10,7 @@
 #include "ModelRunning.h"
 #include "BlasHeader.h"
 #include <nlopt.hpp>
+#include "ReactionCode.h"
 #include <random>
 #include <vector>
 
@@ -61,13 +62,13 @@ void getLimits (vector<double> &minn, vector<double> &maxx, int nCells) {
     maxx.push_back(0);
     
     // Gas6 autocrine
-    for (size_t ii = 0; ii < nCells; ii++) {
+    for (size_t ii = 0; ii < (size_t) nCells; ii++) {
         minn.push_back(-5);
         maxx.push_back(2);
     }
     
     // AXL expression
-    for (size_t ii = 0; ii < nCells; ii++) {
+    for (size_t ii = 0; ii < (size_t) nCells; ii++) {
         minn.push_back(0);
         maxx.push_back(5);
     }
@@ -90,6 +91,31 @@ double calcErrorOptOneLog (unsigned n, const double *x, double *grad, void *data
     return calcErrorOneCellLine (*line, xIn);
 }
 
+double calcErrorOptAllLog (unsigned n, const double *x, double *grad, void *data) {
+    param_type xIn;
+    const int nCellLines = 4;
+
+    double autocrine[nCellLines];
+    double expression[nCellLines];
+
+    for (size_t ii = 0; ii < nCellLines; ii++) {
+    	autocrine[ii] = pow(10,x[ii+15]);
+    	expression[ii] = pow(10,x[ii+15+nCellLines]);
+    }
+
+    for (size_t ii = 0; ii < NELEMS(xIn); ii++) xIn[ii] = pow(10,x[ii]);
+
+    return calcErrorAll(Param(xIn), expression, autocrine);
+}
+
+double calcErrorOptPaperSiLog (unsigned n, const double *x, double *grad, void *data) {
+    param_type xIn;
+
+    for (size_t ii = 0; ii < xIn.size(); ii++) xIn[ii] = pow(10,x[ii]);
+
+    return calcError(xIn) + calcErrorSi(xIn);
+}
+
 void bumpOptim(vector<double> minn, vector<double> maxx, vector<double> xx, double *ff, double strength,
                  unsigned int seed, nlopt_func minFun, void *data) {
     
@@ -99,7 +125,7 @@ void bumpOptim(vector<double> minn, vector<double> maxx, vector<double> xx, doub
     normal_distribution<double> normRnd(0,strength);
     uniform_real_distribution<double> uniRnd(0,1);
     
-    for (int ii = 0; ii < xx.size(); ii++) {
+    for (size_t ii = 0; ii < xx.size(); ii++) {
         xx[ii] = (xx[ii] + normRnd(generator)*(maxx[ii] - minn[ii]));
         
         if ((xx[ii] < minn[ii]) || (xx[ii] > maxx[ii]))

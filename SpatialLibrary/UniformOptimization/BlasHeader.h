@@ -16,5 +16,6 @@ extern "C" int matlabDiffTPS_pY(double *, double , double *, int , double , doub
 extern "C" int matlabDiffTPS_pYavg(double *, double, double *, int, double , double *, double *, int, double *, double, double, int);
 extern "C" void rEntry(double *, const double *);
 extern "C" double calcErrorOneCellLine (int, const double *);
+extern "C" int matlabEntryWithSi(double *, double *, int);
 
 #endif /* defined(__UniformOptimization__HelperFunctions__) */

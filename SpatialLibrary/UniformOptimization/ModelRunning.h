@@ -10,6 +10,7 @@
 #define __UniformOptimization__ModelRunning__
 
 #include "ReactionCode.h"
+#include <atomic>
 
 #define autocrineT 10000
 #define print_CV_err 0
@@ -68,7 +69,30 @@ static const double DoseTotErr[][7] = {
     {28, 37, 49, 22, 33, 24, 20},      // U87
     {20, 50, 13, 30, 13, 16, 21}};     // BT549
 
+// Warfarin, then siGas
+static const double siPY[][2] = {
+		{0, 0}, // A172
+		{1.179, 1.596}, // A549
+		{0, 0}, // U87
+		{0.497, 0.008}}; // BT549
 
+static const double siPYerr[][2] = {
+		{0, 0}, // A172
+		{0.171, 0.107}, // A549
+		{0, 0}, // U87
+		{0.113, 0.029}}; // BT549
+
+static const double siTOT[][2] = {
+		{0, 0}, // A172
+		{1.037, 1.543}, // A549
+		{0, 0}, // U87
+		{0, 0}}; // BT549
+
+static const double siTOTerr[][2] = {
+		{0, 0}, // A172
+		{0.033, 0.034}, // A549
+		{0, 0}, // U87
+		{0, 0}}; // BT549
 
 double calcError (param_type);
 void errorLogger (std::exception *);
@@ -77,5 +101,8 @@ void diffusionSolution(double *, double, double *, int, double, double *, double
 void calcErrorRef (param_type, double *, std::atomic<bool> *);
 void calcProfileSet (double *, double *, struct rates, int, double, double, double, int);
 double calcErrorOneLine (struct rates, size_t, double);
+double calcErrorAll (struct rates, const double *, const double *);
+void calcErrorRefWithSi (param_type, double *, std::atomic<bool> *);
+double calcErrorSi (param_type);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

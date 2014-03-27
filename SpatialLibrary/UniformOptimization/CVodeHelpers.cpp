@@ -6,30 +6,35 @@
 //  Copyright (c) 2014 Aaron Meyer. All rights reserved.
 //
 
-#include "nvector_serial.h"  /* serial N_Vector types, fcts., macros */
-#include "cvode.h"             /* prototypes for CVODE fcts., consts. */
+#include "CVode/nvector_serial.h"  /* serial N_Vector types, fcts., macros */
+#include "CVode/cvode.h"             /* prototypes for CVODE fcts., consts. */
 #include <string>
-#include "cvode_dense.h"       /* prototype for CVDense */
-#include "cvode_band.h"
+#include "CVode/cvode_dense.h"       /* prototype for CVDense */
+#include "CVode/cvode_band.h"
 #include <sstream>
+#include <stdexcept>
 #include "CVodeHelpers.h"
 #include "ReactionCode.h"
-#include "sundials_dense.h"
+#include "ModelRunning.h"
+#include "CVode/sundials_dense.h"
 
 #define IJth(A,i,j) DENSE_ELEM(A,i-1,j-1)
 
 using namespace std;
 
 void errorHandler(int error_code, const char *module, const char *function, char *msg, void *eh_data) {
-    //stringstream OutMesg;
+    stringstream OutMesg;
+
+    OutMesg << "Internal CVode error in " << function << endl;
+    OutMesg << msg << endl;
+    OutMesg << "In module: " << module << endl;
+    OutMesg << "Error code: " << error_code << endl;
     
-    //OutMesg << "Internal CVode error in " << function << endl;
-    //OutMesg << msg << endl;
-    //OutMesg << "In module: " << module << endl;
-    //OutMesg << "Error code: " << error_code << endl;
-    
-    //throw runtime_error(OutMesg.str());
+    exception error = runtime_error(OutMesg.str());
+
+    errorLogger(&error);
 }
+
 
 void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolIn, CVRhsFn f) {
     int flag;
@@ -44,7 +49,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     }
     
     CVodeSetErrHandlerFn(cvode_mem, &errorHandler, nullptr);
-    
+
     /* Call CVodeInit to initialize the integrator memory and specify the
      * user's right hand side function in y'=f(t,y), the inital time T0, and
      * the initial dependent variable vector y. */

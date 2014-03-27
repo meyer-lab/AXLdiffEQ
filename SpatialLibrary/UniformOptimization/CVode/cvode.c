@@ -2618,6 +2618,8 @@ static int CVNlsFunctional(CVodeMem cv_mem)
         if (retval > 0) return(RHSFUNC_RECVR);
         
     }
+
+    return -1;
 }
 
 /*
@@ -2702,6 +2704,8 @@ static int CVNlsNewton(CVodeMem cv_mem, int nflag)
         callSetup = TRUE;
         convfail = CV_FAIL_BAD_J;
     }
+
+    return -1;
 }
 
 /*
@@ -2788,6 +2792,8 @@ static int CVNewtonIteration(CVodeMem cv_mem)
         }
         
     } /* end loop */
+
+    return -1;
 }
 
 /*

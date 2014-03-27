@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Aaron Meyer. All rights reserved.
 //
 
-#include "sundials_nvector.h"
-#include "cvode.h"
+#include "CVode/sundials_nvector.h"
+#include "CVode/cvode.h"
 #include <vector>
 #include <string>
 #include <iostream>
@@ -217,18 +217,17 @@ double calcErrorOneLine (struct rates inP, size_t cellLine, double autocrine) {
 
 double calcError (param_type inP) {
     struct rates params = Param(inP);
-    
+
     N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
     N_Vector outStim = N_VNew_Serial(NELEMS(GassDose));
     N_Vector outStimTot = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector outDataAll = N_VNew_Serial(NELEMS(Gass)*NELEMS(times)*NfitCells);
-    
+
     double error = 0;
-    
+
     for (unsigned short ii = 0; ii < NfitCells; ii++) {
         try {
             calcProfile (outData, outStim, outStimTot, params, inP[15+ii], inP[15+NfitCells+ii]);
-            
+
             error += errorFuncOpt (outData, &pY[ii*NELEMS(Gass)*NELEMS(times)], &pYerror[ii*NELEMS(Gass)*NELEMS(times)]);
             error += errorFuncOpt (outStim, pYdose[ii], DoseError[ii]);
             error += errorFuncFix (outStimTot, DoseTot[ii], DoseTotErr[ii]);
@@ -236,18 +235,47 @@ double calcError (param_type inP) {
             N_VDestroy_Serial(outData);
             N_VDestroy_Serial(outStim);
             N_VDestroy_Serial(outStimTot);
-            N_VDestroy_Serial(outDataAll);
             errorLogger(&e);
-            
+
             return 1E6;
         }
     }
-    
+
     N_VDestroy_Serial(outData);
     N_VDestroy_Serial(outStim);
     N_VDestroy_Serial(outStimTot);
-    N_VDestroy_Serial(outDataAll);
-    
+
+    return error;
+}
+
+double calcErrorAll (struct rates inP, const double *expression, const double *autocrine) {
+    N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
+    N_Vector outStim = N_VNew_Serial(NELEMS(GassDose));
+    N_Vector outStimTot = N_VNew_Serial(NELEMS(GassDose));
+
+    double error = 0;
+
+    for (unsigned short ii = 0; ii < 3; ii++) {
+        try {
+            calcProfile (outData, outStim, outStimTot, inP, autocrine[ii], expression[ii]);
+
+            error += errorFuncOpt (outData, &pY[ii*NELEMS(Gass)*NELEMS(times)], &pYerror[ii*NELEMS(Gass)*NELEMS(times)]);
+            error += errorFuncOpt (outStim, pYdose[ii], DoseError[ii]);
+            error += errorFuncFix (outStimTot, DoseTot[ii], DoseTotErr[ii]);
+        } catch (exception &e) {
+            N_VDestroy_Serial(outData);
+            N_VDestroy_Serial(outStim);
+            N_VDestroy_Serial(outStimTot);
+            errorLogger(&e);
+
+            return 1E6;
+        }
+    }
+
+    N_VDestroy_Serial(outData);
+    N_VDestroy_Serial(outStim);
+    N_VDestroy_Serial(outStimTot);
+
     return error;
 }
 
@@ -260,7 +288,78 @@ void calcErrorRef (param_type params, double *out, atomic<bool> *done) {
     *done = true;
 }
 
+void calcSiLigand (N_Vector totalL, N_Vector pYL, struct rates params, double autocrine, double expression) {
+	params.expression = expression;
+    N_Vector init_state = N_VNew_Serial(Nspecies);
 
+    void *cvode_mem = NULL;
+
+    // Initialize state based on autocrine ligand
+    try {
+        cvode_mem = initState(init_state, params, autocrine);
+    } catch (exception &e) {
+        N_VDestroy_Serial(init_state);
+        CVodeFree(&cvode_mem);
+        throw;
+    }
+
+    CVodeFree(&cvode_mem);
+
+    Ith(pYL,0) = pYcalc(init_state, params);
+    Ith(totalL,0) = totCalc(init_state);
+
+    // Initialize state based on autocrine ligand
+    try {
+        cvode_mem = initState(init_state, params, 0.0);
+    } catch (exception &e) {
+        N_VDestroy_Serial(init_state);
+        CVodeFree(&cvode_mem);
+        throw;
+    }
+
+    CVodeFree(&cvode_mem);
+
+    Ith(pYL,1) = pYcalc(init_state, params);
+    Ith(totalL,1) = totCalc(init_state);
+
+    N_VDestroy_Serial(init_state);
+}
+
+
+double calcErrorSi (param_type inP) {
+    struct rates params = Param(inP);
+
+    N_Vector totalData = N_VNew_Serial(2);
+    N_Vector pYdata = N_VNew_Serial(2);
+
+    double error = 0;
+
+    for (unsigned short ii = 0; ii < NfitCells; ii++) {
+        try {
+        	calcSiLigand (totalData, pYdata, params, inP[15+ii], inP[15+NfitCells+ii]);
+
+            if (siPY[ii][0] != 0) error += errorFuncOpt (pYdata, siPY[ii], siPYerr[ii]);
+            if (siTOT[ii][0] != 0) error += errorFuncOpt (totalData, siTOT[ii], siTOTerr[ii]);
+        } catch (exception &e) {
+        	N_VDestroy_Serial(totalData);
+        	N_VDestroy_Serial(pYdata);
+            errorLogger(&e);
+
+            return 1E6;
+        }
+    }
+
+    N_VDestroy_Serial(totalData);
+    N_VDestroy_Serial(pYdata);
+
+    return error;
+}
+
+void calcErrorRefWithSi (param_type params, double *out, atomic<bool> *done) {
+    *out = calcError(params);
+    *out += calcErrorSi(params);
+    *done = true;
+}
 
 // Calculate the initial state by waiting a long time with autocrine Gas
 void *initState( N_Vector init, struct rates params, double autocrine) {
@@ -465,21 +564,6 @@ void diffusionSolution(double *dataPtr, double AXLin, double *GasIn, int gridIn,
 
 
 
-//void testDiffModel () {
-//    const size_t gridSize = 100;
-//    
-//    double tps[] = {30};
-//    double data[1];
-//    double GasIn[gridSize];
-//    
-//    double params[] = {1.2, 0.054435, 0.042, 24.392, 0.00081113, 0.34571, 0.0010493, 0.017322, 1e-06, 3.183, 0.0056061, 0.002045, 0.1, 0.0085047, 1, 0.0019396, 0.058122, 155.7, 359.46};
-//    
-//    for (int ii = 0; ii < gridSize; ii++) GasIn[ii] = ((double) rand()) / ((double) RAND_MAX);
-//    
-//    double dIn[] = {0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-//    
-//    cout << matlabDiffTPS_pYavg(data, 359.46, GasIn, gridSize, 0.001, params, tps, 1, dIn, 1, 1, 0) << endl;
-//}
 
 
 

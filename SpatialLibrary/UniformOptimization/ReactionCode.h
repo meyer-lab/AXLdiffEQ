@@ -9,7 +9,7 @@
 #ifndef __UniformOptimization__ReactionCode__
 #define __UniformOptimization__ReactionCode__
 
-#include "nvector_serial.h"  /* serial N_Vector types, fcts., macros */
+#include "CVode/nvector_serial.h"  /* serial N_Vector types, fcts., macros */
 #include <array>
 #include <vector>
 

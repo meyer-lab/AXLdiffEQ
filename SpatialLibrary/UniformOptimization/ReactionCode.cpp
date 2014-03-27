@@ -7,7 +7,7 @@
 //
 
 #include "ReactionCode.h"
-#include "nvector_serial.h"  /* serial N_Vector types, fcts., macros */
+#include "CVode/nvector_serial.h"  /* serial N_Vector types, fcts., macros */
 #include <string>
 #include <array>
 #include <vector>

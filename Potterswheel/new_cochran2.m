@@ -1,7 +1,7 @@
 function m = new_cochran2()
 % PottersWheel model definition file
 
-global postTag cellName;
+global postTag cellName siEXP;
 gasName = ['Gas_' cellName];
 axlExp = ['AXLexp_' cellName];
 m = pwGetEmptyModel();
@@ -21,10 +21,17 @@ m = pwAddX(m,'Gasi'      ,0,'fix',  0, 1E20,'#/cell','endoMem');
 
 %% Reactions2
 % m = pwAddR(m, ID, reactants, products, modifiers,  type, options, rateSignature, parameters, description, name, fast)
-m = pwAddR(m,'R01',{'AXL'},{'A1'},{'Gas'},'C',[],'k1*r1*(m1+k3)-k2*p1',{'B1','U1',gasName});
-m = pwAddR(m,'R02',{'AXL'},{'A2'},{'Gas'},'C',[],'k1*r1*(m1+k3)-k2*p1',{'B2','U2',gasName});
-m = pwAddR(m,'R03',{'A1'},{'A12'},{'Gas'},'C',[],'k1*r1*(m1+k3)-k2*p1',{'B2','U2',gasName});
-m = pwAddR(m,'R04',{'A2'},{'A12'},{'Gas'},'C',[],'k1*r1*(m1+k3)-k2*p1',{'B1','U1',gasName});
+if siEXP
+    m = pwAddR(m,'R01',{'AXL'},{'A1'},{'Gas'},'C',[],'k1*r1*(m1+k3)-k2*p1',{'B1','U1',gasName});
+    m = pwAddR(m,'R02',{'AXL'},{'A2'},{'Gas'},'C',[],'k1*r1*(m1+k3)-k2*p1',{'B2','U2',gasName});
+    m = pwAddR(m,'R03',{'A1'},{'A12'},{'Gas'},'C',[],'k1*r1*(m1+k3)-k2*p1',{'B2','U2',gasName});
+    m = pwAddR(m,'R04',{'A2'},{'A12'},{'Gas'},'C',[],'k1*r1*(m1+k3)-k2*p1',{'B1','U1',gasName});
+else
+    m = pwAddR(m,'R01',{'AXL'},{'A1'},{'Gas'},'C',[],'k1*r1*(m1*k3)-k2*p1',{'B1','U1',gasName});
+    m = pwAddR(m,'R02',{'AXL'},{'A2'},{'Gas'},'C',[],'k1*r1*(m1*k3)-k2*p1',{'B2','U2',gasName});
+    m = pwAddR(m,'R03',{'A1'},{'A12'},{'Gas'},'C',[],'k1*r1*(m1*k3)-k2*p1',{'B2','U2',gasName});
+    m = pwAddR(m,'R04',{'A2'},{'A12'},{'Gas'},'C',[],'k1*r1*(m1*k3)-k2*p1',{'B1','U1',gasName});
+end
 m = pwAddR(m,'R05',{'AXL','A1'},{'D1'},[],'C',[],'k1*r1*r2-k2*p1',{'xFwd1','xRev1'});
 m = pwAddR(m,'R07',{'AXL','A12'},{'D2'},[],'C',[],'k1*r1*r2-k2*p1',{'xFwd3','xRev3'});
 m = pwAddR(m,'R06',{'AXL','A2'},{'D1'},[],'C',[],'k1*k2*r1*r2/k3-k4*p1*k5/k6',{'xFwd1','B1','B2','xRev1','U1','U2'}); 
@@ -33,11 +40,15 @@ m = pwAddR(m,'R08',{'A1','A1'}, {'D2'},[],'C',[],'k1*k2*r1*r2/k3-k4*p1*k5/k6',{'
 % xRev4 is xRev3*U2/U1 _________ xFwd4 is xFwd3*B2/B1
 m = pwAddR(m,'R09',{'A2','A2'}, {'D2'},[],'C',[],'k1*k2*r1*r2/k3-k4*k5*p1/k6',{'xFwd3','B1','B2','xRev3','U1','U2'});
 % xRev5 is xRev3*U1/U2 _________ xFwd5', 'xFwd3*B1/B2
-m = pwAddR(m,'R11',{'D1'},{'D2'},{'Gas'},'C',[],'k1*r1*k2*(m1+k7)/k3-k4*k5*p1/k6',{'xFwd3','B2','xFwd1','xRev3','U2','xRev1',gasName});
+if siEXP
+    m = pwAddR(m,'R11',{'D1'},{'D2'},{'Gas'},'C',[],'k1*r1*k2*(m1*k7)/k3-k4*k5*p1/k6',{'xFwd3','B2','xFwd1','xRev3','U2','xRev1',gasName});
+else
+    m = pwAddR(m,'R11',{'D1'},{'D2'},{'Gas'},'C',[],'k1*r1*k2*(m1+k7)/k3-k4*k5*p1/k6',{'xFwd3','B2','xFwd1','xRev3','U2','xRev1',gasName});
+end
 % xFwd6', 'xFwd3*B2/xFwd1'); _________ xRev6', 'xRev3*U2/xRev1');
 
 % Internalization
-m = pwAddR(m,'R12',{'AXL'},{'AXLi'},[],'C',[],'(k1 + k2*k3)*r1 - k4*(1-k5)*p1',{'AXLint1','AXLint2','scale_A','kRec','fElse'});
+m = pwAddR(m,'R12',{'AXL'},{'AXLi'},[],'C',[],'(k1 + k2*k3)*r1 - k4*(1-k5)*p1',{'AXLint1','AXLint2','scale_A','kRec','fA'});
 m = pwAddR(m,'R13',{'A1'}, {'A1i'}, [],'C',[],'(k1 + k2*k3)*r1 - k4*(1-k5)*p1',{'AXLint1','AXLint2','scale_A','kRec','fElse'});
 m = pwAddR(m,'R14',{'A2'}, {'A2i'}, [],'C',[],'(k1 + k2*k3)*r1 - k4*(1-k5)*p1',{'AXLint1','AXLint2','scale_A','kRec','fElse'});
 m = pwAddR(m,'R15',{'A12'},{'A12i'},[],'C',[],'(k1 + k2*k3)*r1 - k4*(1-k5)*p1',{'AXLint1','AXLint2','scale_A','kRec','fElse'});
@@ -45,7 +56,7 @@ m = pwAddR(m,'R16',{'D1'}, {'D1i'}, [],'C',[],'(k1 + k2*k3)*r1 - k4*(1-k5)*p1',{
 m = pwAddR(m,'R17',{'D2'}, {'D2i'}, [],'C',[],'(k1 + k2)*r1 - k3*(1-k4)*p1',{'AXLint1','AXLint2','kRec','fD2'});
 m = pwAddR(m,'R19',[],{'AXL'},      [],'C',[],'k1',{axlExp});
 
-m = pwAddR(m,'R26',{'AXLi'},[],[],'C',[],'k1*k2*r1',{'kDeg','fElse'});
+m = pwAddR(m,'R26',{'AXLi'},[],[],'C',[],'k1*k2*r1',{'kDeg','fA'});
 m = pwAddR(m,'R27',{'A1i'}, [],[],'C',[],'k1*k2*r1',{'kDeg','fElse'});
 m = pwAddR(m,'R28',{'A2i'}, [],[],'C',[],'k1*k2*r1',{'kDeg','fElse'});
 m = pwAddR(m,'R29',{'A12i'},[],[],'C',[],'k1*k2*r1',{'kDeg','fElse'});
@@ -72,18 +83,27 @@ EndoMemFrac = 0.5;
 
 if ~isempty(strfind(postTag,'longT'))
     m = pwAddY(m,'dimAXL',['scale_obs1*(2*D2 + 2*' mat2str(EndoMemFrac) '*D2i +scale_A*(AXL+A1+A2+A12+2*D1 + ' mat2str(EndoMemFrac) '*(AXLi+A1i+A2i+A12i+2*D1i)))/(A1+A2+A12+2*D1+2*D2+AXL + ' mat2str(EndoMemFrac) '*(A1i+A2i+A12i+2*D1i+2*D2i+AXLi))']);
+    
     m = pwAddY(m,'tAXL',['(A1+A2+A12+2*D1+2*D2+AXL + ' mat2str(EndoMemFrac) '*(A1i+A2i+A12i+2*D1i+2*D2i+AXLi))/135.2']); % Scaling for fg/mg
 else
     m = pwAddY(m,'dimAXL',['scale_obs1*(2*D2 + 2*' mat2str(EndoMemFrac) '*D2i +scale_A*(AXL+A1+A2+A12+2*D1 + ' mat2str(EndoMemFrac) '*(AXLi+A1i+A2i+A12i+2*D1i)))']);
+
+    if siEXP
+        m = pwAddY(m,'tAXL',['scale_tot*(A1+A2+A12+2*D1+2*D2+AXL + ' mat2str(EndoMemFrac) '*(A1i+A2i+A12i+2*D1i+2*D2i+AXLi))/135.2']); % Scaling for fg/mg
+    end
 end
 
 %% Observation parameters
 m = pwAddS(m, 'scale_obs1', 2543,  'local',  1E-6, 1E6);
 m = pwAddS(m, 'scale_A',    0.014545, 'global', 1E-6, 1);
+m = pwAddS(m, 'scale_tot',    0.014545, 'local', 1E-6, 1);
+
 
 %% Driving input, Compartments
 % m = pwAddU(m, ID, uType, uTimes, uValues, compartment, name, description, u2Values, alternativeIDs)
 % m = pwAddC(m, *ID, *size, outside, spatialDim, name, unit, constant, designerProps, classname, description)
+
+
 m = pwAddU(m,'Gas','steps',[-1000 0],[0 1.25]);
 m = pwAddC(m,'cell',1);
 m = pwAddC(m,'endoMem',0.5);
@@ -101,6 +121,7 @@ m = pwAddK(m,'xRev3',0.041195);
 
 m = pwAddK(m,'AXLint1',0.0020244,'global',1E-6,1);
 m = pwAddK(m,'AXLint2',0.99998,'global',1E-3,100);
+m = pwAddK(m,'fA',0.00089687,'global',1E-5,1);
 m = pwAddK(m,'fElse',0.00089687,'global',1E-5,1);
 m = pwAddK(m,'fD2',0.76196,'global',1E-1,1);
 m = pwAddK(m,'kRec',0.0026825,'global',1E-3,1E-1);

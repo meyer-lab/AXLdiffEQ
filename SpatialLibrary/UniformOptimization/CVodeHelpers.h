@@ -9,8 +9,8 @@
 #ifndef __UniformOptimization__CVodeHelpers__
 #define __UniformOptimization__CVodeHelpers__
 
-#include "nvector_serial.h"  /* serial N_Vector types, fcts., macros */
-#include "cvode.h"
+#include "CVode/nvector_serial.h"  /* serial N_Vector types, fcts., macros */
+#include "CVode/cvode.h"
 
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
 void* solver_setup (N_Vector, void *, double, double, CVRhsFn);

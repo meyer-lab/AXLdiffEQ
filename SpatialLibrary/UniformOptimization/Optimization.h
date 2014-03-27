@@ -18,5 +18,7 @@ void getLimits (std::vector<double> &, std::vector<double> &, int);
 void bumpOptim(std::vector<double>, std::vector<double>, std::vector<double>, double *, double, unsigned int, nlopt_func, void *);
 double calcErrorOptOneLog (unsigned, const double *, double *, void *);
 double calcErrorOptLog (unsigned, const double *, double *, void *);
+double calcErrorOptAllLog (unsigned, const double *, double *, void *);
+double calcErrorOptPaperSiLog (unsigned, const double *, double *, void *);
 
 #endif /* defined(__UniformOptimization__Optimization__) */
