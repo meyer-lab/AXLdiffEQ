@@ -73,26 +73,30 @@ static const double DoseTotErr[][7] = {
 static const double siPY[][2] = {
 		{0, 0}, // A172
 		{1.179, 1.596}, // A549
-		{0, 0}, // U87
-		{0.497, 0.008}}; // BT549
+		{0.240, 1.641}, // U87
+		{0.497, 0.008}, // BT549
+        {0.329, 0.402}}; // MB231
 
 static const double siPYerr[][2] = {
 		{0, 0}, // A172
 		{0.171, 0.107}, // A549
-		{0, 0}, // U87
-		{0.113, 0.029}}; // BT549
+		{0.045, 0.049}, // U87
+		{0.113, 0.029}, // BT549
+        {0.058, 0.169}}; // MB231
 
 static const double siTOT[][2] = {
 		{0, 0}, // A172
 		{1.037, 1.543}, // A549
-		{0, 0}, // U87
-		{0, 0}}; // BT549
+		{0.715, 0.395}, // U87
+		{1.816, 0.130}, // BT549
+        {1.053, 0.295}}; // MB231
 
 static const double siTOTerr[][2] = {
 		{0, 0}, // A172
 		{0.033, 0.034}, // A549
-		{0, 0}, // U87
-		{0, 0}}; // BT549
+		{0.050, 0.050}, // U87
+		{0.047, 0.014}, // BT549
+        {0.038, 0.005}}; // MB231
 
 double calcError (param_type);
 void errorLogger (std::exception *);
@@ -104,5 +108,8 @@ double calcErrorOneLine (struct rates, size_t, double);
 double calcErrorAll (struct rates, const double *, const double *);
 void calcErrorRefWithSi (param_type, double *, std::atomic<bool> *);
 double calcErrorSi (param_type);
+void *initState_sepA( N_Vector, struct rates_sepA, double);
+double calcErrorSi_sepA (std::vector<double> inP);
+double calcErrorAll_sepA (struct rates_sepA, const double *, const double *);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

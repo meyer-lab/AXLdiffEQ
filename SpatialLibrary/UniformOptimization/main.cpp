@@ -36,14 +36,14 @@ int main( int argc, char *argv[] ) {
 
 	istringstream ss(argv[1]);
 	int x;
-	if (!(ss >> x) || (x > 3) || (x < -2)) {
+	if (!(ss >> x) || (x > 3) || (x < -3)) {
 	    cerr << "Invalid cell line number " << argv[1] << '\n';
 	    return 1;
 	}
 
 	cout << "Running optimization for cell line " << x << endl;
 
-    const int nthreads = 8;
+    const int nthreads = 2;
     boost::chrono::milliseconds dura( 200 );
     vector<double> minn, maxx, best;
     vector<double> inn[nthreads];
@@ -54,6 +54,8 @@ int main( int argc, char *argv[] ) {
     int cellLine[] = {x};
     
     if (cellLine[0] == -1) getLimits(minn, maxx, 4);
+    else if (cellLine[0] == -2) getLimits(minn, maxx, 2);
+    else if (cellLine[0] == -3) getLimits_sepA(minn, maxx, 5);
     else getLimits(minn, maxx, 1);
     
     default_random_engine generator;
@@ -72,6 +74,8 @@ int main( int argc, char *argv[] ) {
         	threads[ii] = thread(bumpOptim,minn,maxx,inn[ii],&out[ii],powRND,seedRND,calcErrorOptAllLog,nullptr);
         } else if (cellLine[0] == -2) {
         	threads[ii] = thread(bumpOptim,minn,maxx,inn[ii],&out[ii],powRND,seedRND,calcErrorOptPaperSiLog,nullptr);
+        } else if (cellLine[0] == -3) {
+        	threads[ii] = thread(bumpOptim,minn,maxx,inn[ii],&out[ii],powRND,seedRND,calcErrorOptAllSiLog_sepA,nullptr);
         } else {
         	threads[ii] = thread(bumpOptim,minn,maxx,inn[ii],&out[ii],powRND,seedRND,calcErrorOptOneLog,cellLine);
         }
@@ -100,6 +104,8 @@ int main( int argc, char *argv[] ) {
             	threads[ii] = thread(bumpOptim,minn,maxx,inn[ii],&out[ii],powRND,seedRND,calcErrorOptAllLog,nullptr);
             } else if (cellLine[0] == -2) {
             	threads[ii] = thread(bumpOptim,minn,maxx,inn[ii],&out[ii],powRND,seedRND,calcErrorOptPaperSiLog,nullptr);
+            } else if (cellLine[0] == -3) {
+                threads[ii] = thread(bumpOptim,minn,maxx,inn[ii],&out[ii],powRND,seedRND,calcErrorOptAllSiLog_sepA,nullptr);
             } else {
             	threads[ii] = thread(bumpOptim,minn,maxx,inn[ii],&out[ii],powRND,seedRND,calcErrorOptOneLog,cellLine);
             }

@@ -52,10 +52,43 @@ struct rates {
     double fD2;        ///< Recycling fraction for D2.
 };
 
+struct rates_sepA {
+    double Binding1;   ///< Forward binding rate for Ig1
+    double Binding2;   ///< Forward binding rate for Ig2
+    double Unbinding1; ///< Reverse binding rate for Ig1
+    double Unbinding2; ///< Reverse binding rate for Ig2
+    double xFwd1;      ///< Reaction 1 forward rate.
+    double xRev1;      ///< Reaction 1 reverse rate.
+    double xFwd2;      ///< Reaction 2 forward rate.
+    double xRev2;      ///< Reaction 2 reverse rate.
+    double xFwd3;      ///< Reaction 3 forward rate.
+    double xRev3;      ///< Reaction 3 reverse rate.
+    double xFwd4;      ///< Reaction 4 forward rate.
+    double xRev4;      ///< Reaction 4 reverse rate.
+    double xFwd5;      ///< Reaction 5 forward rate.
+    double xRev5;      ///< Reaction 5 reverse rate.
+    double xFwd6;      ///< Reaction 6 forward rate.
+    double xRev6;      ///< Reaction 6 reverse rate.
+    double scaleA;     ///< Signaling capacity of non-D2 species.
+    double expression; ///< AXL expression rate.
+    double internalize;///< Non-pY species internalization rate.
+    double pYinternalize;///< pY species internalization rate.
+    double kRec;       ///< Recycling rate.
+    double kDeg;       ///< Degradation rate.
+    double fElse;      ///< Recycling fraction for non-D2 species.
+    double fD2;        ///< Recycling fraction for D2.
+    double fA;        ///< Recycling fraction for D2.
+    double kRecA;
+    double kDegA;
+};
+
 int AXL_react(double, N_Vector, N_Vector, void *);
 int AXL_react_diff(double, N_Vector, N_Vector, void *);
 double pYcalc (N_Vector, struct rates);
 double totCalc (N_Vector);
 struct rates Param(param_type);
+int AXL_react_sepA(double, N_Vector, N_Vector, void *);
+struct rates_sepA Param_sepA(param_type);
+double pYcalc (N_Vector, double);
 
 #endif /* defined(__UniformOptimization__ReactionCode__) */
