@@ -1,7 +1,7 @@
 clc; clear;
 
 %function Fitting(nameIn)
-nameIn = 'new_cochran2';
+nameIn = 'new_cochran2_restricted';
 % This script runs extensive optimization
 
 pwClear;
@@ -24,12 +24,12 @@ siEXP = 0;
 % pwAddData([dataFolder 'A172.xls'],1,0);
 % ii = ii + 1;
 % 
-% postTag = 'A549';
-% cellName = 'A549';
-% pwAddModel(model);
-% pwSelect(ii);
-% pwAddData([dataFolder 'A549.xls'],1,0);
-% ii = ii + 1;
+postTag = 'A549';
+cellName = 'A549';
+pwAddModel(model);
+pwSelect(ii);
+pwAddData([dataFolder 'A549.xls'],1,0);
+ii = ii + 1;
 % 
 % postTag = 'A172_longT';
 % cellName = 'A172';
@@ -38,20 +38,20 @@ siEXP = 0;
 % pwAddData([dataFolder 'A172_longT.xls'],1,0);
 % ii = ii + 1;
 
-% postTag = 'A549_longT';
-% cellName = 'A549';
-% pwAddModel(model);
-% pwSelect(ii);
-% pwAddData([dataFolder 'A549_longT.xls'],1,0);
-% ii = ii + 1;
+postTag = 'A549_longT';
+cellName = 'A549';
+pwAddModel(model);
+pwSelect(ii);
+pwAddData([dataFolder 'A549_longT.xls'],1,0);
+ii = ii + 1;
 
-% postTag = 'A549_SI';
-% cellName = 'A549';
-% siEXP = 1;
-% pwAddModel(model);
-% pwSelect(ii);
-% pwAddData([dataFolder 'A549_SI.xls'],1,0);
-% ii = ii + 1;
+postTag = 'A549_SI';
+cellName = 'A549';
+siEXP = 1;
+pwAddModel(model);
+pwSelect(ii);
+pwAddData([dataFolder 'A549_SI.xls'],1,0);
+ii = ii + 1;
 % 
 % postTag = 'U87_SI';
 % cellName = 'U87';

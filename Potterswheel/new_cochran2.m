@@ -103,7 +103,6 @@ m = pwAddS(m, 'scale_tot',    0.014545, 'local', 1E-6, 1);
 % m = pwAddU(m, ID, uType, uTimes, uValues, compartment, name, description, u2Values, alternativeIDs)
 % m = pwAddC(m, *ID, *size, outside, spatialDim, name, unit, constant, designerProps, classname, description)
 
-
 m = pwAddU(m,'Gas','steps',[-1000 0],[0 1.25]);
 m = pwAddC(m,'cell',1);
 m = pwAddC(m,'endoMem',0.5);
@@ -132,5 +131,5 @@ m = pwAddK(m,gasName,0.015242,'global',1E-6,100);
 
 %% Constraints
 % m = pwAddCS(m, *ID, *lhs, *operator, *rhs, lambda)
-m = pwAddCS(m,'CS2','U2/B2','<','1000',1000);
-m = pwAddCS(m,'CS3','U2/B2','>','10'  ,1000);
+% m = pwAddCS(m,'CS2','U2/B2','<','1000',1000);
+% m = pwAddCS(m,'CS3','U2/B2','>','10'  ,1000);

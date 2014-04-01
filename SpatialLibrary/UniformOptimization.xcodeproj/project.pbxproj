@@ -45,13 +45,9 @@
 		9389C4CE18E3A2A30015B8B2 /* sundials_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49918E3A2A30015B8B2 /* sundials_direct.c */; };
 		9389C4CF18E3A2A30015B8B2 /* sundials_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49918E3A2A30015B8B2 /* sundials_direct.c */; };
 		9389C4D018E3A2A30015B8B2 /* sundials_direct.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C49A18E3A2A30015B8B2 /* sundials_direct.h */; };
-		9389C4D418E3A2A30015B8B2 /* sundials_math.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49D18E3A2A30015B8B2 /* sundials_math.c */; };
-		9389C4D518E3A2A30015B8B2 /* sundials_math.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49D18E3A2A30015B8B2 /* sundials_math.c */; };
-		9389C4D618E3A2A30015B8B2 /* sundials_math.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C49E18E3A2A30015B8B2 /* sundials_math.h */; };
 		9389C4D718E3A2A30015B8B2 /* sundials_nvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49F18E3A2A30015B8B2 /* sundials_nvector.c */; };
 		9389C4D818E3A2A30015B8B2 /* sundials_nvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49F18E3A2A30015B8B2 /* sundials_nvector.c */; };
 		9389C4D918E3A2A30015B8B2 /* sundials_nvector.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C4A018E3A2A30015B8B2 /* sundials_nvector.h */; };
-		9389C4E318E3A2A30015B8B2 /* sundials_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C4A718E3A2A30015B8B2 /* sundials_types.h */; };
 		9389C4E818E3A3BC0015B8B2 /* Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C4E518E3A3BC0015B8B2 /* Testing.h */; };
 		9389C4F618E3B2250015B8B2 /* cvode.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C47F18E3A2A30015B8B2 /* cvode.c */; };
 		9389C4F718E3B2250015B8B2 /* cvode_band.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C48118E3A2A30015B8B2 /* cvode_band.c */; };
@@ -62,7 +58,6 @@
 		9389C50018E3B2250015B8B2 /* sundials_band.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49518E3A2A30015B8B2 /* sundials_band.c */; };
 		9389C50118E3B2250015B8B2 /* sundials_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49718E3A2A30015B8B2 /* sundials_dense.c */; };
 		9389C50218E3B2250015B8B2 /* sundials_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49918E3A2A30015B8B2 /* sundials_direct.c */; };
-		9389C50418E3B2250015B8B2 /* sundials_math.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49D18E3A2A30015B8B2 /* sundials_math.c */; };
 		9389C50518E3B2250015B8B2 /* sundials_nvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49F18E3A2A30015B8B2 /* sundials_nvector.c */; };
 		9389C50918E3B2380015B8B2 /* ReactionCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9385E03918CF36FB00FEB938 /* ReactionCode.cpp */; };
 		9389C50A18E3B2380015B8B2 /* CVodeHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9385E03418CF36C100FEB938 /* CVodeHelpers.cpp */; };
@@ -127,11 +122,8 @@
 		9389C49818E3A2A30015B8B2 /* sundials_dense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_dense.h; sourceTree = "<group>"; };
 		9389C49918E3A2A30015B8B2 /* sundials_direct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sundials_direct.c; sourceTree = "<group>"; };
 		9389C49A18E3A2A30015B8B2 /* sundials_direct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_direct.h; sourceTree = "<group>"; };
-		9389C49D18E3A2A30015B8B2 /* sundials_math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sundials_math.c; sourceTree = "<group>"; };
-		9389C49E18E3A2A30015B8B2 /* sundials_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_math.h; sourceTree = "<group>"; };
 		9389C49F18E3A2A30015B8B2 /* sundials_nvector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sundials_nvector.c; sourceTree = "<group>"; };
 		9389C4A018E3A2A30015B8B2 /* sundials_nvector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_nvector.h; sourceTree = "<group>"; };
-		9389C4A718E3A2A30015B8B2 /* sundials_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_types.h; sourceTree = "<group>"; };
 		9389C4E418E3A3BC0015B8B2 /* Testing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Testing.cpp; sourceTree = "<group>"; };
 		9389C4E518E3A3BC0015B8B2 /* Testing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Testing.h; sourceTree = "<group>"; };
 		9389C4ED18E3A4C20015B8B2 /* Test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Test; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -191,11 +183,8 @@
 				9389C49818E3A2A30015B8B2 /* sundials_dense.h */,
 				9389C49918E3A2A30015B8B2 /* sundials_direct.c */,
 				9389C49A18E3A2A30015B8B2 /* sundials_direct.h */,
-				9389C49D18E3A2A30015B8B2 /* sundials_math.c */,
-				9389C49E18E3A2A30015B8B2 /* sundials_math.h */,
 				9389C49F18E3A2A30015B8B2 /* sundials_nvector.c */,
 				9389C4A018E3A2A30015B8B2 /* sundials_nvector.h */,
-				9389C4A718E3A2A30015B8B2 /* sundials_types.h */,
 			);
 			path = CVode;
 			sourceTree = "<group>";
@@ -247,7 +236,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9389C4E318E3A2A30015B8B2 /* sundials_types.h in Headers */,
 				9389C4B418E3A2A30015B8B2 /* cvode_direct_impl.h in Headers */,
 				9385E03D18CF36FB00FEB938 /* ReactionCode.h in Headers */,
 				93A4908118DF082D00CF316F /* Optimization.h in Headers */,
@@ -259,7 +247,6 @@
 				9389C4B018E3A2A30015B8B2 /* cvode_dense.h in Headers */,
 				9385E03818CF36C100FEB938 /* CVodeHelpers.h in Headers */,
 				935C638718D1E4A50069EF58 /* ModelRunning.h in Headers */,
-				9389C4D618E3A2A30015B8B2 /* sundials_math.h in Headers */,
 				9389C4AD18E3A2A30015B8B2 /* cvode_band.h in Headers */,
 				9389C4D918E3A2A30015B8B2 /* sundials_nvector.h in Headers */,
 				9389C4E818E3A3BC0015B8B2 /* Testing.h in Headers */,
@@ -355,7 +342,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9389C4D518E3A2A30015B8B2 /* sundials_math.c in Sources */,
 				9389C4CC18E3A2A30015B8B2 /* sundials_dense.c in Sources */,
 				9370A68F17E754C700791D49 /* BlasHeader.cpp in Sources */,
 				93A4908018DF082D00CF316F /* Optimization.cpp in Sources */,
@@ -393,7 +379,6 @@
 				9389C50018E3B2250015B8B2 /* sundials_band.c in Sources */,
 				9389C50118E3B2250015B8B2 /* sundials_dense.c in Sources */,
 				9389C50218E3B2250015B8B2 /* sundials_direct.c in Sources */,
-				9389C50418E3B2250015B8B2 /* sundials_math.c in Sources */,
 				9389C50518E3B2250015B8B2 /* sundials_nvector.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -414,7 +399,6 @@
 				9389C4CE18E3A2A30015B8B2 /* sundials_direct.c in Sources */,
 				9389C4CB18E3A2A30015B8B2 /* sundials_dense.c in Sources */,
 				935C638518D1E4A50069EF58 /* ModelRunning.cpp in Sources */,
-				9389C4D418E3A2A30015B8B2 /* sundials_math.c in Sources */,
 				9389C4A818E3A2A30015B8B2 /* cvode.c in Sources */,
 				9389C4B618E3A2A30015B8B2 /* cvode_io.c in Sources */,
 				93A2529617E60FF800FC8307 /* main.cpp in Sources */,
@@ -646,6 +630,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
+				CLANG_X86_VECTOR_INSTRUCTIONS = avx;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
@@ -683,6 +668,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
 				CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = NO;
+				CLANG_X86_VECTOR_INSTRUCTIONS = avx;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = NO;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_UNROLL_LOOPS = YES;

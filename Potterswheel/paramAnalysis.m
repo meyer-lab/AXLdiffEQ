@@ -1,6 +1,6 @@
 clc; clear;
 
-load('new_cochran2_noBT');
+load('out');
 
 
 % Clear scales
@@ -27,7 +27,7 @@ min(chiSq)
 
 clear idx
 
-IDDD = 1:4000;
+IDDD = 1:100;
 
 Kd2 = params(:,2)./params(:,1);
 

@@ -111,5 +111,7 @@ double calcErrorSi (param_type);
 void *initState_sepA( N_Vector, struct rates_sepA, double);
 double calcErrorSi_sepA (std::vector<double> inP);
 double calcErrorAll_sepA (struct rates_sepA, const double *, const double *);
+double calcError_sepA (std::vector<double>);
+void errorLogger (std::stringstream &);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

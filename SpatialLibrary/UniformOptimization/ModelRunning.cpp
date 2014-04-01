@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <nlopt.hpp>
 #include "ModelRunning.h"
@@ -346,6 +347,42 @@ double calcError (param_type inP) {
     return error;
 }
 
+double calcError_sepA (vector<double> inP) {
+    param_type inAP;
+    for (size_t ii = 0; ii < inAP.size(); ii++) inAP[ii] = inP[ii];
+    
+    struct rates_sepA params = Param_sepA(inAP);
+    
+    N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
+    N_Vector outStim = N_VNew_Serial(NELEMS(GassDose));
+    N_Vector outStimTot = N_VNew_Serial(NELEMS(GassDose));
+    
+    double error = 0;
+    
+    for (unsigned short ii = 0; ii < NfitCells; ii++) {
+        try {
+            calcProfile_sepA (outData, outStim, outStimTot, params, inP[16+ii], inP[16+NfitCells+ii]);
+            
+            error += errorFuncOpt (outData, &pY[ii*NELEMS(Gass)*NELEMS(times)], &pYerror[ii*NELEMS(Gass)*NELEMS(times)]);
+            error += errorFuncOpt (outStim, pYdose[ii], DoseError[ii]);
+            error += errorFuncFix (outStimTot, DoseTot[ii], DoseTotErr[ii]);
+        } catch (exception &e) {
+            N_VDestroy_Serial(outData);
+            N_VDestroy_Serial(outStim);
+            N_VDestroy_Serial(outStimTot);
+            errorLogger(&e);
+            
+            return 1E6;
+        }
+    }
+    
+    N_VDestroy_Serial(outData);
+    N_VDestroy_Serial(outStim);
+    N_VDestroy_Serial(outStimTot);
+    
+    return error;
+}
+
 double calcErrorAll (struct rates inP, const double *expression, const double *autocrine) {
     N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
     N_Vector outStim = N_VNew_Serial(NELEMS(GassDose));
@@ -602,7 +639,8 @@ void *initState_sepA( N_Vector init, struct rates_sepA params, double autocrine)
     void *cvode_mem = solver_setup (init, &params, AXL_react_sepA);
     if (cvode_mem == NULL) throw runtime_error(string("Error with solver setup in initState."));
     
-    int flag = CVode(cvode_mem, autocrineT, init, &t, CV_NORMAL);
+    // NOTE: Running autocrineT * 10
+    int flag = CVode(cvode_mem, autocrineT*10, init, &t, CV_NORMAL);
     if (flag < 0) {
         CVodeFree(&cvode_mem);
         throw runtime_error(string("Integration failure at initial condition."));
@@ -761,6 +799,19 @@ void errorLogger (exception *e) {
     } else if (print_CV_err == 2) {
         errOut.open ("error.txt", ios::app);
         errOut << e->what() << endl;
+        errOut.close();
+    }
+}
+
+void errorLogger (stringstream &e) {
+    ofstream errOut;
+    
+    if (print_CV_err == 0) return;
+    else if (print_CV_err == 1) {
+        cout << e.str() << endl;
+    } else if (print_CV_err == 2) {
+        errOut.open ("error.txt", ios::app);
+        errOut << e.str() << endl;
         errOut.close();
     }
 }

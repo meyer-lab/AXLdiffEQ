@@ -33,7 +33,7 @@ extern "C" {
  */
 
 #define CVD_MSBJ  50
-#define CVD_DGMAX RCONST(0.2)
+#define CVD_DGMAX (0.2)
 
 /*
  * -----------------------------------------------------------------
@@ -53,7 +53,7 @@ typedef struct CVDlsMemRec {
   long int d_mu;          /* upper bandwidth of Jacobian                  */ 
   long int d_smu;         /* upper bandwith of M = MIN(N-1,d_mu+d_ml)     */
 
-  booleantype d_jacDQ;    /* TRUE if using internal DQ Jacobian approx.   */
+  int d_jacDQ;    /* 1 if using internal DQ Jacobian approx.   */
   CVDlsDenseJacFn d_djac; /* dense Jacobian routine to be called          */
   CVDlsBandJacFn d_bjac;  /* band Jacobian routine to be called           */
   void *d_J_data;         /* user data is passed to djac or bjac          */

@@ -20,10 +20,7 @@
 #include <math.h>
 
 #include "sundials_band.h"
-#include "sundials_math.h"
-
-#define ZERO RCONST(0.0)
-#define ONE  RCONST(1.0)
+#include "sundials_nvector.h"
 
 #define ROW(i,j,smu) (i-j+smu)
 
@@ -65,7 +62,7 @@ long int bandGBTRF(double **a, long int n, long int mu, long int ml, long int sm
   long int i, j, k, l, storage_l, storage_k, last_col_k, last_row_k;
   double *a_c, *col_k, *diag_k, *sub_diag_k, *col_j, *kptr, *jptr;
   double max, temp, mult, a_kj;
-  booleantype swap;
+  int swap;
 
   /* zero out the first smu - mu rows of the rectangular array a */
 
@@ -74,7 +71,7 @@ long int bandGBTRF(double **a, long int n, long int mu, long int ml, long int sm
     for (c=0; c < n; c++) {
       a_c = a[c];
       for (r=0; r < num_rows; r++) {
-	a_c[r] = ZERO;
+	a_c[r] = 0.0;
       }
     }
   }
@@ -103,7 +100,7 @@ long int bandGBTRF(double **a, long int n, long int mu, long int ml, long int sm
     
     /* check for zero pivot element */
 
-    if (col_k[storage_l] == ZERO) return(k+1);
+    if (col_k[storage_l] == 0.0) return(k+1);
     
     /* swap a(l,k) and a(k,k) if necessary */
     
@@ -119,7 +116,7 @@ long int bandGBTRF(double **a, long int n, long int mu, long int ml, long int sm
     /* stores the pivot row multipliers -a(i,k)/a(k,k)  */
     /* in a(i,k), i=k+1, ..., MIN(n-1,k+ml).            */
     
-    mult = -ONE / (*diag_k);
+    mult = -1.0 / (*diag_k);
     for (i=k+1, kptr = sub_diag_k; i <= last_row_k; i++, kptr++)
       (*kptr) *= mult;
 
@@ -146,7 +143,7 @@ long int bandGBTRF(double **a, long int n, long int mu, long int ml, long int sm
       /* a(i,j) = a(i,j) - [a(i,k)/a(k,k)]*a(k,j) */
       /* a_kj = a(k,j), *kptr = - a(i,k)/a(k,k), *jptr = a(i,j) */
 
-      if (a_kj != ZERO) {
+      if (a_kj != 0.0) {
 	for (i=k+1, kptr=sub_diag_k, jptr=col_j+ROW(k+1,j,smu);
 	     i <= last_row_k;
 	     i++, kptr++, jptr++)
@@ -158,7 +155,7 @@ long int bandGBTRF(double **a, long int n, long int mu, long int ml, long int sm
   /* set the last pivot row to be n-1 and check for a zero pivot */
 
   *p = n-1; 
-  if (a[n-1][smu] == ZERO) return(n);
+  if (a[n-1][smu] == 0.0) return(n);
 
   /* return 0 to indicate success */
 
@@ -232,5 +229,5 @@ void bandAddIdentity(double **a, long int n, long int smu)
   long int j;
  
   for(j=0; j < n; j++)
-    a[j][smu] += ONE;
+    a[j][smu] += 1.0;
 }

@@ -20,13 +20,11 @@
 #include <stdlib.h>
 
 #include "nvector_serial.h"
-#include "sundials_math.h"
 #include <math.h>
+#include <float.h>
 
-#define ZERO   RCONST(0.0)
-#define HALF   RCONST(0.5)
-#define ONE    RCONST(1.0)
-#define ONEPT5 RCONST(1.5)
+#define HALF   (0.5)
+#define ONEPT5 (1.5)
 
 /* Private function prototypes */
 /* z=x */
@@ -108,7 +106,7 @@ N_Vector N_VNewEmpty_Serial(long int length)
     if (content == NULL) { free(ops); free(v); return(NULL); }
     
     content->length   = length;
-    content->own_data = FALSE;
+    content->own_data = 0;
     content->data     = NULL;
     
     /* Attach content and ops */
@@ -140,7 +138,7 @@ N_Vector N_VNew_Serial(long int length)
         if(data == NULL) { N_VDestroy_Serial(v); return(NULL); }
         
         /* Attach data */
-        NV_OWN_DATA_S(v) = TRUE;
+        NV_OWN_DATA_S(v) = 1;
         NV_DATA_S(v)     = data;
         
     }
@@ -162,7 +160,7 @@ N_Vector N_VMake_Serial(long int length, double *v_data)
     
     if (length > 0) {
         /* Attach data */
-        NV_OWN_DATA_S(v) = FALSE;
+        NV_OWN_DATA_S(v) = 0;
         NV_DATA_S(v)     = v_data;
     }
     
@@ -322,7 +320,7 @@ N_Vector N_VCloneEmpty_Serial(N_Vector w)
     if (content == NULL) { free(ops); free(v); return(NULL); }
     
     content->length   = NV_LENGTH_S(w);
-    content->own_data = FALSE;
+    content->own_data = 0;
     content->data     = NULL;
     
     /* Attach content and ops */
@@ -353,7 +351,7 @@ N_Vector N_VClone_Serial(N_Vector w)
         if(data == NULL) { N_VDestroy_Serial(v); return(NULL); }
         
         /* Attach data */
-        NV_OWN_DATA_S(v) = TRUE;
+        NV_OWN_DATA_S(v) = 1;
         NV_DATA_S(v)     = data;
         
     }
@@ -363,7 +361,7 @@ N_Vector N_VClone_Serial(N_Vector w)
 
 void N_VDestroy_Serial(N_Vector v)
 {
-    if (NV_OWN_DATA_S(v) == TRUE) {
+    if (NV_OWN_DATA_S(v) == 1) {
         free(NV_DATA_S(v));
         NV_DATA_S(v) = NULL;
     }
@@ -397,28 +395,28 @@ void N_VSetArrayPointer_Serial(double *v_data, N_Vector v)
 void N_VLinearSum_Serial(double a, N_Vector x, double b, N_Vector y, N_Vector z) {
     double c;
     N_Vector v1, v2;
-    booleantype test;
+    int test;
     
-    if ((b == ONE) && (z == y)) {    /* BLAS usage: axpy y <- ax+y */
+    if ((b == 1.0) && (z == y)) {    /* BLAS usage: axpy y <- ax+y */
         Vaxpy_Serial(a,x,y);
         return;
     }
     
-    if ((a == ONE) && (z == x)) {    /* BLAS usage: axpy x <- by+x */
+    if ((a == 1.0) && (z == x)) {    /* BLAS usage: axpy x <- by+x */
         Vaxpy_Serial(b,y,x);
         return;
     }
     
     /* Case: a == b == 1.0 */
     
-    if ((a == ONE) && (b == ONE)) {
+    if ((a == 1.0) && (b == 1.0)) {
         VSum_Serial(x, y, z);
         return;
     }
     
     /* Cases: (1) a == 1.0, b = -1.0, (2) a == -1.0, b == 1.0 */
     
-    if ((test = ((a == ONE) && (b == -ONE))) || ((a == -ONE) && (b == ONE))) {
+    if ((test = ((a == 1.0) && (b == -1.0))) || ((a == -1.0) && (b == 1.0))) {
         v1 = test ? y : x;
         v2 = test ? x : y;
         VDiff_Serial(v2, v1, z);
@@ -428,7 +426,7 @@ void N_VLinearSum_Serial(double a, N_Vector x, double b, N_Vector y, N_Vector z)
     /* Cases: (1) a == 1.0, b == other or 0.0, (2) a == other or 0.0, b == 1.0 */
     /* if a or b is 0.0, then user should have called N_VScale */
     
-    if ((test = (a == ONE)) || (b == ONE)) {
+    if ((test = (a == 1.0)) || (b == 1.0)) {
         c  = test ? b : a;
         v1 = test ? y : x;
         v2 = test ? x : y;
@@ -438,7 +436,7 @@ void N_VLinearSum_Serial(double a, N_Vector x, double b, N_Vector y, N_Vector z)
     
     /* Cases: (1) a == -1.0, b != 1.0, (2) a != 1.0, b == -1.0 */
     
-    if ((test = (a == -ONE)) || (b == -ONE)) {
+    if ((test = (a == -1.0)) || (b == -1.0)) {
         c = test ? b : a;
         v1 = test ? y : x;
         v2 = test ? x : y;
@@ -540,9 +538,9 @@ void N_VScale_Serial(double c, N_Vector x, N_Vector z)
         return;
     }
     
-    if (c == ONE) {
+    if (c == 1.0) {
         VCopy_Serial(x, z);
-    } else if (c == -ONE) {
+    } else if (c == -1.0) {
         VNeg_Serial(x, z);
     } else {
         N  = NV_LENGTH_S(x);
@@ -584,7 +582,7 @@ void N_VInv_Serial(N_Vector x, N_Vector z)
     zd = NV_DATA_S(z);
     
     for (i = 0; i < N; i++)
-        zd[i] = ONE/xd[i];
+        zd[i] = 1.0/xd[i];
     
     return;
 }
@@ -611,7 +609,7 @@ double N_VDotProd_Serial(N_Vector x, N_Vector y)
     long int i, N;
     double sum, *xd, *yd;
     
-    sum = ZERO;
+    sum = 0.0;
     xd = yd = NULL;
     
     N  = NV_LENGTH_S(x);
@@ -629,7 +627,7 @@ double N_VMaxNorm_Serial(N_Vector x)
     long int i, N;
     double max, *xd;
     
-    max = ZERO;
+    max = 0.0;
     xd = NULL;
     
     N  = NV_LENGTH_S(x);
@@ -647,7 +645,7 @@ double N_VWrmsNorm_Serial(N_Vector x, N_Vector w)
     long int i, N;
     double sum, prodi, *xd, *wd;
     
-    sum = ZERO;
+    sum = 0.0;
     xd = wd = NULL;
     
     N  = NV_LENGTH_S(x);
@@ -667,7 +665,7 @@ double N_VWrmsNormMask_Serial(N_Vector x, N_Vector w, N_Vector id)
     long int i, N;
     double sum, prodi, *xd, *wd, *idd;
     
-    sum = ZERO;
+    sum = 0.0;
     xd = wd = idd = NULL;
     
     N  = NV_LENGTH_S(x);
@@ -676,7 +674,7 @@ double N_VWrmsNormMask_Serial(N_Vector x, N_Vector w, N_Vector id)
     idd = NV_DATA_S(id);
     
     for (i = 0; i < N; i++) {
-        if (idd[i] > ZERO) {
+        if (idd[i] > 0.0) {
             prodi = xd[i]*wd[i];
             sum += SQR(prodi);
         }
@@ -709,7 +707,7 @@ double N_VWL2Norm_Serial(N_Vector x, N_Vector w)
     long int i, N;
     double sum, prodi, *xd, *wd;
     
-    sum = ZERO;
+    sum = 0.0;
     xd = wd = NULL;
     
     N  = NV_LENGTH_S(x);
@@ -729,7 +727,7 @@ double N_VL1Norm_Serial(N_Vector x)
     long int i, N;
     double sum, *xd;
     
-    sum = ZERO;
+    sum = 0.0;
     xd = NULL;
     
     N  = NV_LENGTH_S(x);
@@ -753,13 +751,13 @@ void N_VCompare_Serial(double c, N_Vector x, N_Vector z)
     zd = NV_DATA_S(z);
     
     for (i = 0; i < N; i++) {
-        zd[i] = (ABS(xd[i]) >= c) ? ONE : ZERO;
+        zd[i] = (ABS(xd[i]) >= c) ? 1.0 : 0.0;
     }
     
     return;
 }
 
-booleantype N_VInvTest_Serial(N_Vector x, N_Vector z)
+int N_VInvTest_Serial(N_Vector x, N_Vector z)
 {
     long int i, N;
     double *xd, *zd;
@@ -771,17 +769,17 @@ booleantype N_VInvTest_Serial(N_Vector x, N_Vector z)
     zd = NV_DATA_S(z);
     
     for (i = 0; i < N; i++) {
-        if (xd[i] == ZERO) return(FALSE);
-        zd[i] = ONE/xd[i];
+        if (xd[i] == 0.0) return(0);
+        zd[i] = 1.0/xd[i];
     }
     
-    return(TRUE);
+    return(1);
 }
 
-booleantype N_VConstrMask_Serial(N_Vector c, N_Vector x, N_Vector m)
+int N_VConstrMask_Serial(N_Vector c, N_Vector x, N_Vector m)
 {
     long int i, N;
-    booleantype test;
+    int test;
     double *cd, *xd, *md;
     
     cd = xd = md = NULL;
@@ -791,17 +789,17 @@ booleantype N_VConstrMask_Serial(N_Vector c, N_Vector x, N_Vector m)
     cd = NV_DATA_S(c);
     md = NV_DATA_S(m);
     
-    test = TRUE;
+    test = 1;
     
     for (i = 0; i < N; i++) {
-        md[i] = ZERO;
-        if (cd[i] == ZERO) continue;
-        if (cd[i] > ONEPT5 || cd[i] < -ONEPT5) {
-            if ( xd[i]*cd[i] <= ZERO) { test = FALSE; md[i] = ONE; }
+        md[i] = 0.0;
+        if (cd[i] == 0.0) continue;
+        if (cd[i] > ONEPT5 || cd[i] < ONEPT5) {
+            if ( xd[i]*cd[i] <= 0.0) { test = 0; md[i] = 1.0; }
             continue;
         }
         if ( cd[i] > HALF || cd[i] < -HALF) {
-            if (xd[i]*cd[i] < ZERO ) { test = FALSE; md[i] = ONE; }
+            if (xd[i]*cd[i] < 0.0 ) { test = 0; md[i] = 1.0; }
         }
     }
     
@@ -810,7 +808,7 @@ booleantype N_VConstrMask_Serial(N_Vector c, N_Vector x, N_Vector m)
 
 double N_VMinQuotient_Serial(N_Vector num, N_Vector denom)
 {
-    booleantype notEvenOnce;
+    int notEvenOnce;
     long int i, N;
     double *nd, *dd, min;
     
@@ -820,16 +818,16 @@ double N_VMinQuotient_Serial(N_Vector num, N_Vector denom)
     nd = NV_DATA_S(num);
     dd = NV_DATA_S(denom);
     
-    notEvenOnce = TRUE;
-    min = BIG_REAL;
+    notEvenOnce = 1;
+    min = DBL_MAX;
     
     for (i = 0; i < N; i++) {
-        if (dd[i] == ZERO) continue;
+        if (dd[i] == 0.0) continue;
         else {
             if (!notEvenOnce) min = MIN(min, nd[i]/dd[i]);
             else {
                 min = nd[i]/dd[i];
-                notEvenOnce = FALSE;
+                notEvenOnce = 0;
             }
         }
     }
@@ -991,12 +989,12 @@ static void Vaxpy_Serial(double a, N_Vector x, N_Vector y)
     double *xd = NV_DATA_S(x);
     double *yd = NV_DATA_S(y);
     
-    if (a == ONE) {
+    if (a == 1.0) {
         for (size_t i = 0; i < N; i++) yd[i] += xd[i];
         return;
     }
     
-    if (a == -ONE) {
+    if (a == -1.0) {
         for (size_t i = 0; i < N; i++) yd[i] -= xd[i];
         return;
     }    

@@ -23,7 +23,6 @@
 extern "C" {
 #endif
 
-#include "sundials_types.h"
 
 /*
  * =================================================================
@@ -194,7 +193,7 @@ typedef struct _DlsMat {
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT DlsMat NewDenseMat(long int M, long int N);
+DlsMat NewDenseMat(long int M, long int N);
 
 /*
  * -----------------------------------------------------------------
@@ -216,7 +215,7 @@ SUNDIALS_EXPORT DlsMat NewDenseMat(long int M, long int N);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT DlsMat NewBandMat(long int N, long int mu, long int ml, long int smu);
+DlsMat NewBandMat(long int N, long int mu, long int ml, long int smu);
 
 /*
  * -----------------------------------------------------------------
@@ -226,7 +225,7 @@ SUNDIALS_EXPORT DlsMat NewBandMat(long int N, long int mu, long int ml, long int
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void DestroyMat(DlsMat A);
+void DestroyMat(DlsMat A);
 
 /*
  * -----------------------------------------------------------------
@@ -238,7 +237,7 @@ SUNDIALS_EXPORT void DestroyMat(DlsMat A);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int *NewIntArray(int N);
+int *NewIntArray(int N);
 
 /*
  * -----------------------------------------------------------------
@@ -250,7 +249,7 @@ SUNDIALS_EXPORT int *NewIntArray(int N);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT long int *NewLintArray(long int N);
+long int *NewLintArray(long int N);
 
 /*
  * -----------------------------------------------------------------
@@ -262,7 +261,7 @@ SUNDIALS_EXPORT long int *NewLintArray(long int N);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT double *NewRealArray(long int N);
+double *NewRealArray(long int N);
 
 /*
  * -----------------------------------------------------------------
@@ -273,7 +272,7 @@ SUNDIALS_EXPORT double *NewRealArray(long int N);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void DestroyArray(void *p);
+void DestroyArray(void *p);
 
 /*
  * -----------------------------------------------------------------
@@ -287,7 +286,7 @@ SUNDIALS_EXPORT void DestroyArray(void *p);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void AddIdentity(DlsMat A);
+void AddIdentity(DlsMat A);
 
 /*
  * -----------------------------------------------------------------
@@ -297,7 +296,7 @@ SUNDIALS_EXPORT void AddIdentity(DlsMat A);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void SetToZero(DlsMat A);
+void SetToZero(DlsMat A);
 
 /*
  * -----------------------------------------------------------------
@@ -311,7 +310,7 @@ SUNDIALS_EXPORT void SetToZero(DlsMat A);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void PrintMat(DlsMat A);
+void PrintMat(DlsMat A);
 
 
 /*
@@ -320,13 +319,13 @@ SUNDIALS_EXPORT void PrintMat(DlsMat A);
  * ==================================================================
  */
 
-SUNDIALS_EXPORT double **newDenseMat(long int m, long int n);
-SUNDIALS_EXPORT double **newBandMat(long int n, long int smu, long int ml);
-SUNDIALS_EXPORT void destroyMat(double **a);
-SUNDIALS_EXPORT int *newIntArray(int n);
-SUNDIALS_EXPORT long int *newLintArray(long int n);
-SUNDIALS_EXPORT double *newRealArray(long int m);
-SUNDIALS_EXPORT void destroyArray(void *v);
+double **newDenseMat(long int m, long int n);
+double **newBandMat(long int n, long int smu, long int ml);
+void destroyMat(double **a);
+int *newIntArray(int n);
+long int *newLintArray(long int n);
+double *newRealArray(long int m);
+void destroyArray(void *v);
 
 
 #ifdef __cplusplus

@@ -11,7 +11,9 @@
 #include <string>
 #include "CVode/cvode_dense.h"       /* prototype for CVDense */
 #include "CVode/cvode_band.h"
+#include "CVode/cvode_direct.h"
 #include <sstream>
+#include <iostream>
 #include <stdexcept>
 #include "CVodeHelpers.h"
 #include "ReactionCode.h"
@@ -23,6 +25,8 @@
 using namespace std;
 
 void errorHandler(int error_code, const char *module, const char *function, char *msg, void *eh_data) {
+    if (error_code == CV_WARNING) return;
+    
     stringstream OutMesg;
 
     OutMesg << "Internal CVode error in " << function << endl;
@@ -30,11 +34,8 @@ void errorHandler(int error_code, const char *module, const char *function, char
     OutMesg << "In module: " << module << endl;
     OutMesg << "Error code: " << error_code << endl;
     
-    exception error = runtime_error(OutMesg.str());
-
-    errorLogger(&error);
+    errorLogger(OutMesg);
 }
-
 
 void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolIn, CVRhsFn f) {
     int flag;
@@ -49,6 +50,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     }
     
     CVodeSetErrHandlerFn(cvode_mem, &errorHandler, nullptr);
+    
 
     /* Call CVodeInit to initialize the integrator memory and specify the
      * user's right hand side function in y'=f(t,y), the inital time T0, and
@@ -85,6 +87,11 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
         throw runtime_error(string("Error calling CVDense in solver_setup."));
     }
     
+    if (flag < 0) {
+        CVodeFree(&cvode_mem);
+        throw runtime_error(string("Error calling CVJac in solver_setup."));
+    }
+    
     // Pass along the parameter structure to the differential equations
     flag = CVodeSetUserData(cvode_mem, params);
     if (flag < 0) {
@@ -92,7 +99,6 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
         throw runtime_error(string("Error calling CVodeSetUserData in solver_setup."));
     }
     
-    CVodeSetMaxConvFails(cvode_mem, 50);
     CVodeSetMaxNumSteps(cvode_mem, 2E6);
     
     return cvode_mem;
@@ -104,5 +110,36 @@ void solverReset (void *cvode_mem, N_Vector init) {
 }
 
 void* solver_setup (N_Vector init, void *params, CVRhsFn f) {
-    return solver_setup (init, params, 1E-4, 1E-6, f);
+    return solver_setup (init, params, 1E-3, 1E-6, f);
+}
+
+void PrintFinalStats(void *cvode_mem)
+{
+    long int nst, nfe, nsetups, nje, nfeLS, nni, ncfn, netf, nge;
+    int flag;
+    
+    flag = CVodeGetNumSteps(cvode_mem, &nst);
+    if (flag < 0) return;
+    flag = CVodeGetNumRhsEvals(cvode_mem, &nfe);
+    if (flag < 0) return;
+    flag = CVodeGetNumLinSolvSetups(cvode_mem, &nsetups);
+    if (flag < 0) return;
+    flag = CVodeGetNumErrTestFails(cvode_mem, &netf);
+    if (flag < 0) return;
+    flag = CVodeGetNumNonlinSolvIters(cvode_mem, &nni);
+    if (flag < 0) return;
+    flag = CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn);
+    if (flag < 0) return;
+    flag = CVDlsGetNumJacEvals(cvode_mem, &nje);
+    if (flag < 0) return;
+    flag = CVDlsGetNumRhsEvals(cvode_mem, &nfeLS);
+    if (flag < 0) return;
+    flag = CVodeGetNumGEvals(cvode_mem, &nge);
+    if (flag < 0) return;
+    
+    printf("\nFinal Statistics:\n");
+    printf("NumSteps = %-6ld RhsEvals  = %-6ld LinSolvSetups = %-6ld CVDRhsEvals = %-6ld CVDJacEvals = %ld\n",
+           nst, nfe, nsetups, nfeLS, nje);
+    printf("NonLinSolveIter = %-6ld NonLinSolvConvFails = %-6ld ErrTestFails = %-6ld nge = %ld\n \n",
+           nni, ncfn, netf, nge);
 }

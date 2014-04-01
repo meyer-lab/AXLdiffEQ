@@ -19,10 +19,7 @@
 #include <stdlib.h>
 
 #include "sundials_direct.h"
-#include "sundials_math.h"
-
-#define ZERO RCONST(0.0)
-#define ONE  RCONST(1.0)
+#include "sundials_nvector.h"
 
 DlsMat NewDenseMat(long int M, long int N)
 {
@@ -254,11 +251,11 @@ void AddIdentity(DlsMat A)
   switch (A->type) {
 
   case SUNDIALS_DENSE:
-    for (i=0; i<A->N; i++) A->cols[i][i] += ONE;
+    for (i=0; i<A->N; i++) A->cols[i][i] += 1.0;
     break;
 
   case SUNDIALS_BAND:
-    for (i=0; i<A->M; i++) A->cols[i][A->s_mu] += ONE;
+    for (i=0; i<A->M; i++) A->cols[i][A->s_mu] += 1.0;
     break;
 
   }
@@ -278,7 +275,7 @@ void SetToZero(DlsMat A)
     for (j=0; j<A->N; j++) {
       col_j = A->cols[j];
       for (i=0; i<A->M; i++)
-        col_j[i] = ZERO;
+        col_j[i] = 0.0;
     }
 
     break;
@@ -289,7 +286,7 @@ void SetToZero(DlsMat A)
     for (j=0; j<A->M; j++) {
       col_j = A->cols[j] + A->s_mu - A->mu;
       for (i=0; i<colSize; i++)
-        col_j[i] = ZERO;
+        col_j[i] = 0.0;
     }
 
     break;

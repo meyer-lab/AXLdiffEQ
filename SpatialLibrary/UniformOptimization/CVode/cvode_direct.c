@@ -26,7 +26,6 @@
 
 #include "cvode_impl.h"
 #include "cvode_direct_impl.h"
-#include "sundials_math.h"
 
 /* 
  * =================================================================
@@ -35,11 +34,8 @@
  */
 
 /* Constant for DQ Jacobian approximation */
-#define MIN_INC_MULT RCONST(1000.0)
-
-#define ZERO         RCONST(0.0)
-#define ONE          RCONST(1.0)
-#define TWO          RCONST(2.0)
+#define MIN_INC_MULT (1000.0)
+#define TWO          (2.0)
 
 /*
  * =================================================================
@@ -101,10 +97,10 @@ int CVDlsSetDenseJacFn(void *cvode_mem, CVDlsDenseJacFn jac)
   cvdls_mem = (CVDlsMem) lmem;
 
   if (jac != NULL) {
-    jacDQ = FALSE;
+    jacDQ = 0;
     djac = jac;
   } else {
-    jacDQ = TRUE;
+    jacDQ = 1;
   }
 
   return(CVDLS_SUCCESS);
@@ -132,10 +128,10 @@ int CVDlsSetBandJacFn(void *cvode_mem, CVDlsBandJacFn jac)
   cvdls_mem = (CVDlsMem) lmem;
 
   if (jac != NULL) {
-    jacDQ = FALSE;
+    jacDQ = 0;
     bjac = jac;
   } else {
-    jacDQ = TRUE;
+    jacDQ = 1;
   }
 
   return(CVDLS_SUCCESS);
@@ -260,7 +256,7 @@ char *CVDlsGetReturnFlagName(long int flag)
     sprintf(name,"CVDLS_JACFUNC_RECVR");
     break;
   default:
-    sprintf(name,"NONE");
+    sprintf(name,"N1.0");
   }
 
   return(name);
@@ -345,8 +341,8 @@ int cvDlsDenseDQJac(long int N, double t,
   /* Set minimum increment based on uround and norm of f */
   srur = RSqrt(uround);
   fnorm = N_VWrmsNorm(fy, ewt);
-  minInc = (fnorm != ZERO) ?
-           (MIN_INC_MULT * ABS(h) * uround * N * fnorm) : ONE;
+  minInc = (fnorm != 0.0) ?
+           (MIN_INC_MULT * ABS(h) * uround * N * fnorm) : 1.0;
 
   for (j = 0; j < N; j++) {
 
@@ -364,7 +360,7 @@ int cvDlsDenseDQJac(long int N, double t,
     
     y_data[j] = yjsaved;
 
-    inc_inv = ONE/inc;
+    inc_inv = 1.0/inc;
     N_VLinearSum(inc_inv, ftemp, -inc_inv, fy, jthCol);
 
     DENSE_COL(Jac,j) = N_VGetArrayPointer(jthCol);
@@ -419,13 +415,13 @@ int cvDlsBandDQJac(long int N, long int mupper, long int mlower,
   ytemp_data = N_VGetArrayPointer(ytemp);
 
   /* Load ytemp with y = predicted y vector */
-  N_VScale(ONE, y, ytemp);
+  N_VScale(1.0, y, ytemp);
 
   /* Set minimum increment based on uround and norm of f */
   srur = RSqrt(uround);
   fnorm = N_VWrmsNorm(fy, ewt);
-  minInc = (fnorm != ZERO) ?
-           (MIN_INC_MULT * ABS(h) * uround * N * fnorm) : ONE;
+  minInc = (fnorm != 0.0) ?
+           (MIN_INC_MULT * ABS(h) * uround * N * fnorm) : 1.0;
 
   /* Set bandwidth and number of column groups for band differencing */
   width = mlower + mupper + 1;
@@ -451,7 +447,7 @@ int cvDlsBandDQJac(long int N, long int mupper, long int mlower,
       ytemp_data[j] = y_data[j];
       col_j = BAND_COL(Jac,j);
       inc = MAX(srur*ABS(y_data[j]), minInc/ewt_data[j]);
-      inc_inv = ONE/inc;
+      inc_inv = 1.0/inc;
       i1 = MAX(0, j-mupper);
       i2 = MIN(j+mlower, N-1);
       for (i=i1; i <= i2; i++)

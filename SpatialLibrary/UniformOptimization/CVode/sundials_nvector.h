@@ -47,7 +47,6 @@
 extern "C" {
 #endif
 
-#include "sundials_types.h"
 
 /*
  * -----------------------------------------------------------------
@@ -88,8 +87,8 @@ struct _generic_N_Vector_Ops {
   double    (*nvwl2norm)(N_Vector, N_Vector);
   double    (*nvl1norm)(N_Vector);
   void        (*nvcompare)(double, N_Vector, N_Vector);
-  booleantype (*nvinvtest)(N_Vector, N_Vector);
-  booleantype (*nvconstrmask)(N_Vector, N_Vector, N_Vector);
+  int (*nvinvtest)(N_Vector, N_Vector);
+  int (*nvconstrmask)(N_Vector, N_Vector, N_Vector);
   double    (*nvminquotient)(N_Vector, N_Vector);
 };
 
@@ -213,8 +212,8 @@ struct _generic_N_Vector {
  * N_VInvTest
  *   Performs the operation z[i] = 1/x[i] with a test for 
  *   x[i] == 0.0 before inverting x[i].
- *   This routine returns TRUE if all components of x are non-zero 
- *   (successful inversion) and returns FALSE otherwise.
+ *   This routine returns 1 if all components of x are non-zero 
+ *   (successful inversion) and returns 0 otherwise.
  *
  * N_VConstrMask
  *   Performs the operation : 
@@ -225,8 +224,8 @@ struct _generic_N_Vector {
  *      If c[i] = +1.0, then x[i] must be >= 0.0.
  *      If c[i] = -1.0, then x[i] must be <= 0.0.
  *      If c[i] = -2.0, then x[i] must be <  0.0.
- *   This routine returns a boolean FALSE if any element failed
- *   the constraint test, TRUE if all passed. It also sets a
+ *   This routine returns a boolean 0 if any element failed
+ *   the constraint test, 1 if all passed. It also sets a
  *   mask vector m, with elements equal to 1.0 where the
  *   corresponding constraint test failed, and equal to 0.0
  *   where the constraint test passed.
@@ -313,31 +312,31 @@ struct _generic_N_Vector {
  * -----------------------------------------------------------------
  */
   
-SUNDIALS_EXPORT N_Vector N_VClone(N_Vector w);
-SUNDIALS_EXPORT N_Vector N_VCloneEmpty(N_Vector w);
-SUNDIALS_EXPORT void N_VDestroy(N_Vector v);
-SUNDIALS_EXPORT void N_VSpace(N_Vector v, long int *lrw, long int *liw);
-SUNDIALS_EXPORT double *N_VGetArrayPointer(N_Vector v);
-SUNDIALS_EXPORT void N_VSetArrayPointer(double *v_data, N_Vector v);
-SUNDIALS_EXPORT void N_VLinearSum(double a, N_Vector x, double b, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VConst(double c, N_Vector z);
-SUNDIALS_EXPORT void N_VProd(N_Vector x, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VDiv(N_Vector x, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VScale(double c, N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VAbs(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VInv(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VAddConst(N_Vector x, double b, N_Vector z);
-SUNDIALS_EXPORT double N_VDotProd(N_Vector x, N_Vector y);
-SUNDIALS_EXPORT double N_VMaxNorm(N_Vector x);
-SUNDIALS_EXPORT double N_VWrmsNorm(N_Vector x, N_Vector w);
-SUNDIALS_EXPORT double N_VWrmsNormMask(N_Vector x, N_Vector w, N_Vector id);
-SUNDIALS_EXPORT double N_VMin(N_Vector x);
-SUNDIALS_EXPORT double N_VWL2Norm(N_Vector x, N_Vector w);
-SUNDIALS_EXPORT double N_VL1Norm(N_Vector x);
-SUNDIALS_EXPORT void N_VCompare(double c, N_Vector x, N_Vector z);
-SUNDIALS_EXPORT booleantype N_VInvTest(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT booleantype N_VConstrMask(N_Vector c, N_Vector x, N_Vector m);
-SUNDIALS_EXPORT double N_VMinQuotient(N_Vector num, N_Vector denom);
+N_Vector N_VClone(N_Vector w);
+N_Vector N_VCloneEmpty(N_Vector w);
+void N_VDestroy(N_Vector v);
+void N_VSpace(N_Vector v, long int *lrw, long int *liw);
+double *N_VGetArrayPointer(N_Vector v);
+void N_VSetArrayPointer(double *v_data, N_Vector v);
+void N_VLinearSum(double a, N_Vector x, double b, N_Vector y, N_Vector z);
+void N_VConst(double c, N_Vector z);
+void N_VProd(N_Vector x, N_Vector y, N_Vector z);
+void N_VDiv(N_Vector x, N_Vector y, N_Vector z);
+void N_VScale(double c, N_Vector x, N_Vector z);
+void N_VAbs(N_Vector x, N_Vector z);
+void N_VInv(N_Vector x, N_Vector z);
+void N_VAddConst(N_Vector x, double b, N_Vector z);
+double N_VDotProd(N_Vector x, N_Vector y);
+double N_VMaxNorm(N_Vector x);
+double N_VWrmsNorm(N_Vector x, N_Vector w);
+double N_VWrmsNormMask(N_Vector x, N_Vector w, N_Vector id);
+double N_VMin(N_Vector x);
+double N_VWL2Norm(N_Vector x, N_Vector w);
+double N_VL1Norm(N_Vector x);
+void N_VCompare(double c, N_Vector x, N_Vector z);
+int N_VInvTest(N_Vector x, N_Vector z);
+int N_VConstrMask(N_Vector c, N_Vector x, N_Vector m);
+double N_VMinQuotient(N_Vector num, N_Vector denom);
 
 /*
  * -----------------------------------------------------------------
@@ -362,9 +361,89 @@ SUNDIALS_EXPORT double N_VMinQuotient(N_Vector num, N_Vector denom);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT N_Vector *N_VCloneEmptyVectorArray(int count, N_Vector w);
-SUNDIALS_EXPORT N_Vector *N_VCloneVectorArray(int count, N_Vector w);
-SUNDIALS_EXPORT void N_VDestroyVectorArray(N_Vector *vs, int count);
+N_Vector *N_VCloneEmptyVectorArray(int count, N_Vector w);
+N_Vector *N_VCloneVectorArray(int count, N_Vector w);
+void N_VDestroyVectorArray(N_Vector *vs, int count);
+    
+    /*
+     * -----------------------------------------------------------------
+     * Macros : MIN and MAX
+     * -----------------------------------------------------------------
+     * MIN(A,B) returns the minimum of A and B
+     *
+     * MAX(A,B) returns the maximum of A and B
+     *
+     * SQR(A) returns A^2
+     * -----------------------------------------------------------------
+     */
+    
+#ifndef MIN
+#define MIN(A, B) ((A) < (B) ? (A) : (B))
+#endif
+    
+#ifndef MAX
+#define MAX(A, B) ((A) > (B) ? (A) : (B))
+#endif
+    
+#ifndef SQR
+#define SQR(A) ((A)*(A))
+#endif
+    
+#ifndef ABS
+#define ABS fabs
+#endif
+    
+#ifndef SQRT
+#define SQRT RSqrt
+#endif
+    
+#ifndef EXP
+#define EXP RExp
+#endif
+    
+    /*
+     * -----------------------------------------------------------------
+     * Function : RPowerI
+     * -----------------------------------------------------------------
+     * Usage : int exponent;
+     *         double base, ans;
+     *         ans = RPowerI(base,exponent);
+     * -----------------------------------------------------------------
+     * RPowerI returns the value of base^exponent, where base is of type
+     * double and exponent is of type int.
+     * -----------------------------------------------------------------
+     */
+    
+    double RPowerI(double base, int exponent);
+    
+    /*
+     * -----------------------------------------------------------------
+     * Function : RPowerR
+     * -----------------------------------------------------------------
+     * Usage : double base, exponent, ans;
+     *         ans = RPowerR(base,exponent);
+     * -----------------------------------------------------------------
+     * RPowerR returns the value of base^exponent, where both base and
+     * exponent are of type double. If base < 0.0, then RPowerR
+     * returns 0.0.
+     * -----------------------------------------------------------------
+     */
+    
+    double RPowerR(double base, double exponent);
+    
+    /*
+     * -----------------------------------------------------------------
+     * Function : RSqrt
+     * -----------------------------------------------------------------
+     * Usage : double sqrt_x;
+     *         sqrt_x = RSqrt(x);
+     * -----------------------------------------------------------------
+     * RSqrt(x) returns the square root of x. If x < 0.0, then RSqrt
+     * returns 0.0.
+     * -----------------------------------------------------------------
+     */
+    
+    double RSqrt(double x);
 
 #ifdef __cplusplus
 }

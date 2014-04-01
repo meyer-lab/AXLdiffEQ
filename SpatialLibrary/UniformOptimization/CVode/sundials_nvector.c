@@ -17,6 +17,7 @@
  */
 
 #include <stdlib.h>
+#include <math.h>
 
 #include "sundials_nvector.h"
 
@@ -153,14 +154,14 @@ void N_VCompare(double c, N_Vector x, N_Vector z)
   return;
 }
 
-booleantype N_VInvTest(N_Vector x, N_Vector z)
+int N_VInvTest(N_Vector x, N_Vector z)
 {
-  return((booleantype) z->ops->nvinvtest(x, z));
+  return((int) z->ops->nvinvtest(x, z));
 }
 
-booleantype N_VConstrMask(N_Vector c, N_Vector x, N_Vector m)
+int N_VConstrMask(N_Vector c, N_Vector x, N_Vector m)
 {
-  return((booleantype) x->ops->nvconstrmask(c, x, m));
+  return((int) x->ops->nvconstrmask(c, x, m));
 }
 
 double N_VMinQuotient(N_Vector num, N_Vector denom)
@@ -231,3 +232,28 @@ void N_VDestroyVectorArray(N_Vector *vs, int count)
 
   return;
 }
+
+double RPowerI(double base, int exponent)
+{
+    int i, expt;
+    double prod;
+    
+    prod = 1.0;
+    expt = abs(exponent);
+    for(i = 1; i <= expt; i++) prod *= base;
+    if (exponent < 0) prod = 1.0/prod;
+    return(prod);
+}
+
+double RPowerR(double base, double exponent)
+{
+    if (base <= 0.0) return(0.0);
+    return(pow(base, exponent));
+}
+
+double RSqrt(double x)
+{
+    if (x <= 0.0) return(0.0);
+    return(sqrt(x));
+}
+

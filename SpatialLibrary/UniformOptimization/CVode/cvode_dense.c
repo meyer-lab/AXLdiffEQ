@@ -23,20 +23,16 @@
 #include "cvode_direct_impl.h"
 #include "cvode_impl.h"
 
-#include "sundials_math.h"
-
 /* Constants */
 
-#define ZERO         RCONST(0.0)
-#define ONE          RCONST(1.0)
-#define TWO          RCONST(2.0)
+#define TWO          (2.0)
 
 /* CVDENSE linit, lsetup, lsolve, and lfree routines */
  
 static int cvDenseInit(CVodeMem cv_mem);
 
 static int cvDenseSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
-                        N_Vector fpred, booleantype *jcurPtr, 
+                        N_Vector fpred, int *jcurPtr, 
                         N_Vector vtemp1, N_Vector vtemp2, N_Vector vtemp3);
 
 static int cvDenseSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight,
@@ -88,7 +84,7 @@ static void cvDenseFree(CVodeMem cv_mem);
  * respectively.  It allocates memory for a structure of type
  * CVDlsMemRec and sets the cv_lmem field in (*cvode_mem) to the
  * address of this structure.  It sets setupNonNull in (*cvode_mem) to
- * TRUE, and the d_jac field to the default cvDlsDenseDQJac.
+ * 1, and the d_jac field to the default cvDlsDenseDQJac.
  * Finally, it allocates memory for M, savedJ, and lpivots.
  * The return value is SUCCESS = 0, or LMEM_FAIL = -1.
  *
@@ -139,13 +135,13 @@ int CVDense(void *cvode_mem, long int N)
   mtype = SUNDIALS_DENSE;
 
   /* Initialize Jacobian-related data */
-  jacDQ = TRUE;
+  jacDQ = 1;
   jac = NULL;
   J_data = NULL;
 
   last_flag = CVDLS_SUCCESS;
 
-  setupNonNull = TRUE;
+  setupNonNull = 1;
 
   /* Set problem dimension */
   n = N;
@@ -228,10 +224,10 @@ static int cvDenseInit(CVodeMem cv_mem)
  */
 
 static int cvDenseSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
-                        N_Vector fpred, booleantype *jcurPtr, 
+                        N_Vector fpred, int *jcurPtr, 
                         N_Vector vtemp1, N_Vector vtemp2, N_Vector vtemp3)
 {
-  booleantype jbad, jok;
+  int jbad, jok;
   double dgamma;
   long int ier;
   CVDlsMem cvdls_mem;
@@ -241,7 +237,7 @@ static int cvDenseSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
  
   /* Use nst, gamma/gammap, and convfail to set J eval. flag jok */
  
-  dgamma = fabs((gamma/gammap) - ONE);
+  dgamma = fabs((gamma/gammap) - 1.0);
   jbad = (nst == 0) || (nst > nstlj + CVD_MSBJ) ||
          ((convfail == CV_FAIL_BAD_J) && (dgamma < CVD_DGMAX)) ||
          (convfail == CV_FAIL_OTHER);
@@ -249,16 +245,16 @@ static int cvDenseSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
  
   if (jok) {
 
-    /* If jok = TRUE, use saved copy of J */
-    *jcurPtr = FALSE;
+    /* If jok = 1, use saved copy of J */
+    *jcurPtr = 0;
     DenseCopy(savedJ, M);
 
   } else {
 
-    /* If jok = FALSE, call jac routine for new J value */
+    /* If jok = 0, call jac routine for new J value */
     nje++;
     nstlj = nst;
-    *jcurPtr = TRUE;
+    *jcurPtr = 1;
     SetToZero(M);
 
     retval = jac(n, tn, ypred, fpred, M, J_data, vtemp1, vtemp2, vtemp3);
@@ -298,25 +294,42 @@ static int cvDenseSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
  * -----------------------------------------------------------------
  */
 
-static int cvDenseSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight,
-                        N_Vector ycur, N_Vector fcur)
-{
-  CVDlsMem cvdls_mem;
-  double *bd;
-
-  cvdls_mem = (CVDlsMem) lmem;
-  
-  bd = N_VGetArrayPointer(b);
-
-  DenseGETRS(M, lpivots, bd);
-
-  /* If CV_BDF, scale the correction to account for change in gamma */
-  if ((lmm == CV_BDF) && (gamrat != ONE)) {
-    N_VScale(TWO/(ONE + gamrat), b, b);
-  }
-  
-  last_flag = CVDLS_SUCCESS;
-  return(0);
+static int cvDenseSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector ycur, N_Vector fcur) {
+    CVDlsMem cvdls_mem = (CVDlsMem) lmem;
+    double *bd = N_VGetArrayPointer(b);
+    double tmp;
+    
+    double **a = M->cols;
+    
+    /* Permute b, based on pivot information in p */
+    for (size_t k = 0; k < (M->N); k++) {
+        long int pk = lpivots[k];
+        if(pk != k) {
+            tmp = bd[k];
+            bd[k] = bd[pk];
+            bd[pk] = tmp;
+        }
+    }
+    
+    /* Solve Ly = b, store solution y in b */
+    for (size_t k=0; k<(M->N)-1; k++) {
+        for (size_t i=k+1; i<(M->N); i++) bd[i] -= a[k][i]*bd[k];
+    }
+    
+    /* Solve Ux = y, store solution x in b */
+    for (size_t k = (M->N)-1; k > 0; k--) {
+        bd[k] /= a[k][k];
+        for (size_t i=0; i<k; i++) bd[i] -= a[k][i]*bd[k];
+    }
+    bd[0] /= a[0][0];
+    
+    /* If CV_BDF, scale the correction to account for change in gamma */
+    if ((lmm == CV_BDF) && (gamrat != 1.0)) {
+        N_VScale(2.0/(1.0 + gamrat), b, b);
+    }
+    
+    last_flag = CVDLS_SUCCESS;
+    return(0);
 }
 
 /*

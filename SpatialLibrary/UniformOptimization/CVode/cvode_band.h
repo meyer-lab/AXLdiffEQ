@@ -22,7 +22,6 @@
 extern "C" {
 #endif
 
-//#include "cvode_direct.h"
 #include "sundials_band.h"
  
 /*
@@ -52,7 +51,7 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVBand(void *cvode_mem, long int N, long int mupper, long int mlower);
+int CVBand(void *cvode_mem, long int N, long int mupper, long int mlower);
 
 #ifdef __cplusplus
 }

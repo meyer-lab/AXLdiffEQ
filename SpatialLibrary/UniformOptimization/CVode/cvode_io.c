@@ -19,10 +19,7 @@
 #include <stdlib.h>
 
 #include "cvode_impl.h"
-#include "sundials_types.h"
 
-#define ZERO RCONST(0.0)
-#define ONE  RCONST(1.0)
 
 #define lrw (cv_mem->cv_lrw)
 #define liw (cv_mem->cv_liw)
@@ -221,7 +218,7 @@ int CVodeSetMaxHnilWarns(void *cvode_mem, int mxhnil)
  * Turns on/off the stability limit detection algorithm
  */
 
-int CVodeSetStabLimDet(void *cvode_mem, booleantype sldet)
+int CVodeSetStabLimDet(void *cvode_mem, int sldet)
 {
   CVodeMem cv_mem;
 
@@ -287,12 +284,12 @@ int CVodeSetMinStep(void *cvode_mem, double hmin)
   }
 
   /* Passing 0 sets hmin = zero */
-  if (hmin == ZERO) {
+  if (hmin == 0.0) {
     cv_mem->cv_hmin = HMIN_DEFAULT;
     return(CV_SUCCESS);
   }
 
-  if (hmin * cv_mem->cv_hmax_inv > ONE) {
+  if (hmin * cv_mem->cv_hmax_inv > 1.0) {
     CVProcessError(cv_mem, CV_ILL_INPUT, "CVODE", "CVodeSetMinStep", MSGCV_BAD_HMIN_HMAX);
     return(CV_ILL_INPUT);
   }
@@ -326,13 +323,13 @@ int CVodeSetMaxStep(void *cvode_mem, double hmax)
   }
 
   /* Passing 0 sets hmax = infinity */
-  if (hmax == ZERO) {
+  if (hmax == 0.0) {
     cv_mem->cv_hmax_inv = HMAX_INV_DEFAULT;
     return(CV_SUCCESS);
   }
 
-  hmax_inv = ONE/hmax;
-  if (hmax_inv * cv_mem->cv_hmin > ONE) {
+  hmax_inv = 1.0/hmax;
+  if (hmax_inv * cv_mem->cv_hmin > 1.0) {
     CVProcessError(cv_mem, CV_ILL_INPUT, "CVODE", "CVodeSetMaxStep", MSGCV_BAD_HMIN_HMAX);
     return(CV_ILL_INPUT);
   }
@@ -364,7 +361,7 @@ int CVodeSetStopTime(void *cvode_mem, double tstop)
    * tstop will be checked in CVode. */
   if (cv_mem->cv_nst > 0) {
 
-    if ( (tstop - cv_mem->cv_tn) * cv_mem->cv_h < ZERO ) {
+    if ( (tstop - cv_mem->cv_tn) * cv_mem->cv_h < 0.0 ) {
       CVProcessError(cv_mem, CV_ILL_INPUT, "CVODE", "CVodeSetStopTime", MSGCV_BAD_TSTOP, cv_mem->cv_tn);
       return(CV_ILL_INPUT);
     }
@@ -372,7 +369,7 @@ int CVodeSetStopTime(void *cvode_mem, double tstop)
   }
 
   cv_mem->cv_tstop = tstop;
-  cv_mem->cv_tstopset = TRUE;
+  cv_mem->cv_tstopset = 1;
 
   return(CV_SUCCESS);
 }
@@ -706,7 +703,7 @@ int CVodeGetNumStabLimOrderReds(void *cvode_mem, long int *nslred)
 
   cv_mem = (CVodeMem) cvode_mem;
 
-  if (sldeton==FALSE)
+  if (sldeton==0)
     *nslred = 0;
   else
     *nslred = nor;
@@ -841,7 +838,7 @@ int CVodeGetErrWeights(void *cvode_mem, N_Vector eweight)
 
   cv_mem = (CVodeMem) cvode_mem;
 
-  N_VScale(ONE, ewt, eweight);
+  N_VScale(1.0, ewt, eweight);
 
   return(CV_SUCCESS);
 }
@@ -863,7 +860,7 @@ int CVodeGetEstLocalErrors(void *cvode_mem, N_Vector ele)
 
   cv_mem = (CVodeMem) cvode_mem;
 
-  N_VScale(ONE, acor, ele);
+  N_VScale(1.0, acor, ele);
 
   return(CV_SUCCESS);
 }
@@ -1121,7 +1118,7 @@ char *CVodeGetReturnFlagName(long int flag)
     sprintf(name,"CV_TOO_CLOSE");
     break;    
   default:
-    sprintf(name,"NONE");
+    sprintf(name,"N1.0");
   }
 
   return(name);

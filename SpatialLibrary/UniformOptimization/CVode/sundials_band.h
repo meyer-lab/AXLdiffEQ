@@ -76,8 +76,8 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT long int BandGBTRF(DlsMat A, long int *p);
-SUNDIALS_EXPORT long int bandGBTRF(double **a, long int n, long int mu, long int ml,
+long int BandGBTRF(DlsMat A, long int *p);
+long int bandGBTRF(double **a, long int n, long int mu, long int ml,
                                    long int smu, long int *p);
 
 /*
@@ -97,8 +97,8 @@ SUNDIALS_EXPORT long int bandGBTRF(double **a, long int n, long int mu, long int
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void BandGBTRS(DlsMat A, long int *p, double *b);
-SUNDIALS_EXPORT void bandGBTRS(double **a, long int n, long int smu, long int ml, long int *p, double *b);
+void BandGBTRS(DlsMat A, long int *p, double *b);
+void bandGBTRS(double **a, long int n, long int smu, long int ml, long int *p, double *b);
 
 /*
  * -----------------------------------------------------------------
@@ -115,8 +115,8 @@ SUNDIALS_EXPORT void bandGBTRS(double **a, long int n, long int smu, long int ml
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void BandCopy(DlsMat A, DlsMat B, long int copymu, long int copyml);
-SUNDIALS_EXPORT void bandCopy(double **a, double **b, long int n, long int a_smu, long int b_smu,
+void BandCopy(DlsMat A, DlsMat B, long int copymu, long int copyml);
+void bandCopy(double **a, double **b, long int n, long int a_smu, long int b_smu,
 			      long int copymu, long int copyml);
 
 /*
@@ -133,8 +133,8 @@ SUNDIALS_EXPORT void bandCopy(double **a, double **b, long int n, long int a_smu
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void BandScale(double c, DlsMat A);
-SUNDIALS_EXPORT void bandScale(double c, double **a, long int n, long int mu, long int ml, long int smu);
+void BandScale(double c, DlsMat A);
+void bandScale(double c, double **a, long int n, long int mu, long int ml, long int smu);
 
 /*
  * -----------------------------------------------------------------
@@ -145,7 +145,7 @@ SUNDIALS_EXPORT void bandScale(double c, double **a, long int n, long int mu, lo
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void bandAddIdentity(double **a, long int n, long int smu);
+void bandAddIdentity(double **a, long int n, long int smu);
 
 #ifdef __cplusplus
 }

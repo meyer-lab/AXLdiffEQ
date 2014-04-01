@@ -13,7 +13,6 @@
 #include <array>
 #include <vector>
 
-
 #define Nspecies 14
 #define maxR 1.0
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */

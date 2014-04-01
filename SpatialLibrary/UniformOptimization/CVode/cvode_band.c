@@ -23,20 +23,12 @@
 #include "cvode_direct_impl.h"
 #include "cvode_impl.h"
 
-#include "sundials_math.h"
-
-/* Constants */
-
-#define ZERO         RCONST(0.0)
-#define ONE          RCONST(1.0)
-#define TWO          RCONST(2.0)
-
 /* CVBAND linit, lsetup, lsolve, and lfree routines */
 
 static int cvBandInit(CVodeMem cv_mem);
 
 static int cvBandSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
-                       N_Vector fpred, booleantype *jcurPtr, N_Vector vtemp1,
+                       N_Vector fpred, int *jcurPtr, N_Vector vtemp1,
                        N_Vector vtemp2, N_Vector vtemp3);
 
 static int cvBandSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight,
@@ -92,7 +84,7 @@ static void cvBandFree(CVodeMem cv_mem);
  * respectively.  It allocates memory for a structure of type
  * CVDlsMemRec and sets the cv_lmem field in (*cvode_mem) to the
  * address of this structure.  It sets setupNonNull in (*cvode_mem) to be
- * TRUE, d_mu to be mupper, d_ml to be mlower, and the d_jac field to be 
+ * 1, d_mu to be mupper, d_ml to be mlower, and the d_jac field to be 
  * cvDlsBandDQJac.
  * Finally, it allocates memory for M, savedJ, and pivot.  The CVBand
  * return value is SUCCESS = 0, LMEM_FAIL = -1, or LIN_ILL_INPUT = -2.
@@ -105,8 +97,7 @@ static void cvBandFree(CVodeMem cv_mem);
  * -----------------------------------------------------------------
  */
                   
-int CVBand(void *cvode_mem, long int N, long int mupper, long int mlower)
-{
+int CVBand(void *cvode_mem, long int N, long int mupper, long int mlower) {
   CVodeMem cv_mem;
   CVDlsMem cvdls_mem;
 
@@ -143,13 +134,13 @@ int CVBand(void *cvode_mem, long int N, long int mupper, long int mlower)
   mtype = SUNDIALS_BAND;
   
   /* Initialize Jacobian-related data */
-  jacDQ = TRUE;
+  jacDQ = 1;
   jac = NULL;
   J_data = NULL;
 
   last_flag = CVDLS_SUCCESS;
 
-  setupNonNull = TRUE;
+  setupNonNull = 1;
   
   /* Load problem dimension */
   n = N;
@@ -166,7 +157,7 @@ int CVBand(void *cvode_mem, long int N, long int mupper, long int mlower)
   }
 
   /* Set extended upper half-bandwith for M (required for pivoting) */
-  smu = MIN(N-1, mu + ml);
+  smu = (int) fmin(N-1, mu + ml);
 
   /* Allocate memory for M, savedJ, and pivot arrays */
   M = NULL;
@@ -245,10 +236,10 @@ static int cvBandInit(CVodeMem cv_mem)
  */
 
 static int cvBandSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
-                       N_Vector fpred, booleantype *jcurPtr, N_Vector vtemp1,
+                       N_Vector fpred, int *jcurPtr, N_Vector vtemp1,
                        N_Vector vtemp2, N_Vector vtemp3)
 {
-  booleantype jbad, jok;
+  int jbad, jok;
   double dgamma;
   long int ier;
   CVDlsMem cvdls_mem;
@@ -258,7 +249,7 @@ static int cvBandSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
 
   /* Use nst, gamma/gammap, and convfail to set J eval. flag jok */
 
-  dgamma = fabs((gamma/gammap) - ONE);
+  dgamma = fabs((gamma/gammap) - 1.0);
   jbad = (nst == 0) || (nst > nstlj + CVD_MSBJ) ||
          ((convfail == CV_FAIL_BAD_J) && (dgamma < CVD_DGMAX)) ||
          (convfail == CV_FAIL_OTHER);
@@ -266,16 +257,16 @@ static int cvBandSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
   
   if (jok) {
 
-    /* If jok = TRUE, use saved copy of J */
-    *jcurPtr = FALSE;
+    /* If jok = 1, use saved copy of J */
+    *jcurPtr = 0;
     BandCopy(savedJ, M, mu, ml);
 
   } else {
 
-    /* If jok = FALSE, call jac routine for new J value */
+    /* If jok = 0, call jac routine for new J value */
     nje++;
     nstlj = nst;
-    *jcurPtr = TRUE;
+    *jcurPtr = 1;
     SetToZero(M); 
 
     retval = jac(n, mu, ml, tn, ypred, fpred, M, J_data, vtemp1, vtemp2, vtemp3);
@@ -331,8 +322,8 @@ static int cvBandSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight,
   BandGBTRS(M, lpivots, bd);
 
   /* If CV_BDF, scale the correction to account for change in gamma */
-  if ((lmm == CV_BDF) && (gamrat != ONE)) {
-    N_VScale(TWO/(ONE + gamrat), b, b);
+  if ((lmm == CV_BDF) && (gamrat != 1.0)) {
+    N_VScale(2.0/(1.0 + gamrat), b, b);
   }
 
   last_flag = CVDLS_SUCCESS;

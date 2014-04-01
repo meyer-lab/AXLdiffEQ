@@ -23,5 +23,8 @@ double calcErrorOptPaperSiLog (unsigned, const double *, double *, void *);
 double calcErrorSiLog_sepA (unsigned, const double *, double *, void *);
 double calcErrorOptAllSiLog_sepA (unsigned, const double *, double *, void *);
 void getLimits_sepA (std::vector<double> &, std::vector<double> &, int);
+double calcErrorOptPaperSiLog_sepA (unsigned, const double *, double *, void *);
+double calcErrorSiLog_sepA (unsigned, const double *, double *, void *);
+double calcErrorOptPaperSiAllLog_sepA (unsigned n, const double *x, double *grad, void *data);
 
 #endif /* defined(__UniformOptimization__Optimization__) */

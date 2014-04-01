@@ -156,7 +156,6 @@ int AXL_react_sepA(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     return 0;
 }
 
-
 int AXL_react_diff(double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
     double* xx_d = NV_DATA_S(xx);
     double* dxxdt_d = NV_DATA_S(dxxdt);

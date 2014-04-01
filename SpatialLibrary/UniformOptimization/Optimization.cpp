@@ -14,6 +14,9 @@
 #include <random>
 #include <vector>
 
+
+#define noiseOut 0
+
 using namespace nlopt;
 using namespace std;
 
@@ -84,17 +87,18 @@ void getLimits_sepA (vector<double> &minn, vector<double> &maxx, int nCells) {
     
     // Ig2 bind
     minn.push_back(-5);
-    maxx.push_back(1);
+    maxx.push_back(0.08);
     
     minn.push_back(-1.3767507096);
     maxx.push_back(-1.3767507096);
     
-    minn.push_back(-5);
-    maxx.push_back(5);
+    minn.push_back(-1);
+    maxx.push_back(2);
     
+    // Receptor dimer parameters
     for (size_t ii = 0; ii < 4; ii++) {
         minn.push_back(-5);
-        maxx.push_back(5);
+        maxx.push_back(2);
     }
     
     minn.push_back(-6);
@@ -176,6 +180,18 @@ double calcErrorOptPaperSiLog (unsigned n, const double *x, double *grad, void *
     return calcError(xIn) + calcErrorSi(xIn);
 }
 
+double calcErrorOptPaperSiLog_sepA (unsigned n, const double *x, double *grad, void *data) {
+    vector<double> xIn(n);
+    
+    for (size_t ii = 0; ii < n; ii++) xIn[ii] = pow(10,x[ii]);
+    
+    double error = calcError_sepA(xIn) + calcErrorSi_sepA(xIn);
+    
+    if (noiseOut) cout << error << endl;
+    
+    return error;
+}
+
 double calcErrorSiLog_sepA (unsigned n, const double *x, double *grad, void *data) {
     vector<double> xIn;
     
@@ -204,6 +220,35 @@ double calcErrorOptAllSiLog_sepA (unsigned n, const double *x, double *grad, voi
     for (size_t ii = 0; ii < NELEMS(xIn); ii++) xIn[ii] = pow(10,x[ii]);
     
     return calcErrorAll_sepA(Param_sepA(xIn), expression, autocrine) + calcErrorSi_sepA (siIn);
+}
+
+double calcErrorOptPaperSiAllLog_sepA (unsigned n, const double *x, double *grad, void *data) {
+    clock_t bbegin, endd;
+    
+    if (noiseOut) bbegin = clock();
+    
+    
+    vector<double> xIn;
+    vector<double> siIn;
+    for (size_t ii = 0; ii < n; ii++) siIn.push_back(pow(10,x[ii]));
+    
+    xIn = siIn;
+    
+    xIn.erase(xIn.end()-3, xIn.end());
+    xIn.erase(xIn.end()-5, xIn.end()-2);
+    
+    double error = calcError_sepA(xIn) + calcErrorSi_sepA (siIn);
+    
+    if (noiseOut) {
+        endd = clock();
+    
+        cout << "Time: " << ((double) (endd - bbegin))/((double) CLOCKS_PER_SEC) << endl;
+        cout << "Err: " << error << endl << endl;
+    }
+    
+    //cout << error << endl;
+    
+    return error;
 }
 
 void bumpOptim(vector<double> minn, vector<double> maxx, vector<double> xx, double *ff, double strength,

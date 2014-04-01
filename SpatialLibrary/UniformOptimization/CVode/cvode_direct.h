@@ -238,8 +238,8 @@ typedef int (*CVDlsBandJacFn)(long int N, long int mupper, long int mlower,
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVDlsSetDenseJacFn(void *cvode_mem, CVDlsDenseJacFn jac);
-SUNDIALS_EXPORT int CVDlsSetBandJacFn(void *cvode_mem, CVDlsBandJacFn jac);
+int CVDlsSetDenseJacFn(void *cvode_mem, CVDlsDenseJacFn jac);
+int CVDlsSetBandJacFn(void *cvode_mem, CVDlsBandJacFn jac);
 
 /*
  * -----------------------------------------------------------------
@@ -263,10 +263,10 @@ SUNDIALS_EXPORT int CVDlsSetBandJacFn(void *cvode_mem, CVDlsBandJacFn jac);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVDlsGetWorkSpace(void *cvode_mem, long int *lenrwLS, long int *leniwLS);
-SUNDIALS_EXPORT int CVDlsGetNumJacEvals(void *cvode_mem, long int *njevals);
-SUNDIALS_EXPORT int CVDlsGetNumRhsEvals(void *cvode_mem, long int *nfevalsLS);
-SUNDIALS_EXPORT int CVDlsGetLastFlag(void *cvode_mem, long int *flag);
+int CVDlsGetWorkSpace(void *cvode_mem, long int *lenrwLS, long int *leniwLS);
+int CVDlsGetNumJacEvals(void *cvode_mem, long int *njevals);
+int CVDlsGetNumRhsEvals(void *cvode_mem, long int *nfevalsLS);
+int CVDlsGetLastFlag(void *cvode_mem, long int *flag);
 
 /*
  * -----------------------------------------------------------------
@@ -275,7 +275,7 @@ SUNDIALS_EXPORT int CVDlsGetLastFlag(void *cvode_mem, long int *flag);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT char *CVDlsGetReturnFlagName(long int flag);
+char *CVDlsGetReturnFlagName(long int flag);
 
 
 #ifdef __cplusplus
