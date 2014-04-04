@@ -314,6 +314,38 @@ double calcErrorOneLine (struct rates inP, size_t cellLine, double autocrine) {
     return error;
 }
 
+double calcErrorOneLine_sepA (struct rates_sepA inP, size_t cellLine, double autocrine) {
+    N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
+    N_Vector outStim = N_VNew_Serial(NELEMS(GassDose));
+    N_Vector outStimTot = N_VNew_Serial(NELEMS(GassDose));
+    N_Vector outDataAll = N_VNew_Serial(NELEMS(Gass)*NELEMS(times)*NfitCells);
+    
+    double error = 0;
+    
+    try {
+        calcProfile_sepA (outData, outStim, outStimTot, inP, autocrine, inP.expression);
+        
+        error += errorFuncOpt (outData, &pY[cellLine*NELEMS(Gass)*NELEMS(times)], &pYerror[cellLine*NELEMS(Gass)*NELEMS(times)]);
+        error += errorFuncOpt (outStim, pYdose[cellLine], DoseError[cellLine]);
+        error += errorFuncFix (outStimTot, DoseTot[cellLine], DoseTotErr[cellLine]);
+    } catch (exception &e) {
+        N_VDestroy_Serial(outData);
+        N_VDestroy_Serial(outStim);
+        N_VDestroy_Serial(outStimTot);
+        N_VDestroy_Serial(outDataAll);
+        errorLogger(&e);
+        
+        return 1E6;
+    }
+    
+    N_VDestroy_Serial(outData);
+    N_VDestroy_Serial(outStim);
+    N_VDestroy_Serial(outStimTot);
+    N_VDestroy_Serial(outDataAll);
+    
+    return error;
+}
+
 double calcError (param_type inP) {
     struct rates params = Param(inP);
 
@@ -585,6 +617,32 @@ double calcErrorSi_sepA (vector<double> inP) {
             
             return 1E6;
         }
+    }
+    
+    N_VDestroy_Serial(totalData);
+    N_VDestroy_Serial(pYdata);
+    
+    return error;
+}
+
+double calcErrorSiOneLine_sepA (struct rates_sepA params, size_t ii, double autocrine) {
+    
+    N_Vector totalData = N_VNew_Serial(2);
+    N_Vector pYdata = N_VNew_Serial(2);
+    
+    double error = 0;
+    
+    try {
+        calcSiLigand_sepA (totalData, pYdata, params, autocrine, params.expression);
+        
+        if (siPY[ii][0] != 0) error += errorFuncOpt (pYdata, siPY[ii], siPYerr[ii]);
+        if (siTOT[ii][0] != 0) error += errorFuncOpt (totalData, siTOT[ii], siTOTerr[ii]);
+    } catch (exception &e) {
+        N_VDestroy_Serial(totalData);
+        N_VDestroy_Serial(pYdata);
+        errorLogger(&e);
+        
+        return 1E6;
     }
     
     N_VDestroy_Serial(totalData);

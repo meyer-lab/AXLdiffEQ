@@ -37,6 +37,7 @@ void errorHandler(int error_code, const char *module, const char *function, char
     errorLogger(OutMesg);
 }
 
+
 void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolIn, CVRhsFn f) {
     int flag;
     void *cvode_mem = NULL;
@@ -99,6 +100,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
         throw runtime_error(string("Error calling CVodeSetUserData in solver_setup."));
     }
     
+    CVodeSetMaxConvFails(cvode_mem, 50);
     CVodeSetMaxNumSteps(cvode_mem, 2E6);
     
     return cvode_mem;

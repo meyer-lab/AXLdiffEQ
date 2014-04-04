@@ -13,12 +13,47 @@
 #include "ReactionCode.h"
 #include <random>
 #include <vector>
+#include <algorithm>
+#include <mutex>
 
 
 #define noiseOut 0
 
 using namespace nlopt;
 using namespace std;
+
+
+vector<double> xBest;
+double fbest = 1e10;
+mutex mtx;
+
+unsigned long long rdtsc(){
+    unsigned int lo,hi;
+    __asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
+    return ((unsigned long long)hi << 32) | lo;
+}
+
+void globalBest (size_t n, const double *x, double f) {
+    mtx.lock();
+    
+    if (f < fbest) {
+        fbest = f;
+        
+        xBest.clear();
+        
+        cout << "Best! " << f << endl;
+        
+        for (size_t i = 0; i < n; i++) {
+            xBest.push_back(x[i]);
+            cout << x[i] << " ";
+        }
+        
+        cout << endl;
+    }
+    
+    mtx.unlock();
+}
+
 
 void getLimits (vector<double> &minn, vector<double> &maxx, int nCells) {
     minn.clear();
@@ -142,7 +177,11 @@ double calcErrorOptLog (unsigned n, const double *x, double *grad, void *data) {
     param_type inner;
     for (size_t i = 0; i < n; i++) inner[i] = pow(10,x[i]);
     
-    return calcError(inner);
+    double error = calcError(inner);
+    
+    globalBest(n, x, error);
+    
+    return error;
 }
 
 double calcErrorOptOneLog (unsigned n, const double *x, double *grad, void *data) {
@@ -152,8 +191,35 @@ double calcErrorOptOneLog (unsigned n, const double *x, double *grad, void *data
     
     for (size_t ii = 0; ii < n; ii++) xIn[ii] = pow(10,x[ii]);
     
-    return calcErrorOneCellLine (*line, xIn);
+    double error = calcErrorOneCellLine (*line, xIn);
+    
+    globalBest(n, x, error);
+    
+    return error;
 }
+
+
+
+double calcErrorOptPaperSiOneLog_sepA (unsigned n, const double *x, double *grad, void *data) {
+    int *line = (int *) data;
+    
+    param_type xIn;
+    
+    for (size_t ii = 0; ii < n; ii++) xIn[ii] = pow(10,x[ii]);
+    
+    struct rates_sepA rates = Param_sepA(xIn);
+    
+    rates.expression = xIn[n-1];
+    
+    double error = calcErrorOneLine_sepA (rates, *line, xIn[n-2]) + calcErrorSiOneLine_sepA (rates, *line, xIn[n-2]);
+    
+    //cout << error << endl;
+    
+    globalBest(n, x, error);
+    
+    return error;
+}
+
 
 double calcErrorOptAllLog (unsigned n, const double *x, double *grad, void *data) {
     param_type xIn;
@@ -169,7 +235,11 @@ double calcErrorOptAllLog (unsigned n, const double *x, double *grad, void *data
 
     for (size_t ii = 0; ii < NELEMS(xIn); ii++) xIn[ii] = pow(10,x[ii]);
 
-    return calcErrorAll(Param(xIn), expression, autocrine);
+    double error = calcErrorAll(Param(xIn), expression, autocrine);
+    
+    globalBest(n, x, error);
+    
+    return error;
 }
 
 double calcErrorOptPaperSiLog (unsigned n, const double *x, double *grad, void *data) {
@@ -177,7 +247,11 @@ double calcErrorOptPaperSiLog (unsigned n, const double *x, double *grad, void *
 
     for (size_t ii = 0; ii < xIn.size(); ii++) xIn[ii] = pow(10,x[ii]);
 
-    return calcError(xIn) + calcErrorSi(xIn);
+    double error = calcError(xIn) + calcErrorSi(xIn);
+    
+    globalBest(n, x, error);
+    
+    return error;
 }
 
 double calcErrorOptPaperSiLog_sepA (unsigned n, const double *x, double *grad, void *data) {
@@ -189,6 +263,8 @@ double calcErrorOptPaperSiLog_sepA (unsigned n, const double *x, double *grad, v
     
     if (noiseOut) cout << error << endl;
     
+    globalBest(n, x, error);
+    
     return error;
 }
 
@@ -197,12 +273,16 @@ double calcErrorSiLog_sepA (unsigned n, const double *x, double *grad, void *dat
     
     for (size_t ii = 0; ii < n; ii++) xIn.push_back(pow(10,x[ii]));
     
-    return calcErrorSi_sepA (xIn);
+    double error = calcErrorSi_sepA (xIn);
+    
+    globalBest(n, x, error);
+    
+    return error;
 }
 
 double calcErrorOptAllSiLog_sepA (unsigned n, const double *x, double *grad, void *data) {
     param_type xIn;
-    const int nCellLines = (n-15)/2;
+    const size_t nCellLines = (n-15)/2;
     
     
     vector<double> siIn;
@@ -219,7 +299,11 @@ double calcErrorOptAllSiLog_sepA (unsigned n, const double *x, double *grad, voi
     
     for (size_t ii = 0; ii < NELEMS(xIn); ii++) xIn[ii] = pow(10,x[ii]);
     
-    return calcErrorAll_sepA(Param_sepA(xIn), expression, autocrine) + calcErrorSi_sepA (siIn);
+    double error = calcErrorAll_sepA(Param_sepA(xIn), expression, autocrine) + calcErrorSi_sepA (siIn);
+    
+    globalBest(n, x, error);
+    
+    return error;
 }
 
 double calcErrorOptPaperSiAllLog_sepA (unsigned n, const double *x, double *grad, void *data) {
@@ -246,36 +330,50 @@ double calcErrorOptPaperSiAllLog_sepA (unsigned n, const double *x, double *grad
         cout << "Err: " << error << endl << endl;
     }
     
-    //cout << error << endl;
+    globalBest(n, x, error);
     
     return error;
 }
 
-void bumpOptim(vector<double> minn, vector<double> maxx, vector<double> xx, double *ff, double strength,
-                 unsigned int seed, nlopt_func minFun, void *data) {
+void bumpOptimGlobal(vector<double> minn, vector<double> maxx, nlopt_func minFun, void *data, int method) {
+    using nlopt::algorithm;
     
+    vector<double> xx;
     double outVal;
+    nlopt::opt opterG;
     default_random_engine generator;
-    generator.seed(seed);
-    normal_distribution<double> normRnd(0,strength);
+    generator.seed(rdtsc());
     uniform_real_distribution<double> uniRnd(0,1);
     
-    for (size_t ii = 0; ii < xx.size(); ii++) {
-        xx[ii] = (xx[ii] + normRnd(generator)*(maxx[ii] - minn[ii]));
-        
-        if ((xx[ii] < minn[ii]) || (xx[ii] > maxx[ii]))
-            xx[ii] = minn[ii] + (maxx[ii] - minn[ii]) * uniRnd(generator);
+    nlopt_srand(rdtsc());
+    
+    for (size_t i = 0; i < minn.size(); i++) {
+        xx.push_back(minn[i] + (maxx[i] - minn[i]) * uniRnd(generator));
     }
     
-    nlopt::opt opter = nlopt::opt(nlopt::algorithm::LN_COBYLA, (unsigned int) xx.size());
-    opter.set_lower_bounds(minn);
-    opter.set_upper_bounds(maxx);
-    opter.set_xtol_rel(1E-6);
-    opter.set_ftol_rel(1E-5);
-    opter.set_min_objective(minFun, data);
-    opter.optimize(xx, outVal);
+    if (method == 0) opterG = nlopt::opt(G_MLSL_LDS, (unsigned int) xx.size());
+    if (method == 1) opterG = nlopt::opt(GN_ISRES, (unsigned int) xx.size());
+    if (method == 2) opterG = nlopt::opt(GN_MLSL_LDS, (unsigned int) xx.size());
+    if (method == 3) opterG = nlopt::opt(GN_CRS2_LM, (unsigned int) xx.size());
+    if (method == 4) opterG = nlopt::opt(GN_DIRECT_L_RAND, (unsigned int) xx.size());
     
-    *ff = outVal;
+    opterG.set_lower_bounds(minn);
+    opterG.set_upper_bounds(maxx);
+    opterG.set_min_objective(minFun, data);
+    
+    if (method == 0) {
+        nlopt::opt opter = nlopt::opt(nlopt::algorithm::LN_BOBYQA, (unsigned int) xx.size());
+        opter.set_lower_bounds(minn);
+        opter.set_upper_bounds(maxx);
+        opter.set_xtol_rel(1E-6);
+        opter.set_ftol_rel(1E-5);
+        opter.set_min_objective(minFun, data);
+        opterG.set_local_optimizer(opter);
+    }
+    
+    //opterG.set_maxtime(30);
+    opterG.optimize(xx, outVal);
 }
+
 
 

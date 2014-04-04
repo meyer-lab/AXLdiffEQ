@@ -113,5 +113,7 @@ double calcErrorSi_sepA (std::vector<double> inP);
 double calcErrorAll_sepA (struct rates_sepA, const double *, const double *);
 double calcError_sepA (std::vector<double>);
 void errorLogger (std::stringstream &);
+double calcErrorOneLine_sepA (struct rates_sepA inP, size_t cellLine, double autocrine);
+double calcErrorSiOneLine_sepA (struct rates_sepA params, size_t ii, double autocrine);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */
