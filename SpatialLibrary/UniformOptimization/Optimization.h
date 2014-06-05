@@ -23,14 +23,10 @@ double calcErrorOptOneLog (unsigned, const double *, double *, void *);
 double calcErrorOptLog (unsigned, const double *, double *, void *);
 double calcErrorOptAllLog (unsigned, const double *, double *, void *);
 double calcErrorOptPaperSiLog (unsigned, const double *, double *, void *);
-double calcErrorSiLog_sepA (unsigned, const double *, double *, void *);
-double calcErrorOptAllSiLog_sepA (unsigned, const double *, double *, void *);
-void getLimits_sepA (std::vector<double> &, std::vector<double> &, int);
-double calcErrorOptPaperSiLog_sepA (unsigned, const double *, double *, void *);
-double calcErrorSiLog_sepA (unsigned, const double *, double *, void *);
-double calcErrorOptPaperSiAllLog_sepA (unsigned n, const double *x, double *grad, void *data);
-double calcErrorOptPaperSiOneLog_sepA (unsigned n, const double *x, double *grad, void *data);
 void bumpOptimGlobal(vector<double> minn, vector<double> maxx, nlopt_func minFun, void *data, int method);
 unsigned long long rdtsc(void);
+double calcErrorOptA549Full (unsigned n, const double *x, double *grad, void *data);
+void randLargeResponse(vector<double> minn, vector<double> maxx);
+void getRandLimits (vector<double> &minn, vector<double> &maxx, int nCells);
 
 #endif /* defined(__UniformOptimization__Optimization__) */

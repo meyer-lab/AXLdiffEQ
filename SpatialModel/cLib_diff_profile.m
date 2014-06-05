@@ -1,4 +1,4 @@
-function outter = cLib_diff_profile (tps, AXLin, autocrine, GasIn, Din, endoImpair, degImpair)
+function outter = cLib_diff_profile (tps, params, AXLin, autocrine, GasIn, Din, endoImpair, degImpair)
 
 Nspecies = 14;
 
@@ -9,7 +9,7 @@ end
 
 dataPtr = libpointer('doublePtr',1:(length(tps)*length(GasIn)*Nspecies));
 GasInPtr = libpointer('doublePtr',GasIn);
-pIn = libpointer('doublePtr',getOptimParams(1));
+pIn = libpointer('doublePtr',params);
 pTps = libpointer('doublePtr',tps);
 DinP = libpointer('doublePtr',Din);
 

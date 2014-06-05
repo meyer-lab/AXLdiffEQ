@@ -15,5 +15,4 @@ if x == 0
     outter = out.Value;
 else
     outter = [];
-    disp('Failed eval');
 end

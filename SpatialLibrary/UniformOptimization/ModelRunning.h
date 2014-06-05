@@ -45,6 +45,24 @@ static const double pYerror[] = { ///< Error for short time scale pY measurement
     0.294, 0.116, 0.143, 0.034, 0.125, 0.294, 0.194, 0.077, 0.054, 0.217,
     0.294, 0.050, 0.194, 0.373, 0.135, 0.294, 0.144, 0.035, 0.057, 0.069};// BT549
 
+static const double surf[][20] = {
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0.0866, 0.0339, 0.0582, 0.0084, 0.0348, 0.0866, 0.2385, 0.0973, 0.0957, 0.1334,
+        0.0866, 0.1828, 0.1554, 0.3348, 0.0673, 0.0866, 0.0943, 0.1378, 0.0582, 0.1971}}; // A549
+
+static const double surfError[][20] = {
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    {0.0826, 0.0826, 0.0826, 0.0927, 0.0987, 0.0826, 0.0826, 0.0814, 0.0871, 0.0912,
+        0.0826, 0.0826, 0.0684, 0.0807, 0.0946, 0.0826, 0.0826, 0.0734, 0.0900, 0.0847}}; // A549
+
+static const double surfDose[][7] = {
+    {0, 0, 0, 0, 0, 0, 0},
+    {0.065354474, 0.094518425, 0.107833781, 0.072157625, 0.076956945, 0.080170467, 0.069035735}};
+
+static const double surfDoseError[][7] = {
+    {0, 0, 0, 0, 0, 0, 0},
+    {0.005030684, 0.030522852, 0.021637369, 0.000667265, 0.002572132, 0.004779955, 0.006611277}};
+
 static const double pYdose[][7] = {
     {0.097755178, 0.104591926, 0.058509424, 0.035308947, 0.020346485, 0.019266966, 0.017639228}, // A172
     {0.034696084, 0.031362807, 0.025562428, 0.020713842, 0.013218411, 0.011107913, 0.012675294}, // A549
@@ -108,12 +126,8 @@ double calcErrorOneLine (struct rates, size_t, double);
 double calcErrorAll (struct rates, const double *, const double *);
 void calcErrorRefWithSi (param_type, double *, std::atomic<bool> *);
 double calcErrorSi (param_type);
-void *initState_sepA( N_Vector, struct rates_sepA, double);
-double calcErrorSi_sepA (std::vector<double> inP);
-double calcErrorAll_sepA (struct rates_sepA, const double *, const double *);
-double calcError_sepA (std::vector<double>);
 void errorLogger (std::stringstream &);
-double calcErrorOneLine_sepA (struct rates_sepA inP, size_t cellLine, double autocrine);
-double calcErrorSiOneLine_sepA (struct rates_sepA params, size_t ii, double autocrine);
+void calcErrorRefA549 (param_type, double *, std::atomic<bool> *);
+double calcErrorA549Full (struct rates inP, double autocrine);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

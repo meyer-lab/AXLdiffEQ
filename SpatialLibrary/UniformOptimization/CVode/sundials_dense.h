@@ -94,7 +94,7 @@ void denseGETRS(double **a, long int n, long int *p, double *b);
  */
 
 void DenseCopy(DlsMat A, DlsMat B);
-void denseCopy(double **a, double **b, long int m, long int n);
+void denseCopy(double **a, double **b, size_t m, size_t n);
 
 /*
  * -----------------------------------------------------------------
@@ -110,7 +110,7 @@ void denseCopy(double **a, double **b, long int m, long int n);
  */
 
 void DenseScale(double c, DlsMat A);
-void denseScale(double c, double **a, long int m, long int n);
+void denseScale(double c, double **a, size_t m, size_t n);
 
 
 /*
@@ -122,7 +122,7 @@ void denseScale(double c, double **a, long int m, long int n);
  * -----------------------------------------------------------------
  */
 
-void denseAddIdentity(double **a, long int n);
+void denseAddIdentity(double **a, size_t n);
 
 #ifdef __cplusplus
 }

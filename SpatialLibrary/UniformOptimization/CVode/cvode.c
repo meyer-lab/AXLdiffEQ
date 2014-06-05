@@ -2575,7 +2575,7 @@ static int CVNlsFunctional(CVodeMem cv_mem)
     N_VConst(0.0, acor);
     
     /* Initialize delp to avoid compiler warning message */
-    del = delp = 0.0;
+    delp = 0.0;
     
     /* Loop until convergence; accumulate corrections in acor */
     
@@ -2676,7 +2676,7 @@ static int CVNlsNewton(CVodeMem cv_mem, int nflag)
             ier = lsetup(cv_mem, convfail, zn[0], ftemp, &jcur,
                          vtemp1, vtemp2, vtemp3);
             nsetups++;
-            callSetup = 0;
+            //callSetup = 0;
             gamrat = crate = 1.0;
             gammap = gamma;
             nstlp = nst;
@@ -2726,7 +2726,7 @@ static int CVNewtonIteration(CVodeMem cv_mem)
     mnewt = m = 0;
     
     /* Initialize delp to avoid compiler warning message */
-    del = delp = 0.0;
+    delp = 0.0;
     
     /* Looping point for Newton iteration */
     loop {
@@ -3351,7 +3351,7 @@ static int CVsldet(CVodeMem cv_mem)
     sqtol  = (1.0e-3);
     rrtol  = (1.0e-2);
     
-    rr = 0.0;
+    //rr = 0.0;
     
     /*  Index k corresponds to the degree of the interpolating polynomial. */
     /*      k = 1 -> q-1          */
@@ -3421,7 +3421,7 @@ static int CVsldet(CVodeMem cv_mem)
                 drrmax = MAX(drrmax, adrr);
             }
             if (drrmax > vrrt2) {
-                kflag = -3;
+                //kflag = -3;
             }
             
             kflag = 1;

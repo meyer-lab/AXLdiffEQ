@@ -246,7 +246,7 @@ void destroyArray(void *v)
 
 void AddIdentity(DlsMat A)
 {
-  long int i;
+  size_t i;
 
   switch (A->type) {
 
@@ -265,7 +265,7 @@ void AddIdentity(DlsMat A)
 
 void SetToZero(DlsMat A)
 {
-  long int i, j, colSize;
+  size_t i, j, colSize;
   double *col_j;
 
   switch (A->type) {
@@ -298,7 +298,7 @@ void SetToZero(DlsMat A)
 
 void PrintMat(DlsMat A)
 {
-  long int i, j, start, finish;
+  size_t i, j, start, finish;
   double **a;
 
   switch (A->type) {

@@ -1,41 +1,30 @@
 clc; clear;
 
 %function Fitting(nameIn)
-nameIn = 'new_v4c';
+nameIn = 'justSurf_model_cochran';
 % This script runs extensive optimization
 
 pwClear;
 
-baseFolder = '/Users/aaron/Documents/MATLAB/PotterAxlModel/';
+baseFolder = '/Users/aaron/Documents/MATLAB/github/AXLdiffEQ/Potterswheel/';
 
 model = nameIn;
 dataFolder = [baseFolder 'data/'];
 
 global postTag cellName;
 
-postTag = 'A172';
-cellName = 'A172';
-pwAddModel(model);
-pwSelect(1);
-pwAddData([dataFolder 'A172.xls'],1,0);
 
 postTag = 'A549';
 cellName = 'A549';
 pwAddModel(model);
-pwSelect(2);
-pwAddData([dataFolder 'A549.xls'],1,0);
-
-postTag = 'A172_longT';
-cellName = 'A172';
-pwAddModel(model);
-pwSelect(3);
-pwAddData([dataFolder 'A172_longT.xls'],1,0);
+pwSelect(1);
+pwAddData([dataFolder 'A549s.xls'],1,0);
 
 postTag = 'A549_longT';
 cellName = 'A549';
 pwAddModel(model);
-pwSelect(4);
-pwAddData([dataFolder 'A549_longT.xls'],1,0);
+pwSelect(2);
+pwAddData([dataFolder 'A549_longTs.xls'],1,0);
 
 pwSelect('all');
 

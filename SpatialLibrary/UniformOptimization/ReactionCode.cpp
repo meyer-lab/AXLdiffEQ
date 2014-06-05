@@ -89,73 +89,18 @@ int AXL_react(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     return 0;
 }
 
-
-
-int AXL_react_sepA(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
-    struct rates_sepA *r = (struct rates_sepA *) user_data;
-    double* x_d = NV_DATA_S(xIn);
-    double* dxdt_d = NV_DATA_S(dxdtIn);
+double GasCalc (N_Vector state) {
+    double Gas = Ith(state,2) + Ith(state,3) + 2*Ith(state,4) + Ith(state,5) + 2*Ith(state,6) +
+    internalFrac*(Ith(state,8) + Ith(state,9) + 2*Ith(state,10) + Ith(state,11) + 2*Ith(state,12));
     
-    // 0 Gas6   // 1 AXL   // 2 A1    // 3 A2
-    // 4 A12    // 5 D1    // 6 D2    // 7 AXLi
-    // 8 A1i    // 9 A2i   // 10 A12i // 11 D1i    // 12 D2i   // 13 Gasi
+    Gas += Ith(state,13);
     
-    dxdt_d[0] = 0;
-    
-    double dR1 = r->Binding1 * x_d[1] * x_d[0] - r->Unbinding1 * x_d[2];
-    double dR2 = r->Binding2 * x_d[1] * x_d[0] - r->Unbinding2 * x_d[3];
-    double dR3 = r->Binding2 * x_d[2] * x_d[0] - r->Unbinding2 * x_d[4];
-    double dR4 = r->Binding1 * x_d[3] * x_d[0] - r->Unbinding1 * x_d[4];
-    double dR5 = r->xFwd1 * x_d[1] * x_d[2] - r->xRev1 * x_d[5];
-    double dR6 = r->xFwd2 * x_d[1] * x_d[3] - r->xRev2 * x_d[5];
-    double dR7 = r->xFwd3 * x_d[1] * x_d[4] - r->xRev3 * x_d[6];
-    double dR8 = r->xFwd4 * x_d[2] * x_d[2] - r->xRev4 * x_d[6];
-    double dR9 = r->xFwd5 * x_d[3] * x_d[3] - r->xRev5 * x_d[6];
-    double dR11 = r->xFwd6 * x_d[0] * x_d[5] - r->xRev6 * x_d[6];
-    
-    double dR32 = r->Binding1 * x_d[7] * x_d[13] / 623 - r->Unbinding1 * x_d[8];
-    double dR33 = r->Binding2 * x_d[7] * x_d[13] / 623 - r->Unbinding2 * x_d[9];
-    double dR34 = r->Binding2 * x_d[8] * x_d[13] / 623 - r->Unbinding2 * x_d[10];
-    double dR35 = r->Binding1 * x_d[9] * x_d[13] / 623 - r->Unbinding1 * x_d[10];
-    double dR36 = r->xFwd1 * x_d[7] * x_d[8] - r->xRev1 * x_d[11];
-    double dR37 = r->xFwd2 * x_d[7] * x_d[9] - r->xRev2 * x_d[11];
-    double dR38 = r->xFwd3 * x_d[7] * x_d[10] - r->xRev3 * x_d[12];
-    double dR39 = r->xFwd4 * x_d[8] * x_d[8] - r->xRev4 * x_d[12]; // Checked
-    double dR40 = r->xFwd5 * x_d[9] * x_d[9] - r->xRev5 * x_d[12]; // Checked
-    double dR41 = r->xFwd6 * x_d[13] * x_d[11] / 623 - r->xRev6 * x_d[12]; // Checked
-    
-    dxdt_d[1] = - dR7 - dR6 - dR5 - dR1 - dR2 + r->expression; // AXL
-    dxdt_d[2] = -2*(dR8) - dR5 + dR1 - dR3                   ; // AXLgas1
-    dxdt_d[3] = -2*(dR9) - dR6 + dR2 - dR4                   ; // AXLgas2
-    dxdt_d[4] = -dR7 + dR3 + dR4                             ; // AXLgas12
-    dxdt_d[5] = -dR11 + dR6 + dR5                            ; // AXLdimer1
-    dxdt_d[6] = dR11 + dR9 + dR8 + dR7                       ; // AXLdimer2
-    
-    dxdt_d[7]  = - dR38 - dR37 - dR36 - dR32 - dR33          ; // AXLi
-    dxdt_d[8]  = -2*(dR39) - dR36 + dR32 - dR34              ; // AXLgas1i
-    dxdt_d[9]  = -2*(dR40) - dR37 + dR33 - dR35              ; // AXLgas2i
-    dxdt_d[10] = -dR38 + dR34 + dR35                         ; // AXLgas12i
-    dxdt_d[11] = -dR41 + dR37 + dR36                          ; // AXLdimer1i
-    dxdt_d[12] = dR41 + dR40 + dR39 + dR38                   ; // AXLdimer2i
-    
-    dxdt_d[13] = -dR41 - dR32 - dR33 - dR34 - dR35 - r->kDeg*x_d[13];
-    
-    
-    dxdt_d[1] += -x_d[1]*(r->internalize + r->pYinternalize*r->scaleA) + r->kRec*(1-r->fA)*x_d[7]*internalFrac; // Endocytosis, recycling
-    dxdt_d[7] += x_d[1]*(r->internalize + r->pYinternalize*r->scaleA)/internalFrac - r->kRec*(1-r->fA)*x_d[7] - r->kDeg*r->fA*x_d[7]; // Endocytosis, recycling, degradation
-    
-    for (int ii = 2; ii < 6; ii++) {
-        dxdt_d[ii]  += -x_d[ii]*(r->internalize + r->pYinternalize*r->scaleA)*endoImpair + r->kRec*(1-r->fElse)*x_d[ii+6]*internalFrac; // Endocytosis, recycling
-        dxdt_d[ii+6] += x_d[ii]*(r->internalize + r->pYinternalize*r->scaleA)/internalFrac*endoImpair - r->kRec*(1-r->fElse)*x_d[ii+6] // Endocytosis, recycling
-        - r->kDeg*r->fElse*x_d[ii+6]*degImpair; // Degradation
-    }
-    
-    dxdt_d[6]  += -x_d[6]*(r->internalize + r->pYinternalize)*endoImpair + r->kRec*(1-r->fD2)*x_d[12]*internalFrac; // Endocytosis, recycling
-    dxdt_d[12] += x_d[6]*(r->internalize + r->pYinternalize)/internalFrac*endoImpair - r->kRec*(1-r->fD2)*x_d[12] - r->kDeg*r->fD2*x_d[12]*degImpair; // Endocytosis, recycling, degradation
-    
-    return 0;
+    return Gas;
 }
 
+double surfAXL (N_Vector state) {
+    return Ith(state,1) + Ith(state,2) + Ith(state,3) + Ith(state,4) + 2*Ith(state,5) + 2*Ith(state,6);
+}
 
 int AXL_react_diff(double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
     double* xx_d = NV_DATA_S(xx);
@@ -203,6 +148,7 @@ int AXL_react_diff(double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
     return 0;
 }
 
+
 // This takes the model state and calculates the amount of phosphorylated species
 double pYcalc (N_Vector state, struct rates p) {
     double pYa = Ith(state,1) + Ith(state,2) + Ith(state,3) + Ith(state,4) + 2*Ith(state,5) +
@@ -242,6 +188,12 @@ double totCalc (N_Vector state) {
     return total/fgMgConv;
 }
 
+double D2Calc (N_Vector state) {
+    double total = 2*Ith(state,6) + internalFrac*(2*Ith(state,12));
+    
+    return total/totCalc(state)/fgMgConv;
+}
+
 
 struct rates Param(param_type params) {
     struct rates out;
@@ -265,41 +217,6 @@ struct rates Param(param_type params) {
     out.kDeg = params[12];
     out.fElse = params[13];
     out.fD2 = params[14];
-    out.xRev5 = out.xRev3*out.Unbinding1/out.Unbinding2;
-    out.xRev4 = out.xRev3*out.Unbinding2/out.Unbinding1;
-    out.xRev2 = out.xRev1*out.Unbinding1/out.Unbinding2;
-    out.xFwd2 = out.xFwd1*out.Binding1/out.Binding2;
-    out.xFwd4 = out.xFwd3*out.Binding2/out.Binding1;
-    out.xFwd5 = out.xFwd3*out.Binding1/out.Binding2;
-    out.xFwd6 = out.xFwd3*out.Binding2/out.xFwd1;
-    out.xRev6 = out.xRev3*out.Unbinding2/out.xRev1;
-    
-    return out;
-}
-
-struct rates_sepA Param_sepA(param_type params) {
-    struct rates_sepA out;
-    
-    for (size_t ii = 0; ii < 16; ii++) {
-        if (params[ii] < 0) throw invalid_argument(string("An input model parameter is outside the physical range."));
-    }
-    
-    out.Binding1 = params[0];
-    out.Binding2 = params[1];
-    out.Unbinding1 = params[2];
-    out.Unbinding2 = params[3];
-    out.xFwd1 = params[4];
-    out.xRev1 = params[5];
-    out.xFwd3 = params[6];
-    out.xRev3 = params[7];
-    out.internalize = params[8];
-    out.pYinternalize = params[9];
-    out.scaleA = params[10];
-    out.kRec = params[11];
-    out.kDeg = params[12];
-    out.fElse = params[13];
-    out.fD2 = params[14];
-    out.fA = params[15];
     out.xRev5 = out.xRev3*out.Unbinding1/out.Unbinding2;
     out.xRev4 = out.xRev3*out.Unbinding2/out.Unbinding1;
     out.xRev2 = out.xRev1*out.Unbinding1/out.Unbinding2;

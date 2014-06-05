@@ -10,28 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "UniformOptimization/Testing.cpp"
-            timestampString = "417576078.972513"
+            timestampString = "423619801.974942"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "35"
-            endingLineNumber = "35"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
             landmarkName = "BOOST_AUTO_TEST_CASE( matlabEntry_Test )"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "UniformOptimization/ModelRunning.cpp"
-            timestampString = "418176397.449075"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "697"
-            endingLineNumber = "697"
-            landmarkName = "initState_sepA( N_Vector init, struct rates_sepA params, double autocrine)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

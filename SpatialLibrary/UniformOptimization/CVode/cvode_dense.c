@@ -303,7 +303,7 @@ static int cvDenseSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector y
     
     /* Permute b, based on pivot information in p */
     for (size_t k = 0; k < (M->N); k++) {
-        long int pk = lpivots[k];
+        size_t pk = lpivots[k];
         if(pk != k) {
             tmp = bd[k];
             bd[k] = bd[pk];
@@ -340,11 +340,8 @@ static int cvDenseSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight, N_Vector y
  * -----------------------------------------------------------------
  */
 
-static void cvDenseFree(CVodeMem cv_mem)
-{
-  CVDlsMem  cvdls_mem;
-
-  cvdls_mem = (CVDlsMem) lmem;
+static void cvDenseFree(CVodeMem cv_mem) {
+  CVDlsMem cvdls_mem = (CVDlsMem) lmem;
   
   DestroyMat(M);
   DestroyMat(savedJ);
@@ -352,4 +349,3 @@ static void cvDenseFree(CVodeMem cv_mem)
   free(cvdls_mem);
   cv_mem->cv_lmem = NULL;
 }
-

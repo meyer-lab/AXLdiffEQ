@@ -1,4 +1,4 @@
-function outter = cLib_diff_profile_pY (tps, AXLin, autocrine, GasIn, Din, endoImpair, degImpair, frac)
+function outter = cLib_diff_profile_pY (tps, params, AXLin, autocrine, GasIn, Din, endoImpair, degImpair, frac)
 
 %unloadlibrary('libOptimize');
 if ~libisloaded('libOptimize')
@@ -7,7 +7,7 @@ end
 
 dataPtr = libpointer('doublePtr',1:(length(tps)*length(GasIn)));
 GasInPtr = libpointer('doublePtr',GasIn);
-pIn = libpointer('doublePtr',getOptimParams(1));
+pIn = libpointer('doublePtr',params);
 pTps = libpointer('doublePtr',tps);
 DinP = libpointer('doublePtr',Din);
 

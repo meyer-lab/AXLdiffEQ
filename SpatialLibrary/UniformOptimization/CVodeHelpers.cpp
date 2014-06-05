@@ -77,11 +77,11 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     }
     
     // Call CVDense to specify the CVDENSE dense linear solver
-    if (NV_LENGTH_S(init) > 20) {
-        flag = CVBand(cvode_mem, (int) NV_LENGTH_S(init), 2, 2);
-    } else {
+    //if (NV_LENGTH_S(init) > 200) {
+    //    flag = CVBand(cvode_mem, (int) NV_LENGTH_S(init), 3, 3);
+    //} else {
         flag = CVDense(cvode_mem, NV_LENGTH_S(init));
-    }
+    //}
     
     if (flag < 0) {
         CVodeFree(&cvode_mem);
@@ -101,7 +101,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     }
     
     CVodeSetMaxConvFails(cvode_mem, 50);
-    CVodeSetMaxNumSteps(cvode_mem, 2E6);
+    CVodeSetMaxNumSteps(cvode_mem, 1E5);
     
     return cvode_mem;
 }
@@ -112,7 +112,7 @@ void solverReset (void *cvode_mem, N_Vector init) {
 }
 
 void* solver_setup (N_Vector init, void *params, CVRhsFn f) {
-    return solver_setup (init, params, 1E-3, 1E-6, f);
+    return solver_setup (init, params, 1E-3, 1E-8, f);
 }
 
 void PrintFinalStats(void *cvode_mem)

@@ -60,15 +60,15 @@ void getLimits (vector<double> &minn, vector<double> &maxx, int nCells) {
     maxx.clear();
     
     // Ig1 bind
-    minn.push_back(0.07918124604);
-    maxx.push_back(0.07918124604);
-    
-    // Ig2 bind
-    minn.push_back(-5);
+    minn.push_back(-4);
     maxx.push_back(1);
     
-    minn.push_back(-1.3767507096);
-    maxx.push_back(-1.3767507096);
+    // Ig2 bind
+    minn.push_back(-4);
+    maxx.push_back(1);
+    
+    minn.push_back(-5);
+    maxx.push_back(5);
     
     minn.push_back(-5);
     maxx.push_back(5);
@@ -82,10 +82,10 @@ void getLimits (vector<double> &minn, vector<double> &maxx, int nCells) {
     maxx.push_back(0);
     
     minn.push_back(-3);
-    maxx.push_back(2);
+    maxx.push_back(1);
     
     minn.push_back(-6);
-    maxx.push_back(-1);
+    maxx.push_back(0);
     
     minn.push_back(-3);
     maxx.push_back(-1);
@@ -101,8 +101,8 @@ void getLimits (vector<double> &minn, vector<double> &maxx, int nCells) {
     
     // Gas6 autocrine
     for (size_t ii = 0; ii < (size_t) nCells; ii++) {
-        minn.push_back(-5);
-        maxx.push_back(2);
+        minn.push_back(-6);
+        maxx.push_back(0);
     }
     
     // AXL expression
@@ -112,38 +112,37 @@ void getLimits (vector<double> &minn, vector<double> &maxx, int nCells) {
     }
 }
 
-void getLimits_sepA (vector<double> &minn, vector<double> &maxx, int nCells) {
+void getRandLimits (vector<double> &minn, vector<double> &maxx, int nCells) {
     minn.clear();
     maxx.clear();
     
     // Ig1 bind
-    minn.push_back(0.07918124604);
-    maxx.push_back(0.07918124604);
+    minn.push_back(-4);
+    maxx.push_back(1);
     
     // Ig2 bind
+    minn.push_back(-4);
+    maxx.push_back(1);
+    
     minn.push_back(-5);
-    maxx.push_back(0.08);
+    maxx.push_back(5);
     
-    minn.push_back(-1.3767507096);
-    maxx.push_back(-1.3767507096);
+    minn.push_back(-5);
+    maxx.push_back(5);
     
-    minn.push_back(-1);
-    maxx.push_back(2);
-    
-    // Receptor dimer parameters
     for (size_t ii = 0; ii < 4; ii++) {
         minn.push_back(-5);
-        maxx.push_back(2);
+        maxx.push_back(5);
     }
     
     minn.push_back(-6);
     maxx.push_back(0);
     
     minn.push_back(-3);
-    maxx.push_back(2);
+    maxx.push_back(1);
     
     minn.push_back(-6);
-    maxx.push_back(-1);
+    maxx.push_back(0);
     
     minn.push_back(-3);
     maxx.push_back(-1);
@@ -157,13 +156,10 @@ void getLimits_sepA (vector<double> &minn, vector<double> &maxx, int nCells) {
     minn.push_back(-1);
     maxx.push_back(0);
     
-    minn.push_back(-5);
-    maxx.push_back(0);
-    
     // Gas6 autocrine
     for (size_t ii = 0; ii < (size_t) nCells; ii++) {
-        minn.push_back(-5);
-        maxx.push_back(2);
+        minn.push_back(-3);
+        maxx.push_back(0);
     }
     
     // AXL expression
@@ -198,22 +194,13 @@ double calcErrorOptOneLog (unsigned n, const double *x, double *grad, void *data
     return error;
 }
 
-
-
-double calcErrorOptPaperSiOneLog_sepA (unsigned n, const double *x, double *grad, void *data) {
-    int *line = (int *) data;
+double calcErrorOptA549Full (unsigned n, const double *x, double *grad, void *data) {
     
     param_type xIn;
     
     for (size_t ii = 0; ii < n; ii++) xIn[ii] = pow(10,x[ii]);
     
-    struct rates_sepA rates = Param_sepA(xIn);
-    
-    rates.expression = xIn[n-1];
-    
-    double error = calcErrorOneLine_sepA (rates, *line, xIn[n-2]) + calcErrorSiOneLine_sepA (rates, *line, xIn[n-2]);
-    
-    //cout << error << endl;
+    double error = calcErrorA549Full (Param(xIn), xIn[15]);
     
     globalBest(n, x, error);
     
@@ -254,87 +241,6 @@ double calcErrorOptPaperSiLog (unsigned n, const double *x, double *grad, void *
     return error;
 }
 
-double calcErrorOptPaperSiLog_sepA (unsigned n, const double *x, double *grad, void *data) {
-    vector<double> xIn(n);
-    
-    for (size_t ii = 0; ii < n; ii++) xIn[ii] = pow(10,x[ii]);
-    
-    double error = calcError_sepA(xIn) + calcErrorSi_sepA(xIn);
-    
-    if (noiseOut) cout << error << endl;
-    
-    globalBest(n, x, error);
-    
-    return error;
-}
-
-double calcErrorSiLog_sepA (unsigned n, const double *x, double *grad, void *data) {
-    vector<double> xIn;
-    
-    for (size_t ii = 0; ii < n; ii++) xIn.push_back(pow(10,x[ii]));
-    
-    double error = calcErrorSi_sepA (xIn);
-    
-    globalBest(n, x, error);
-    
-    return error;
-}
-
-double calcErrorOptAllSiLog_sepA (unsigned n, const double *x, double *grad, void *data) {
-    param_type xIn;
-    const size_t nCellLines = (n-15)/2;
-    
-    
-    vector<double> siIn;
-    for (size_t ii = 0; ii < n; ii++) siIn.push_back(pow(10,x[ii]));
-    
-    
-    double autocrine[nCellLines];
-    double expression[nCellLines];
-    
-    for (size_t ii = 0; ii < nCellLines; ii++) {
-    	autocrine[ii] = pow(10,x[ii+16]);
-    	expression[ii] = pow(10,x[ii+16+nCellLines]);
-    }
-    
-    for (size_t ii = 0; ii < NELEMS(xIn); ii++) xIn[ii] = pow(10,x[ii]);
-    
-    double error = calcErrorAll_sepA(Param_sepA(xIn), expression, autocrine) + calcErrorSi_sepA (siIn);
-    
-    globalBest(n, x, error);
-    
-    return error;
-}
-
-double calcErrorOptPaperSiAllLog_sepA (unsigned n, const double *x, double *grad, void *data) {
-    clock_t bbegin, endd;
-    
-    if (noiseOut) bbegin = clock();
-    
-    
-    vector<double> xIn;
-    vector<double> siIn;
-    for (size_t ii = 0; ii < n; ii++) siIn.push_back(pow(10,x[ii]));
-    
-    xIn = siIn;
-    
-    xIn.erase(xIn.end()-3, xIn.end());
-    xIn.erase(xIn.end()-5, xIn.end()-2);
-    
-    double error = calcError_sepA(xIn) + calcErrorSi_sepA (siIn);
-    
-    if (noiseOut) {
-        endd = clock();
-    
-        cout << "Time: " << ((double) (endd - bbegin))/((double) CLOCKS_PER_SEC) << endl;
-        cout << "Err: " << error << endl << endl;
-    }
-    
-    globalBest(n, x, error);
-    
-    return error;
-}
-
 void bumpOptimGlobal(vector<double> minn, vector<double> maxx, nlopt_func minFun, void *data, int method) {
     using nlopt::algorithm;
     
@@ -344,6 +250,7 @@ void bumpOptimGlobal(vector<double> minn, vector<double> maxx, nlopt_func minFun
     default_random_engine generator;
     generator.seed(rdtsc());
     uniform_real_distribution<double> uniRnd(0,1);
+    uniform_int_distribution<int> intRand(0,3);
     
     nlopt_srand(rdtsc());
     
@@ -351,11 +258,13 @@ void bumpOptimGlobal(vector<double> minn, vector<double> maxx, nlopt_func minFun
         xx.push_back(minn[i] + (maxx[i] - minn[i]) * uniRnd(generator));
     }
     
+    if (method == -1) method = intRand(generator);
+    
     if (method == 0) opterG = nlopt::opt(G_MLSL_LDS, (unsigned int) xx.size());
     if (method == 1) opterG = nlopt::opt(GN_ISRES, (unsigned int) xx.size());
     if (method == 2) opterG = nlopt::opt(GN_MLSL_LDS, (unsigned int) xx.size());
     if (method == 3) opterG = nlopt::opt(GN_CRS2_LM, (unsigned int) xx.size());
-    if (method == 4) opterG = nlopt::opt(GN_DIRECT_L_RAND, (unsigned int) xx.size());
+    //if (method == 4) opterG = nlopt::opt(GN_DIRECT_L_RAND, (unsigned int) xx.size());
     
     opterG.set_lower_bounds(minn);
     opterG.set_upper_bounds(maxx);
@@ -373,6 +282,47 @@ void bumpOptimGlobal(vector<double> minn, vector<double> maxx, nlopt_func minFun
     
     //opterG.set_maxtime(30);
     opterG.optimize(xx, outVal);
+}
+
+void randLargeResponse(vector<double> minn, vector<double> maxx) {
+    double xx[20];
+    double dataPtr[2];
+    double tps[2] = {0, 1};
+    
+    size_t N = 0;
+    
+    default_random_engine generator;
+    generator.seed(rdtsc());
+    uniform_real_distribution<double> uniRnd(0,1);
+    nlopt_srand(rdtsc());
+    
+    while (1) {
+        N++;
+        
+        for (size_t i = 0; i < minn.size(); i++) {
+            xx[i] = pow(10,(minn[i] + (maxx[i] - minn[i]) * uniRnd(generator)));
+        }
+        
+        if (calcProfileMatlab(dataPtr, xx, tps, 2, xx[15], xx[16], 1.25, 1)) continue;
+        
+        if ((dataPtr[1] / dataPtr[0]) < 20) continue;
+        
+        if (calcProfileMatlab(dataPtr, xx, tps, 2, xx[15], xx[16], 1.25, 0)) continue;
+        
+        if ((dataPtr[1] / dataPtr[0]) > 20) {
+            mtx.lock();
+            
+            //cout << (dataPtr[1] / dataPtr[0]) << endl;
+            
+            for (size_t i = 0; i < minn.size(); i++) {
+                cout << log10(xx[i]) << " ";
+            }
+            
+            cout << N << endl;
+            
+            mtx.unlock();
+        }
+    }
 }
 
 

@@ -25,14 +25,14 @@ int main( int argc, char *argv[] ) {
 
 	istringstream ss(argv[1]);
 	int x;
-	if (!(ss >> x) || (x > 3) || (x < -7)) {
+	if (!(ss >> x) || (x > 3) || (x < -9)) {
 	    cerr << "Invalid cell line number " << argv[1] << '\n';
 	    return 1;
 	}
 
 	cout << "Running optimization for cell line " << x << endl;
 
-    const int nthreads = 4;
+    const int nthreads = 1;
     vector<double> minn, maxx, best;
     vector<double> inn[nthreads];
     thread threads[nthreads];
@@ -40,18 +40,13 @@ int main( int argc, char *argv[] ) {
     double out[nthreads];
     int cellLine[] = {x};
     
-    int Acell[] = {1};
-    
     if (cellLine[0] == -1) getLimits(minn, maxx, 4);
     else if (cellLine[0] == -2) getLimits(minn, maxx, 2);
-    else if (cellLine[0] == -3) getLimits_sepA(minn, maxx, 5);
-    else if (cellLine[0] == -4) getLimits_sepA(minn, maxx, 2);
-    else if (cellLine[0] == -5) getLimits_sepA(minn, maxx, 5);
-    else if (cellLine[0] == -6) getLimits_sepA(minn, maxx, 5);
-    else if (cellLine[0] == -7) getLimits_sepA(minn, maxx, 1);
+    else if (cellLine[0] == -8) getLimits(minn, maxx, 1);
+    else if (cellLine[0] == -9) getRandLimits(minn, maxx, 1);
     else getLimits(minn, maxx, 1);
     
-    int method = 4;
+    int method = -1;
     
     for (ii = 0; ii < nthreads; ii++) {
         inn[ii] = best;
@@ -61,16 +56,10 @@ int main( int argc, char *argv[] ) {
         	threads[ii] = thread(bumpOptimGlobal,minn,maxx,calcErrorOptAllLog,nullptr, method);
         } else if (cellLine[0] == -2) {
         	threads[ii] = thread(bumpOptimGlobal,minn,maxx,calcErrorOptPaperSiLog,nullptr, method);
-        } else if (cellLine[0] == -3) {
-        	threads[ii] = thread(bumpOptimGlobal,minn,maxx,calcErrorOptAllSiLog_sepA,nullptr, method);
-        } else if (cellLine[0] == -4) {
-        	threads[ii] = thread(bumpOptimGlobal,minn,maxx,calcErrorOptPaperSiLog_sepA,nullptr, method);
-        } else if (cellLine[0] == -5) {
-        	threads[ii] = thread(bumpOptimGlobal,minn,maxx,calcErrorSiLog_sepA,nullptr, method);
-        } else if (cellLine[0] == -6) {
-        	threads[ii] = thread(bumpOptimGlobal,minn,maxx,calcErrorOptPaperSiAllLog_sepA,nullptr, method);
-        } else if (cellLine[0] == -7) {
-        	threads[ii] = thread(bumpOptimGlobal,minn,maxx,calcErrorOptPaperSiOneLog_sepA,Acell, method);
+        } else if (cellLine[0] == -8) {
+        	threads[ii] = thread(bumpOptimGlobal,minn,maxx,calcErrorOptA549Full,nullptr, method);
+        } else if (cellLine[0] == -9) {
+            threads[ii] = thread(randLargeResponse,minn,maxx);
         } else {
         	threads[ii] = thread(bumpOptimGlobal,minn,maxx,calcErrorOptOneLog,cellLine, method);
         }

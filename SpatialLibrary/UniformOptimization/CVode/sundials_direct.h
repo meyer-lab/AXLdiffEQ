@@ -112,8 +112,8 @@ extern "C" {
 
 typedef struct _DlsMat {
   int type;
-  long int M;
-  long int N;
+  size_t M;
+  size_t N;
   long int ldim;
   long int mu;
   long int ml;

@@ -108,16 +108,16 @@ long int denseGETRF(double **a, long int m, long int n, long int *p) {
 
 
 
-void denseCopy(double **a, double **b, long int m, long int n) {
+void denseCopy(double **a, double **b, size_t m, size_t n) {
   for (size_t j = 0; j < n; j++) memcpy(b[j], a[j], m*sizeof(double));
 }
 
-void denseScale(double c, double **a, long int m, long int n) {
+void denseScale(double c, double **a, size_t m, size_t n) {
   for (size_t j=0; j < n; j++) {
     for (size_t i=0; i < m; i++) a[j][i] *= c;
   }
 }
 
-void denseAddIdentity(double **a, long int n) {
+void denseAddIdentity(double **a, size_t n) {
   for (size_t i=0; i < n; i++) a[i][i] += 1.0;
 }
