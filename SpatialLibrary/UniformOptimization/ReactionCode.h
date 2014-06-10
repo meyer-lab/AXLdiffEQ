@@ -13,7 +13,6 @@
 #include <array>
 #include <vector>
 
-
 #define Nspecies 14
 #define maxR 1.0
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
@@ -21,7 +20,7 @@
 extern double diffD[Nspecies];
 extern double endoImpair; ///< Extent by which to impair endocytosis of Gas6-bound species.
 extern double degImpair;
-extern const double internalFrac;
+extern __thread double internalFrac;
 
 typedef std::array< double , 19 > param_type;
 
@@ -61,8 +60,5 @@ double pYcalc (N_Vector, double);
 double GasCalc (N_Vector);
 double surfAXL (N_Vector);
 double D2Calc (N_Vector state);
-
-
-
 
 #endif /* defined(__UniformOptimization__ReactionCode__) */

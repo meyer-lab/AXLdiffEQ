@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9359E69A19476DFB007DB3B6 /* TextExample.m in Sources */ = {isa = PBXBuildFile; fileRef = 9359E69919476DFB007DB3B6 /* TextExample.m */; };
+		9359E69B19476DFB007DB3B6 /* TextExample.m in Sources */ = {isa = PBXBuildFile; fileRef = 9359E69919476DFB007DB3B6 /* TextExample.m */; };
+		9359E69C19476DFB007DB3B6 /* TextExample.m in Sources */ = {isa = PBXBuildFile; fileRef = 9359E69919476DFB007DB3B6 /* TextExample.m */; };
+		9359E6A619476F44007DB3B6 /* Optimize_Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6A519476F44007DB3B6 /* Optimize_Tests.m */; };
+		9359E6A719476F44007DB3B6 /* libOptimize.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9370A68817E7534800791D49 /* libOptimize.dylib */; };
 		935C638518D1E4A50069EF58 /* ModelRunning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935C638318D1E4A50069EF58 /* ModelRunning.cpp */; };
 		935C638618D1E4A50069EF58 /* ModelRunning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935C638318D1E4A50069EF58 /* ModelRunning.cpp */; };
 		935C638718D1E4A50069EF58 /* ModelRunning.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C638418D1E4A50069EF58 /* ModelRunning.h */; };
@@ -20,9 +25,6 @@
 		9389C4A818E3A2A30015B8B2 /* cvode.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C47F18E3A2A30015B8B2 /* cvode.c */; };
 		9389C4A918E3A2A30015B8B2 /* cvode.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C47F18E3A2A30015B8B2 /* cvode.c */; };
 		9389C4AA18E3A2A30015B8B2 /* cvode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C48018E3A2A30015B8B2 /* cvode.h */; };
-		9389C4AB18E3A2A30015B8B2 /* cvode_band.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C48118E3A2A30015B8B2 /* cvode_band.c */; };
-		9389C4AC18E3A2A30015B8B2 /* cvode_band.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C48118E3A2A30015B8B2 /* cvode_band.c */; };
-		9389C4AD18E3A2A30015B8B2 /* cvode_band.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C48218E3A2A30015B8B2 /* cvode_band.h */; };
 		9389C4AE18E3A2A30015B8B2 /* cvode_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C48318E3A2A30015B8B2 /* cvode_dense.c */; };
 		9389C4AF18E3A2A30015B8B2 /* cvode_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C48318E3A2A30015B8B2 /* cvode_dense.c */; };
 		9389C4B018E3A2A30015B8B2 /* cvode_dense.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C48418E3A2A30015B8B2 /* cvode_dense.h */; };
@@ -50,7 +52,6 @@
 		9389C4D918E3A2A30015B8B2 /* sundials_nvector.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C4A018E3A2A30015B8B2 /* sundials_nvector.h */; };
 		9389C4E818E3A3BC0015B8B2 /* Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C4E518E3A3BC0015B8B2 /* Testing.h */; };
 		9389C4F618E3B2250015B8B2 /* cvode.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C47F18E3A2A30015B8B2 /* cvode.c */; };
-		9389C4F718E3B2250015B8B2 /* cvode_band.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C48118E3A2A30015B8B2 /* cvode_band.c */; };
 		9389C4F818E3B2250015B8B2 /* cvode_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C48318E3A2A30015B8B2 /* cvode_dense.c */; };
 		9389C4F918E3B2250015B8B2 /* cvode_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C48518E3A2A30015B8B2 /* cvode_direct.c */; };
 		9389C4FA18E3B2250015B8B2 /* cvode_io.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C48918E3A2A30015B8B2 /* cvode_io.c */; };
@@ -69,9 +70,18 @@
 		93A2529817E60FF800FC8307 /* UniformOptimization.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 93A2529717E60FF800FC8307 /* UniformOptimization.1 */; };
 		93A252A017E6101300FC8307 /* BlasHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A2529E17E6101300FC8307 /* BlasHeader.cpp */; };
 		93A4907F18DF082D00CF316F /* Optimization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A4907D18DF082D00CF316F /* Optimization.cpp */; };
-		93A4908018DF082D00CF316F /* Optimization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A4907D18DF082D00CF316F /* Optimization.cpp */; };
 		93A4908118DF082D00CF316F /* Optimization.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A4907E18DF082D00CF316F /* Optimization.h */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9359E6A819476F44007DB3B6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 93A2528A17E60FF800FC8307 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9370A68717E7534800791D49;
+			remoteInfo = Optimize;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		9389C4EB18E3A4C20015B8B2 /* CopyFiles */ = {
@@ -96,6 +106,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9359E69919476DFB007DB3B6 /* TextExample.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextExample.m; sourceTree = "<group>"; };
+		9359E6A119476F44007DB3B6 /* Optimize Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Optimize Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9359E6A419476F44007DB3B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9359E6A519476F44007DB3B6 /* Optimize_Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Optimize_Tests.m; sourceTree = "<group>"; };
 		935C638318D1E4A50069EF58 /* ModelRunning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModelRunning.cpp; sourceTree = "<group>"; };
 		935C638418D1E4A50069EF58 /* ModelRunning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelRunning.h; sourceTree = "<group>"; };
 		9370A68817E7534800791D49 /* libOptimize.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libOptimize.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,8 +119,6 @@
 		9385E03A18CF36FB00FEB938 /* ReactionCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactionCode.h; sourceTree = "<group>"; };
 		9389C47F18E3A2A30015B8B2 /* cvode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cvode.c; sourceTree = "<group>"; };
 		9389C48018E3A2A30015B8B2 /* cvode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cvode.h; sourceTree = "<group>"; };
-		9389C48118E3A2A30015B8B2 /* cvode_band.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cvode_band.c; sourceTree = "<group>"; };
-		9389C48218E3A2A30015B8B2 /* cvode_band.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cvode_band.h; sourceTree = "<group>"; };
 		9389C48318E3A2A30015B8B2 /* cvode_dense.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cvode_dense.c; sourceTree = "<group>"; };
 		9389C48418E3A2A30015B8B2 /* cvode_dense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cvode_dense.h; sourceTree = "<group>"; };
 		9389C48518E3A2A30015B8B2 /* cvode_direct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cvode_direct.c; sourceTree = "<group>"; };
@@ -137,6 +149,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		9359E69E19476F44007DB3B6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9359E6A719476F44007DB3B6 /* libOptimize.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9370A68517E7534800791D49 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -161,13 +181,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9359E6A219476F44007DB3B6 /* Optimize Tests */ = {
+			isa = PBXGroup;
+			children = (
+				9359E6A519476F44007DB3B6 /* Optimize_Tests.m */,
+				9359E6A319476F44007DB3B6 /* Supporting Files */,
+			);
+			path = "Optimize Tests";
+			sourceTree = "<group>";
+		};
+		9359E6A319476F44007DB3B6 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				9359E6A419476F44007DB3B6 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		9389C47E18E3A2A30015B8B2 /* CVode */ = {
 			isa = PBXGroup;
 			children = (
 				9389C47F18E3A2A30015B8B2 /* cvode.c */,
 				9389C48018E3A2A30015B8B2 /* cvode.h */,
-				9389C48118E3A2A30015B8B2 /* cvode_band.c */,
-				9389C48218E3A2A30015B8B2 /* cvode_band.h */,
 				9389C48318E3A2A30015B8B2 /* cvode_dense.c */,
 				9389C48418E3A2A30015B8B2 /* cvode_dense.h */,
 				9389C48518E3A2A30015B8B2 /* cvode_direct.c */,
@@ -193,6 +228,7 @@
 			isa = PBXGroup;
 			children = (
 				93A2529417E60FF800FC8307 /* UniformOptimization */,
+				9359E6A219476F44007DB3B6 /* Optimize Tests */,
 				93A2529317E60FF800FC8307 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -203,6 +239,7 @@
 				93A2529217E60FF800FC8307 /* UniformOptimization */,
 				9370A68817E7534800791D49 /* libOptimize.dylib */,
 				9389C4ED18E3A4C20015B8B2 /* Test */,
+				9359E6A119476F44007DB3B6 /* Optimize Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -223,6 +260,7 @@
 				93A4907E18DF082D00CF316F /* Optimization.h */,
 				93A2529E17E6101300FC8307 /* BlasHeader.cpp */,
 				93A2529F17E6101300FC8307 /* BlasHeader.h */,
+				9359E69919476DFB007DB3B6 /* TextExample.m */,
 				9389C4E418E3A3BC0015B8B2 /* Testing.cpp */,
 				9389C4E518E3A3BC0015B8B2 /* Testing.h */,
 			);
@@ -247,7 +285,6 @@
 				9389C4B018E3A2A30015B8B2 /* cvode_dense.h in Headers */,
 				9385E03818CF36C100FEB938 /* CVodeHelpers.h in Headers */,
 				935C638718D1E4A50069EF58 /* ModelRunning.h in Headers */,
-				9389C4AD18E3A2A30015B8B2 /* cvode_band.h in Headers */,
 				9389C4D918E3A2A30015B8B2 /* sundials_nvector.h in Headers */,
 				9389C4E818E3A3BC0015B8B2 /* Testing.h in Headers */,
 				9389C4B318E3A2A30015B8B2 /* cvode_direct.h in Headers */,
@@ -258,6 +295,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		9359E6A019476F44007DB3B6 /* Optimize Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9359E6AA19476F44007DB3B6 /* Build configuration list for PBXNativeTarget "Optimize Tests" */;
+			buildPhases = (
+				9359E69D19476F44007DB3B6 /* Sources */,
+				9359E69E19476F44007DB3B6 /* Frameworks */,
+				9359E69F19476F44007DB3B6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9359E6A919476F44007DB3B6 /* PBXTargetDependency */,
+			);
+			name = "Optimize Tests";
+			productName = "Optimize Tests";
+			productReference = 9359E6A119476F44007DB3B6 /* Optimize Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		9370A68717E7534800791D49 /* Optimize */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9370A68B17E7534800791D49 /* Build configuration list for PBXNativeTarget "Optimize" */;
@@ -317,6 +372,12 @@
 			attributes = {
 				LastUpgradeCheck = 0600;
 				ORGANIZATIONNAME = "Aaron Meyer";
+				TargetAttributes = {
+					9359E6A019476F44007DB3B6 = {
+						CreatedOnToolsVersion = 6.0;
+						TestTargetID = 9370A68717E7534800791D49;
+					};
+				};
 			};
 			buildConfigurationList = 93A2528D17E60FF800FC8307 /* Build configuration list for PBXProject "UniformOptimization" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -333,30 +394,48 @@
 				93A2529117E60FF800FC8307 /* UniformOptimization */,
 				9370A68717E7534800791D49 /* Optimize */,
 				9389C4EC18E3A4C20015B8B2 /* Test */,
+				9359E6A019476F44007DB3B6 /* Optimize Tests */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		9359E69F19476F44007DB3B6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		9359E69D19476F44007DB3B6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9359E6A619476F44007DB3B6 /* Optimize_Tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9370A68417E7534800791D49 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				9389C4CC18E3A2A30015B8B2 /* sundials_dense.c in Sources */,
 				9370A68F17E754C700791D49 /* BlasHeader.cpp in Sources */,
-				93A4908018DF082D00CF316F /* Optimization.cpp in Sources */,
 				9385E03C18CF36FB00FEB938 /* ReactionCode.cpp in Sources */,
 				9389C4B218E3A2A30015B8B2 /* cvode_direct.c in Sources */,
 				9389C4C918E3A2A30015B8B2 /* sundials_band.c in Sources */,
 				9389C4A918E3A2A30015B8B2 /* cvode.c in Sources */,
 				9389C4B718E3A2A30015B8B2 /* cvode_io.c in Sources */,
+				9359E69B19476DFB007DB3B6 /* TextExample.m in Sources */,
 				9385E03718CF36C100FEB938 /* CVodeHelpers.cpp in Sources */,
 				9389C4AF18E3A2A30015B8B2 /* cvode_dense.c in Sources */,
 				9389C4C618E3A2A30015B8B2 /* nvector_serial.c in Sources */,
 				9389C4D818E3A2A30015B8B2 /* sundials_nvector.c in Sources */,
 				9389C4CF18E3A2A30015B8B2 /* sundials_direct.c in Sources */,
 				935C638618D1E4A50069EF58 /* ModelRunning.cpp in Sources */,
-				9389C4AC18E3A2A30015B8B2 /* cvode_band.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,9 +450,9 @@
 				9389C50D18E3B2380015B8B2 /* BlasHeader.cpp in Sources */,
 				9389C50E18E3B2380015B8B2 /* Testing.cpp in Sources */,
 				9389C4F618E3B2250015B8B2 /* cvode.c in Sources */,
-				9389C4F718E3B2250015B8B2 /* cvode_band.c in Sources */,
 				9389C4F818E3B2250015B8B2 /* cvode_dense.c in Sources */,
 				9389C4F918E3B2250015B8B2 /* cvode_direct.c in Sources */,
+				9359E69C19476DFB007DB3B6 /* TextExample.m in Sources */,
 				9389C4FA18E3B2250015B8B2 /* cvode_io.c in Sources */,
 				9389C4FF18E3B2250015B8B2 /* nvector_serial.c in Sources */,
 				9389C50018E3B2250015B8B2 /* sundials_band.c in Sources */,
@@ -392,11 +471,11 @@
 				9389C4C518E3A2A30015B8B2 /* nvector_serial.c in Sources */,
 				93A252A017E6101300FC8307 /* BlasHeader.cpp in Sources */,
 				9385E03B18CF36FB00FEB938 /* ReactionCode.cpp in Sources */,
-				9389C4AB18E3A2A30015B8B2 /* cvode_band.c in Sources */,
 				9389C4AE18E3A2A30015B8B2 /* cvode_dense.c in Sources */,
 				9389C4D718E3A2A30015B8B2 /* sundials_nvector.c in Sources */,
 				9385E03618CF36C100FEB938 /* CVodeHelpers.cpp in Sources */,
 				9389C4CE18E3A2A30015B8B2 /* sundials_direct.c in Sources */,
+				9359E69A19476DFB007DB3B6 /* TextExample.m in Sources */,
 				9389C4CB18E3A2A30015B8B2 /* sundials_dense.c in Sources */,
 				935C638518D1E4A50069EF58 /* ModelRunning.cpp in Sources */,
 				9389C4A818E3A2A30015B8B2 /* cvode.c in Sources */,
@@ -408,7 +487,59 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		9359E6A919476F44007DB3B6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9370A68717E7534800791D49 /* Optimize */;
+			targetProxy = 9359E6A819476F44007DB3B6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		9359E6AB19476F44007DB3B6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "Optimize Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				METAL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9359E6AC19476F44007DB3B6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "Optimize Tests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				METAL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		9370A68917E7534800791D49 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -564,6 +695,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -614,6 +746,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
@@ -638,6 +771,7 @@
 		93A2529C17E60FF800FC8307 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -660,6 +794,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				LLVM_LTO = YES;
 				LLVM_VECTORIZE_LOOPS = YES;
@@ -676,6 +811,7 @@
 		93A2529D17E60FF800FC8307 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -699,6 +835,7 @@
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				LLVM_LTO = YES;
 				LLVM_VECTORIZE_LOOPS = YES;
@@ -715,6 +852,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9359E6AA19476F44007DB3B6 /* Build configuration list for PBXNativeTarget "Optimize Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9359E6AB19476F44007DB3B6 /* Debug */,
+				9359E6AC19476F44007DB3B6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		9370A68B17E7534800791D49 /* Build configuration list for PBXNativeTarget "Optimize" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

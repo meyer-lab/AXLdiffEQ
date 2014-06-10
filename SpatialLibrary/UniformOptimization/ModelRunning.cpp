@@ -256,6 +256,16 @@ void calcErrorRefA549 (param_type params, double *out, atomic<bool> *done) {
     *done = true;
 }
 
+void calcErrorRefA549VaryEndo (param_type params, double *out, atomic<bool> *done) {
+    struct rates pp = Param(params);
+    pp.expression = params[16];
+    
+    internalFrac = params[17];
+    
+    *out = calcErrorA549Full(pp, params[15]);
+    *done = true;
+}
+
 
 double calcError (param_type inP) {
     struct rates params = Param(inP);

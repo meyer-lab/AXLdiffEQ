@@ -6,14 +6,13 @@
 #include <random>
 #include <iostream>
 #include <vector>
-#include <boost/thread/thread.hpp>
+#include <thread>
 #include <climits>
 #include <sstream>
 #include "Optimization.h"
 #include "BlasHeader.h"
 
 using namespace std;
-using namespace boost;
 
 int main( int argc, char *argv[] ) {
    

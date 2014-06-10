@@ -9,14 +9,23 @@
 #ifndef __UniformOptimization__HelperFunctions__
 #define __UniformOptimization__HelperFunctions__
 
-extern "C" int matlabEntry(double * , double * , int);
-extern "C" int calcProfileMatlab(double *, double *, double *, int, double, double, double, int);
-extern "C" int matlabDiffTPS(double *, double , double *, int , double , double *, double *, int, double *, double, double);
-extern "C" int matlabDiffTPS_pY(double *, double , double *, int , double , double *, double *, int, double *, double, double, int);
-extern "C" int matlabDiffTPS_pYavg(double *, double, double *, int, double , double *, double *, int, double *, double, double, int);
-extern "C" void rEntry(double *, const double *);
-extern "C" double calcErrorOneCellLine (int, const double *);
-extern "C" int matlabEntryWithSi(double *, double *, int);
-extern "C" int matlabEntryA549(double *, double *, int);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int matlabEntry(double * , double * , int);
+int calcProfileMatlab(double *, double *, double *, int, double, double, double, int);
+int matlabDiffTPS(double *, double , double *, int , double , double *, double *, int, double *, double, double);
+int matlabDiffTPS_pY(double *, double , double *, int , double , double *, double *, int, double *, double, double, int);
+int matlabDiffTPS_pYavg(double *, double, double *, int, double , double *, double *, int, double *, double, double, int);
+void rEntry(double *, const double *);
+double calcErrorOneCellLine (int, const double *);
+int matlabEntryWithSi(double *, double *, int);
+int matlabEntryA549(double *, double *, int);
+int matlabEntryA549VaryEndo(double *dataPtr, double *pIn, int nIn);
+    
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* defined(__UniformOptimization__HelperFunctions__) */

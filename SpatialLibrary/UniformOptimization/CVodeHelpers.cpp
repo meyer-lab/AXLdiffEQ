@@ -10,7 +10,6 @@
 #include "CVode/cvode.h"             /* prototypes for CVODE fcts., consts. */
 #include <string>
 #include "CVode/cvode_dense.h"       /* prototype for CVDense */
-#include "CVode/cvode_band.h"
 #include "CVode/cvode_direct.h"
 #include <sstream>
 #include <iostream>
@@ -77,11 +76,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     }
     
     // Call CVDense to specify the CVDENSE dense linear solver
-    //if (NV_LENGTH_S(init) > 200) {
-    //    flag = CVBand(cvode_mem, (int) NV_LENGTH_S(init), 3, 3);
-    //} else {
-        flag = CVDense(cvode_mem, NV_LENGTH_S(init));
-    //}
+    flag = CVDense(cvode_mem, NV_LENGTH_S(init));
     
     if (flag < 0) {
         CVodeFree(&cvode_mem);

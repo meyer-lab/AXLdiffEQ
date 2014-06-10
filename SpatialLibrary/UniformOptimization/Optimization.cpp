@@ -16,9 +16,6 @@
 #include <algorithm>
 #include <mutex>
 
-
-#define noiseOut 0
-
 using namespace nlopt;
 using namespace std;
 
@@ -117,56 +114,67 @@ void getRandLimits (vector<double> &minn, vector<double> &maxx, int nCells) {
     maxx.clear();
     
     // Ig1 bind
-    minn.push_back(-4);
-    maxx.push_back(1);
+    minn.push_back(-2.3829);
+    maxx.push_back(-2.3829);
     
     // Ig2 bind
-    minn.push_back(-4);
-    maxx.push_back(1);
+    minn.push_back(0.77811	);
+    maxx.push_back(0.77811	);
+    
+    minn.push_back(-5);
+    maxx.push_back(0);
+    
+    minn.push_back(-5);
+    maxx.push_back(5);
+    
+    // Receptor reactions
+    minn.push_back(-5);
+    maxx.push_back(0);
     
     minn.push_back(-5);
     maxx.push_back(5);
     
     minn.push_back(-5);
-    maxx.push_back(5);
-    
-    for (size_t ii = 0; ii < 4; ii++) {
-        minn.push_back(-5);
-        maxx.push_back(5);
-    }
-    
-    minn.push_back(-6);
     maxx.push_back(0);
-    
-    minn.push_back(-3);
-    maxx.push_back(1);
-    
-    minn.push_back(-6);
-    maxx.push_back(0);
-    
-    minn.push_back(-3);
-    maxx.push_back(-1);
-    
-    minn.push_back(-4);
-    maxx.push_back(-1);
     
     minn.push_back(-5);
+    maxx.push_back(5);
+    
+    // AXLint1
+    minn.push_back(-2.2774);
+    maxx.push_back(-2.2774);
+    
+    // AXLint2
+    minn.push_back(-3);
+    maxx.push_back(-3);
+    
+    // ScaleA
+    minn.push_back(-8);
     maxx.push_back(0);
     
+    // kRec
+    minn.push_back(-2.5648);
+    maxx.push_back(-2.5648);
+    
+    // kDeg
     minn.push_back(-1);
+    maxx.push_back(-1);
+    
+    // fElse
+    minn.push_back(-1.2476);
+    maxx.push_back(-1.2476);
+    
+    // fD2
+    minn.push_back(0);
     maxx.push_back(0);
     
     // Gas6 autocrine
-    for (size_t ii = 0; ii < (size_t) nCells; ii++) {
-        minn.push_back(-3);
-        maxx.push_back(0);
-    }
+    minn.push_back(-2);
+    maxx.push_back(-2);
     
     // AXL expression
-    for (size_t ii = 0; ii < (size_t) nCells; ii++) {
-        minn.push_back(0);
-        maxx.push_back(5);
-    }
+    minn.push_back(2);
+    maxx.push_back(2);
 }
 
 double calcErrorOptLog (unsigned n, const double *x, double *grad, void *data) {
@@ -285,9 +293,13 @@ void bumpOptimGlobal(vector<double> minn, vector<double> maxx, nlopt_func minFun
 }
 
 void randLargeResponse(vector<double> minn, vector<double> maxx) {
-    double xx[20];
+    double xx[18];
     double dataPtr[2];
-    double tps[2] = {0, 1};
+    double tps[2] = {0, 0.5};
+    const double threshold = 20;
+    
+    vector<double> foundMin = maxx;
+    vector<double> foundMax = minn;
     
     size_t N = 0;
     
@@ -303,27 +315,35 @@ void randLargeResponse(vector<double> minn, vector<double> maxx) {
             xx[i] = pow(10,(minn[i] + (maxx[i] - minn[i]) * uniRnd(generator)));
         }
         
-        if (calcProfileMatlab(dataPtr, xx, tps, 2, xx[15], xx[16], 1.25, 1)) continue;
+        if ((xx[3] - xx[1]) < (xx[2] - xx[0])) continue;
+        if ((xx[2] - xx[0]) > 0) continue;
+        if ((xx[3] - xx[1]) < 1) continue;
+        if ((xx[3] - xx[1]) > 3) continue;
         
-        if ((dataPtr[1] / dataPtr[0]) < 20) continue;
         
-        if (calcProfileMatlab(dataPtr, xx, tps, 2, xx[15], xx[16], 1.25, 0)) continue;
+        if (calcProfileMatlab(dataPtr, xx, tps, 2, xx[15], xx[16], 1.25, 5)) continue;
+
+        if (dataPtr[1] < 0.3) continue;
+        if ((dataPtr[1] / dataPtr[0]) < threshold) continue;
         
-        if ((dataPtr[1] / dataPtr[0]) > 20) {
-            mtx.lock();
-            
-            //cout << (dataPtr[1] / dataPtr[0]) << endl;
-            
-            for (size_t i = 0; i < minn.size(); i++) {
-                cout << log10(xx[i]) << " ";
-            }
-            
-            cout << N << endl;
-            
-            mtx.unlock();
+        
+        for (size_t i = 0; i < minn.size(); i++) {
+            if (log10(xx[i]) < foundMin[i]) foundMin[i] = log10(xx[i]);
+            if (log10(xx[i]) > foundMax[i]) foundMax[i] = log10(xx[i]);
         }
+        
+        mtx.lock();
+        
+        for (size_t i = 0; i < minn.size(); i++) {
+            cout << foundMin[i] << " ";
+        }
+        //cout << endl;
+//        for (size_t i = 0; i < minn.size(); i++) {
+//            cout << foundMax[i] << " ";
+//        }
+        
+        cout << N << endl;
+        
+        mtx.unlock();
     }
 }
-
-
-

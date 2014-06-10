@@ -19,7 +19,7 @@ using namespace std;
 
 double endoImpair = 1; ///< Extent by which to impair endocytosis of Gas6-bound species.
 double degImpair = 1;
-const double internalFrac = 0.5;
+__thread double internalFrac = 0.5;
 double diffD[Nspecies];
 const double fgMgConv = 135.2;
 
@@ -228,4 +228,3 @@ struct rates Param(param_type params) {
     
     return out;
 }
-

@@ -129,5 +129,6 @@ double calcErrorSi (param_type);
 void errorLogger (std::stringstream &);
 void calcErrorRefA549 (param_type, double *, std::atomic<bool> *);
 double calcErrorA549Full (struct rates inP, double autocrine);
+void calcErrorRefA549VaryEndo (param_type, double *, std::atomic<bool> *);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

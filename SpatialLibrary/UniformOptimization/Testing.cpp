@@ -53,11 +53,6 @@ BOOST_AUTO_TEST_CASE( testDiffModelA ) {
 }
 
 
-
-
-
-
-
 BOOST_AUTO_TEST_CASE( matlabEntry_Test ) {
 	double data[1];
 
