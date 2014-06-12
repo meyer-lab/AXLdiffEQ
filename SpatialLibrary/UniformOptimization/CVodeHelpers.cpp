@@ -107,7 +107,7 @@ void solverReset (void *cvode_mem, N_Vector init) {
 }
 
 void* solver_setup (N_Vector init, void *params, CVRhsFn f) {
-    return solver_setup (init, params, 1E-3, 1E-8, f);
+    return solver_setup (init, params, 1E-3, 1E-6, f);
 }
 
 void PrintFinalStats(void *cvode_mem)

@@ -13,7 +13,8 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <nlopt.hpp>
+#include <math.h>
+#include "nlopt.h"
 #include "ModelRunning.h"
 #include "CVodeHelpers.h"
 
@@ -164,14 +165,27 @@ double errorFuncOpt (N_Vector fitt, const double *pYmeas, const double *errorMea
     dataS.errorMeas = errorMeas;
     
     double ff = 0;
-    vector<double> xx = {initialCondition(&dataS)};
+    double xx[1] = {initialCondition(&dataS)};
+    double lower[1] = {xx[0]/2};
+    double upper[1] = {xx[0]*2};
     
-    nlopt::opt opter = nlopt::opt(nlopt::algorithm::LN_COBYLA, 1);
-    opter.set_lower_bounds(xx[0]/2);
-    opter.set_upper_bounds(xx[0]*2);
-    opter.set_min_objective(errorOpt,&dataS);
-    opter.set_xtol_rel(1E-8);
-    nlopt::result flag = opter.optimize(xx, ff);
+    
+    
+    
+
+    
+    
+    
+    
+    
+    nlopt_opt opter = nlopt_create(NLOPT_LN_COBYLA, 1);
+    
+    nlopt_set_lower_bounds(opter, lower);
+    nlopt_set_upper_bounds(opter, upper);
+    nlopt_set_min_objective(opter, errorOpt,&dataS);
+    nlopt_set_xtol_rel(opter, 1E-8);
+    int flag = nlopt_optimize(opter, xx, &ff);
+    nlopt_destroy(opter);
     
     if (flag < 0) throw runtime_error(string("Error during error optimization step."));
     
