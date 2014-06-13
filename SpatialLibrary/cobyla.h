@@ -37,8 +37,56 @@
 #ifndef _COBYLA_
 #define _COBYLA_
 
-#include "nlopt.h"
-#include "nlopt-util.h"
+/* A preconditioner, which preconditions v at x to return vpre.
+ (The meaning of "preconditioning" is algorithm-dependent.) */
+typedef void (*nlopt_precond)(unsigned n, const double *x, const double *v,
+double *vpre, void *data);
+
+typedef double (*nlopt_func)(unsigned n, const double *x,
+double *gradient, /* NULL if not needed */
+void *func_data);
+
+typedef void (*nlopt_mfunc)(unsigned m, double *result,
+unsigned n, const double *x,
+double *gradient, /* NULL if not needed */
+void *func_data);
+
+
+/* stopping criteria */
+typedef struct {
+    unsigned n;
+    double minf_max;
+    double ftol_rel;
+    double ftol_abs;
+    double xtol_rel;
+    const double *xtol_abs;
+    int nevals, maxeval;
+    double maxtime, start;
+    int *force_stop;
+} nlopt_stopping;
+
+typedef struct {
+    unsigned m; /* dimensional of constraint: mf maps R^n -> R^m */
+    nlopt_func f; /* one-dimensional constraint, requires m == 1 */
+    nlopt_mfunc mf;
+    nlopt_precond pre; /* preconditioner for f (NULL if none or if mf) */
+    void *f_data;
+    double *tol;
+} nlopt_constraint;
+
+typedef enum {
+    NLOPT_FAILURE = -1, /* generic failure code */
+    NLOPT_INVALID_ARGS = -2,
+    NLOPT_OUT_OF_MEMORY = -3,
+    NLOPT_ROUNDOFF_LIMITED = -4,
+    NLOPT_FORCED_STOP = -5,
+    NLOPT_SUCCESS = 1, /* generic success code */
+    NLOPT_STOPVAL_REACHED = 2,
+    NLOPT_FTOL_REACHED = 3,
+    NLOPT_XTOL_REACHED = 4,
+    NLOPT_MAXEVAL_REACHED = 5,
+    NLOPT_MAXTIME_REACHED = 6
+} nlopt_result;
 
 #ifdef __cplusplus
 extern "C"

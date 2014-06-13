@@ -13,8 +13,9 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include "cobyla.h"
 #include <math.h>
-#include "nlopt.h"
+//#include "nlopt.h"
 #include "ModelRunning.h"
 #include "CVodeHelpers.h"
 
@@ -165,27 +166,24 @@ double errorFuncOpt (N_Vector fitt, const double *pYmeas, const double *errorMea
     dataS.errorMeas = errorMeas;
     
     double ff = 0;
-    double xx[1] = {initialCondition(&dataS)};
-    double lower[1] = {xx[0]/2};
-    double upper[1] = {xx[0]*2};
+    double xx = initialCondition(&dataS);
+    double lower = xx/2;
+    double upper = xx*2;
+    double dx = 3*xx/8;
+    double del = 1E-8;
     
+    nlopt_stopping stop;
+    stop.n = 0;
+    stop.minf_max = 0.0;
+    stop.ftol_rel = 0;
+    stop.ftol_abs = 0;
+    stop.xtol_rel = 1E-8;
+    stop.xtol_abs = &del;
+    stop.nevals = 0;
+    stop.maxeval = 1E9;
+    stop.force_stop = 0;
     
-    
-    
-
-    
-    
-    
-    
-    
-    nlopt_opt opter = nlopt_create(NLOPT_LN_COBYLA, 1);
-    
-    nlopt_set_lower_bounds(opter, lower);
-    nlopt_set_upper_bounds(opter, upper);
-    nlopt_set_min_objective(opter, errorOpt,&dataS);
-    nlopt_set_xtol_rel(opter, 1E-8);
-    int flag = nlopt_optimize(opter, xx, &ff);
-    nlopt_destroy(opter);
+    int flag = cobyla_minimize(1, errorOpt, &dataS, 0, nullptr, 0, nullptr, &lower, &upper, &xx, &ff, &stop, &dx);
     
     if (flag < 0) throw runtime_error(string("Error during error optimization step."));
     

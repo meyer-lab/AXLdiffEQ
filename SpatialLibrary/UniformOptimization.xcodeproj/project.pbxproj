@@ -11,9 +11,6 @@
 		9359E6B21947734B007DB3B6 /* Testing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6B11947734B007DB3B6 /* Testing.m */; };
 		9359E6C919478931007DB3B6 /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6B419478931007DB3B6 /* cobyla.c */; };
 		9359E6CA19478931007DB3B6 /* cobyla.h in Headers */ = {isa = PBXBuildFile; fileRef = 9359E6B519478931007DB3B6 /* cobyla.h */; };
-		9359E6D019478931007DB3B6 /* nlopt-util.h in Headers */ = {isa = PBXBuildFile; fileRef = 9359E6BB19478931007DB3B6 /* nlopt-util.h */; };
-		9359E6D119478931007DB3B6 /* nlopt.h in Headers */ = {isa = PBXBuildFile; fileRef = 9359E6BC19478931007DB3B6 /* nlopt.h */; };
-		9359E6D419478931007DB3B6 /* options.c in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6BF19478931007DB3B6 /* options.c */; };
 		935C638618D1E4A50069EF58 /* ModelRunning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935C638318D1E4A50069EF58 /* ModelRunning.cpp */; };
 		935C638718D1E4A50069EF58 /* ModelRunning.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C638418D1E4A50069EF58 /* ModelRunning.h */; };
 		9370A68F17E754C700791D49 /* BlasHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A2529E17E6101300FC8307 /* BlasHeader.cpp */; };
@@ -71,9 +68,6 @@
 		9359E6B11947734B007DB3B6 /* Testing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Testing.m; path = UniformOptimization/Testing.m; sourceTree = "<group>"; };
 		9359E6B419478931007DB3B6 /* cobyla.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cobyla.c; sourceTree = "<group>"; };
 		9359E6B519478931007DB3B6 /* cobyla.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cobyla.h; sourceTree = "<group>"; };
-		9359E6BB19478931007DB3B6 /* nlopt-util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "nlopt-util.h"; sourceTree = "<group>"; };
-		9359E6BC19478931007DB3B6 /* nlopt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nlopt.h; sourceTree = "<group>"; };
-		9359E6BF19478931007DB3B6 /* options.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = options.c; sourceTree = "<group>"; };
 		935C638318D1E4A50069EF58 /* ModelRunning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelRunning.cpp; path = UniformOptimization/ModelRunning.cpp; sourceTree = "<group>"; };
 		935C638418D1E4A50069EF58 /* ModelRunning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelRunning.h; path = UniformOptimization/ModelRunning.h; sourceTree = "<group>"; };
 		9370A68817E7534800791D49 /* libOptimize.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libOptimize.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,18 +118,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9359E6B319478913007DB3B6 /* NLopt */ = {
-			isa = PBXGroup;
-			children = (
-				9359E6B419478931007DB3B6 /* cobyla.c */,
-				9359E6B519478931007DB3B6 /* cobyla.h */,
-				9359E6BB19478931007DB3B6 /* nlopt-util.h */,
-				9359E6BC19478931007DB3B6 /* nlopt.h */,
-				9359E6BF19478931007DB3B6 /* options.c */,
-			);
-			name = NLopt;
-			sourceTree = "<group>";
-		};
 		9389C47E18E3A2A30015B8B2 /* CVode */ = {
 			isa = PBXGroup;
 			children = (
@@ -166,7 +148,6 @@
 		93A2528917E60FF800FC8307 = {
 			isa = PBXGroup;
 			children = (
-				9359E6B319478913007DB3B6 /* NLopt */,
 				9389C47E18E3A2A30015B8B2 /* CVode */,
 				93A2529717E60FF800FC8307 /* UniformOptimization.1 */,
 				9385E03918CF36FB00FEB938 /* ReactionCode.cpp */,
@@ -178,6 +159,8 @@
 				93A2529E17E6101300FC8307 /* BlasHeader.cpp */,
 				93A2529F17E6101300FC8307 /* BlasHeader.h */,
 				9359E6B11947734B007DB3B6 /* Testing.m */,
+				9359E6B419478931007DB3B6 /* cobyla.c */,
+				9359E6B519478931007DB3B6 /* cobyla.h */,
 				93A2529317E60FF800FC8307 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -205,11 +188,9 @@
 				9389C4C718E3A2A30015B8B2 /* nvector_serial.h in Headers */,
 				9389C4D018E3A2A30015B8B2 /* sundials_direct.h in Headers */,
 				9389C4B518E3A2A30015B8B2 /* cvode_impl.h in Headers */,
-				9359E6D019478931007DB3B6 /* nlopt-util.h in Headers */,
 				9389C4B018E3A2A30015B8B2 /* cvode_dense.h in Headers */,
 				9359E6CA19478931007DB3B6 /* cobyla.h in Headers */,
 				9385E03818CF36C100FEB938 /* CVodeHelpers.h in Headers */,
-				9359E6D119478931007DB3B6 /* nlopt.h in Headers */,
 				935C638718D1E4A50069EF58 /* ModelRunning.h in Headers */,
 				9389C4D918E3A2A30015B8B2 /* sundials_nvector.h in Headers */,
 				9389C4B318E3A2A30015B8B2 /* cvode_direct.h in Headers */,
@@ -325,7 +306,6 @@
 				9389C4C618E3A2A30015B8B2 /* nvector_serial.c in Sources */,
 				9389C4D818E3A2A30015B8B2 /* sundials_nvector.c in Sources */,
 				9359E6C919478931007DB3B6 /* cobyla.c in Sources */,
-				9359E6D419478931007DB3B6 /* options.c in Sources */,
 				9389C4CF18E3A2A30015B8B2 /* sundials_direct.c in Sources */,
 				935C638618D1E4A50069EF58 /* ModelRunning.cpp in Sources */,
 			);

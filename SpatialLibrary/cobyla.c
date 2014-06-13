@@ -72,6 +72,237 @@ typedef struct {
      nlopt_stopping *stop;
 } func_wrap_state;
 
+/* Copyright (c) 2007-2014 Massachusetts Institute of Technology
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+#include <float.h>
+
+/*************************************************************************/
+
+int nlopt_isinf(double x) {
+    return fabs(x) >= HUGE_VAL * 0.99
+#ifdef HAVE_ISINF
+    || isinf(x)
+#endif
+    ;
+}
+/*************************************************************************/
+
+/*************************************************************************/
+
+
+
+/* Return a new array of length n (> 0) that gives a rescaling factor
+ for each dimension, or NULL if out of memory, with dx being the
+ array of nonzero initial steps in each dimension.  */
+double *nlopt_compute_rescaling(unsigned n, const double *dx)
+{
+    double *s = (double *) malloc(sizeof(double) * n);
+    unsigned i;
+    
+    if (!s) return NULL;
+    for (i = 0; i < n; ++i) s[i] = 1.0; /* default: no rescaling */
+    if (n == 1) return s;
+    
+    for (i = 1; i < n && dx[i] == dx[i-1]; ++i) ;
+    if (i < n) { /* unequal initial steps, rescale to make equal to dx[0] */
+        for (i = 1; i < n; ++i)
+            s[i] = dx[i] / dx[0];
+    }
+    return s;
+}
+
+void nlopt_rescale(unsigned n, const double *s, const double *x, double *xs)
+{
+    unsigned i;
+    if (!s) { for (i = 0; i < n;++i) xs[i] = x[i]; }
+    else { for (i = 0; i < n;++i) xs[i] = x[i] / s[i]; }
+}
+
+void nlopt_unscale(unsigned n, const double *s, const double *x, double *xs)
+{
+    unsigned i;
+    if (!s) { for (i = 0; i < n;++i) xs[i] = x[i]; }
+    else { for (i = 0; i < n;++i) xs[i] = x[i] * s[i]; }
+}
+
+/* return a new array of length n equal to the original array
+ x divided by the scale factors s, or NULL on a memory error */
+double *nlopt_new_rescaled(unsigned n, const double *s, const double *x)
+{
+    double *xs = (double *) malloc(sizeof(double) * n);
+    if (!xs) return NULL;
+    nlopt_rescale(n, s, x, xs);
+    return xs;
+}
+
+/* since rescaling can flip the signs of the x components and the bounds,
+ we may have to re-order the bounds in order to ensure that they
+ remain in the correct order */
+void nlopt_reorder_bounds(unsigned n, double *lb, double *ub)
+{
+    unsigned i;
+    for (i = 0; i < n; ++i)
+        if (lb[i] > ub[i]) {
+            double t = lb[i];
+            lb[i] = ub[i];
+            ub[i] = t;
+        }
+}
+
+
+/* utility routines to implement the various stopping criteria */
+
+static int relstop(double vold, double vnew, double reltol, double abstol)
+{
+    if (nlopt_isinf(vold)) return 0;
+    return(fabs(vnew - vold) < abstol
+           || fabs(vnew - vold) < reltol * (fabs(vnew) + fabs(vold)) * 0.5
+           || (reltol > 0 && vnew == vold)); /* catch vnew == vold == 0 */
+}
+
+int nlopt_stop_ftol(const nlopt_stopping *s, double f, double oldf)
+{
+    return (relstop(oldf, f, s->ftol_rel, s->ftol_abs));
+}
+
+int nlopt_stop_f(const nlopt_stopping *s, double f, double oldf)
+{
+    return (f <= s->minf_max || nlopt_stop_ftol(s, f, oldf));
+}
+
+int nlopt_stop_x(const nlopt_stopping *s, const double *x, const double *oldx)
+{
+    unsigned i;
+    for (i = 0; i < s->n; ++i)
+        if (!relstop(oldx[i], x[i], s->xtol_rel, s->xtol_abs[i]))
+            return 0;
+    return 1;
+}
+
+int nlopt_stop_dx(const nlopt_stopping *s, const double *x, const double *dx)
+{
+    unsigned i;
+    for (i = 0; i < s->n; ++i)
+        if (!relstop(x[i] - dx[i], x[i], s->xtol_rel, s->xtol_abs[i]))
+            return 0;
+    return 1;
+}
+
+static double sc(double x, double smin, double smax)
+{
+    return smin + x * (smax - smin);
+}
+
+/* some of the algorithms rescale x to a unit hypercube, so we need to
+ scale back before we can compare to the tolerances */
+int nlopt_stop_xs(const nlopt_stopping *s,
+                  const double *xs, const double *oldxs,
+                  const double *scale_min, const double *scale_max)
+{
+    unsigned i;
+    for (i = 0; i < s->n; ++i)
+        if (relstop(sc(oldxs[i], scale_min[i], scale_max[i]),
+                    sc(xs[i], scale_min[i], scale_max[i]),
+                    s->xtol_rel, s->xtol_abs[i]))
+            return 1;
+    return 0;
+}
+
+int nlopt_stop_evals(const nlopt_stopping *s)
+{
+    return (s->maxeval > 0 && s->nevals >= s->maxeval);
+}
+
+
+
+
+int nlopt_stop_forced(const nlopt_stopping *stop)
+{
+    return stop->force_stop && *(stop->force_stop);
+}
+
+unsigned nlopt_count_constraints(unsigned p, const nlopt_constraint *c)
+{
+    unsigned i, count = 0;
+    for (i = 0; i < p; ++i)
+        count += c[i].m;
+    return count;
+}
+
+unsigned nlopt_max_constraint_dim(unsigned p, const nlopt_constraint *c)
+{
+    unsigned i, max_dim = 0;
+    for (i = 0; i < p; ++i)
+        if (c[i].m > max_dim)
+            max_dim = c[i].m;
+    return max_dim;
+}
+
+void nlopt_eval_constraint(double *result, double *grad,
+                           const nlopt_constraint *c,
+                           unsigned n, const double *x)
+{
+    if (c->f)
+        result[0] = c->f(n, x, grad, c->f_data);
+    else
+        c->mf(c->m, result, n, x, grad, c->f_data);
+}
+
+
+
+/*********************************************************************/
+
+
+/*********************************************************************/
+/* wrapper functions, only for derivative-free methods, that
+ eliminate dimensions with lb == ub.   (The gradient-based methods
+ should handle this case directly, since they operate on much
+ larger vectors where I am loathe to make copies unnecessarily.) */
+
+typedef struct {
+    nlopt_func f;
+    nlopt_mfunc mf;
+    void *f_data;
+    unsigned n; /* true dimension */
+    double *x; /* scratch vector of length n */
+    double *grad; /* optional scratch vector of length n */
+    const double *lb, *ub; /* bounds, of length n */
+} elimdim_data;
+
+
+/*********************************************************************/
+
+typedef struct {
+    nlopt_func f;
+    nlopt_precond pre;
+    void *f_data;
+} f_max_data;
+
+
 static int func_wrap(int ni, int mi, double *x, double *f, double *con,
 		     func_wrap_state *s)
 {
@@ -299,6 +530,10 @@ static nlopt_result trstlp(int *n, int *m, double *a, double *b, double *rho,
   double *sdirn, double *dxnew, double *vmultd);
 
 /* ------------------------------------------------------------------------ */
+
+
+
+#define NLOPT_MINF_MAX_REACHED NLOPT_STOPVAL_REACHED
 
 nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg, double rhoend, nlopt_stopping *stop, const double *lb, const double *ub, int iprint,
   cobyla_function *calcfc, func_wrap_state *state)
