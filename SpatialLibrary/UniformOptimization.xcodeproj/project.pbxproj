@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		93096ED1194B26EC0034EEE9 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93096ED0194B26EC0034EEE9 /* XCTest.framework */; };
 		9359E6A719476F44007DB3B6 /* libOptimize.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9370A68817E7534800791D49 /* libOptimize.dylib */; };
 		9359E6B21947734B007DB3B6 /* Testing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6B11947734B007DB3B6 /* Testing.m */; };
 		9359E6C919478931007DB3B6 /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6B419478931007DB3B6 /* cobyla.c */; };
@@ -29,8 +30,6 @@
 		9389C4B718E3A2A30015B8B2 /* cvode_io.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C48918E3A2A30015B8B2 /* cvode_io.c */; };
 		9389C4C618E3A2A30015B8B2 /* nvector_serial.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49318E3A2A30015B8B2 /* nvector_serial.c */; };
 		9389C4C718E3A2A30015B8B2 /* nvector_serial.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C49418E3A2A30015B8B2 /* nvector_serial.h */; };
-		9389C4C918E3A2A30015B8B2 /* sundials_band.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49518E3A2A30015B8B2 /* sundials_band.c */; };
-		9389C4CA18E3A2A30015B8B2 /* sundials_band.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C49618E3A2A30015B8B2 /* sundials_band.h */; };
 		9389C4CC18E3A2A30015B8B2 /* sundials_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49718E3A2A30015B8B2 /* sundials_dense.c */; };
 		9389C4CD18E3A2A30015B8B2 /* sundials_dense.h in Headers */ = {isa = PBXBuildFile; fileRef = 9389C49818E3A2A30015B8B2 /* sundials_dense.h */; };
 		9389C4CF18E3A2A30015B8B2 /* sundials_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 9389C49918E3A2A30015B8B2 /* sundials_direct.c */; };
@@ -64,6 +63,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		93096ED0194B26EC0034EEE9 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		9359E6A119476F44007DB3B6 /* Optimize Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Optimize Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9359E6B11947734B007DB3B6 /* Testing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Testing.m; path = UniformOptimization/Testing.m; sourceTree = "<group>"; };
 		9359E6B419478931007DB3B6 /* cobyla.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cobyla.c; sourceTree = "<group>"; };
@@ -86,8 +86,6 @@
 		9389C48918E3A2A30015B8B2 /* cvode_io.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cvode_io.c; sourceTree = "<group>"; };
 		9389C49318E3A2A30015B8B2 /* nvector_serial.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nvector_serial.c; sourceTree = "<group>"; };
 		9389C49418E3A2A30015B8B2 /* nvector_serial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nvector_serial.h; sourceTree = "<group>"; };
-		9389C49518E3A2A30015B8B2 /* sundials_band.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sundials_band.c; sourceTree = "<group>"; };
-		9389C49618E3A2A30015B8B2 /* sundials_band.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_band.h; sourceTree = "<group>"; };
 		9389C49718E3A2A30015B8B2 /* sundials_dense.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sundials_dense.c; sourceTree = "<group>"; };
 		9389C49818E3A2A30015B8B2 /* sundials_dense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_dense.h; sourceTree = "<group>"; };
 		9389C49918E3A2A30015B8B2 /* sundials_direct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sundials_direct.c; sourceTree = "<group>"; };
@@ -104,6 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93096ED1194B26EC0034EEE9 /* XCTest.framework in Frameworks */,
 				9359E6A719476F44007DB3B6 /* libOptimize.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -132,8 +131,6 @@
 				9389C48918E3A2A30015B8B2 /* cvode_io.c */,
 				9389C49318E3A2A30015B8B2 /* nvector_serial.c */,
 				9389C49418E3A2A30015B8B2 /* nvector_serial.h */,
-				9389C49518E3A2A30015B8B2 /* sundials_band.c */,
-				9389C49618E3A2A30015B8B2 /* sundials_band.h */,
 				9389C49718E3A2A30015B8B2 /* sundials_dense.c */,
 				9389C49818E3A2A30015B8B2 /* sundials_dense.h */,
 				9389C49918E3A2A30015B8B2 /* sundials_direct.c */,
@@ -148,6 +145,7 @@
 		93A2528917E60FF800FC8307 = {
 			isa = PBXGroup;
 			children = (
+				93096ED0194B26EC0034EEE9 /* XCTest.framework */,
 				9389C47E18E3A2A30015B8B2 /* CVode */,
 				93A2529717E60FF800FC8307 /* UniformOptimization.1 */,
 				9385E03918CF36FB00FEB938 /* ReactionCode.cpp */,
@@ -194,7 +192,6 @@
 				935C638718D1E4A50069EF58 /* ModelRunning.h in Headers */,
 				9389C4D918E3A2A30015B8B2 /* sundials_nvector.h in Headers */,
 				9389C4B318E3A2A30015B8B2 /* cvode_direct.h in Headers */,
-				9389C4CA18E3A2A30015B8B2 /* sundials_band.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,7 +295,6 @@
 				9370A68F17E754C700791D49 /* BlasHeader.cpp in Sources */,
 				9385E03C18CF36FB00FEB938 /* ReactionCode.cpp in Sources */,
 				9389C4B218E3A2A30015B8B2 /* cvode_direct.c in Sources */,
-				9389C4C918E3A2A30015B8B2 /* sundials_band.c in Sources */,
 				9389C4A918E3A2A30015B8B2 /* cvode.c in Sources */,
 				9389C4B718E3A2A30015B8B2 /* cvode_io.c in Sources */,
 				9385E03718CF36C100FEB938 /* CVodeHelpers.cpp in Sources */,
@@ -337,10 +333,7 @@
 			buildSettings = {
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_FRAMEWORKS_DIR)";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -363,10 +356,7 @@
 			buildSettings = {
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_FRAMEWORKS_DIR)";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
@@ -390,6 +380,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -431,6 +422,7 @@
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -478,7 +470,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -529,7 +521,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;

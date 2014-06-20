@@ -32,24 +32,12 @@
  * http://plato.la.asu.edu/topics/problems/nlores.html
  */
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
 #include "cobyla.h"
-
-/* SGJ, 2008: modified COBYLA code to take explicit account of bound
-   constraints.  Since bound constraints are linear, these should
-   already be handled exactly when COBYLA optimizes it linear model.
-   However, they were not handled properly when COBYLA created its
-   initial simplex, or when COBYLA updated unacceptable simplices.
-   Since NLopt guarantees that the objective will not be evaluated
-   outside the bound constraints, this required us to handle such
-   points by putting a slope discontinuity into the objective &
-   constraints (below), which slows convergence considerably for
-   smooth functions.  Instead, handling them explicitly prevents this
-   problem */
-#define ENFORCE_BOUNDS 1
 
 #define MIN2(a,b) ((a) <= (b) ? (a) : (b))
 #define MAX2(a,b) ((a) >= (b) ? (a) : (b))
@@ -109,11 +97,6 @@ int nlopt_isinf(double x) {
 #endif
     ;
 }
-/*************************************************************************/
-
-/*************************************************************************/
-
-
 
 /* Return a new array of length n (> 0) that gives a rescaling factor
  for each dimension, or NULL if out of memory, with dx being the
@@ -313,11 +296,6 @@ static int func_wrap(int ni, int mi, double *x, double *f, double *con,
 
      (void) mi; /* unused */
 
-     /* in nlopt, we guarante that the function is never evaluated outside
-	the lb and ub bounds, so we need force this with xtmp ... note
-	that this leads to discontinuity in the first derivative, which
-        slows convergence if we don't enable the ENFORCE_BOUNDS feature
-	above. */
      for (j = 0; j < n; ++j) {
 	  if (x[j] < lb[j]) xtmp[j] = lb[j];
 	  else if (x[j] > ub[j]) xtmp[j] = ub[j];
@@ -490,22 +468,6 @@ done:
      return ret;
 }
 
-/**************************************************************************/
-
-/* SGJ, 2010: I find that it seems to increase robustness of the algorithm
-   if, on "simplex" steps (which are intended to improve the linear
-   independence of the simplex, not improve the objective), we multiply
-   the steps by pseudorandom numbers in [0,1).  Intuitively, pseudorandom
-   steps are likely to avoid any accidental dependency in the simplex
-   vertices.  However, since I still want COBYLA to be a deterministic
-   algorithm, and I don't care all that much about the quality of the
-   randomness here, I implement a simple linear congruential generator
-   rather than use nlopt_urand, and set the initial seed deterministically. */
-
-#if defined(HAVE_STDINT_H)
-#  include <stdint.h>
-#endif
-
 /* a simple linear congruential generator */
 
 static uint32_t lcg_rand(uint32_t *seed)
@@ -542,63 +504,6 @@ nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg, double
   int *iact;
   double *w;
   nlopt_result rc;
-
-/*
- * This subroutine minimizes an objective function F(X) subject to M
- * inequality constraints on X, where X is a vector of variables that has 
- * N components. The algorithm employs linear approximations to the 
- * objective and constraint functions, the approximations being formed by 
- * linear interpolation at N+1 points in the space of the variables. 
- * We regard these interpolation points as vertices of a simplex. The 
- * parameter RHO controls the size of the simplex and it is reduced 
- * automatically from RHOBEG to RHOEND. For each RHO the subroutine tries 
- * to achieve a good vector of variables for the current size, and then 
- * RHO is reduced until the value RHOEND is reached. Therefore RHOBEG and 
- * RHOEND should be set to reasonable initial changes to and the required 
- * accuracy in the variables respectively, but this accuracy should be 
- * viewed as a subject for experimentation because it is not guaranteed. 
- * The subroutine has an advantage over many of its competitors, however, 
- * which is that it treats each constraint individually when calculating 
- * a change to the variables, instead of lumping the constraints together 
- * into a single penalty function. The name of the subroutine is derived 
- * from the phrase Constrained Optimization BY Linear Approximations. 
- *
- * The user must set the values of N, M, RHOBEG and RHOEND, and must 
- * provide an initial vector of variables in X. Further, the value of 
- * IPRINT should be set to 0, 1, 2 or 3, which controls the amount of 
- * printing during the calculation. Specifically, there is no output if 
- * IPRINT=0 and there is output only at the end of the calculation if 
- * IPRINT=1. Otherwise each new value of RHO and SIGMA is printed. 
- * Further, the vector of variables and some function information are 
- * given either when RHO is reduced or when each new value of F(X) is 
- * computed in the cases IPRINT=2 or IPRINT=3 respectively. Here SIGMA 
- * is a penalty parameter, it being assumed that a change to X is an 
- * improvement if it reduces the merit function 
- *      F(X)+SIGMA*MAX(0.0,-C1(X),-C2(X),...,-CM(X)), 
- * where C1,C2,...,CM denote the constraint functions that should become 
- * nonnegative eventually, at least to the precision of RHOEND. In the 
- * printed output the displayed term that is multiplied by SIGMA is 
- * called MAXCV, which stands for 'MAXimum Constraint Violation'. The 
- * argument MAXFUN is an int variable that must be set by the user to a 
- * limit on the number of calls of CALCFC, the purpose of this routine being 
- * given below. The value of MAXFUN will be altered to the number of calls 
- * of CALCFC that are made. The arguments W and IACT provide real and 
- * int arrays that are used as working space. Their lengths must be at 
- * least N*(3*N+2*M+11)+4*M+6 and M+1 respectively. 
- *
- * In order to define the objective and constraint functions, we require 
- * a subroutine that has the name and arguments 
- *      SUBROUTINE CALCFC (N,M,X,F,CON) 
- *      DIMENSION X(*),CON(*)  . 
- * The values of N and M are fixed and have been defined already, while 
- * X is now the current vector of variables. The subroutine should return 
- * the objective and constraint functions at X in F and CON(1),CON(2), 
- * ...,CON(M). Note that we are trying to adjust X so that F(X) is as 
- * small as possible subject to the constraint functions being nonnegative. 
- *
- * Partition the working space array W to provide the storage that is needed 
- * for the main calculation.
- */
 
   stop->nevals = 0;
 
@@ -758,7 +663,6 @@ static nlopt_result cobylb(int *n, int *m, int *mpp,
       simi[i__ + j * simi_dim1] = 0.;
     }
     rhocur = rho;
-#if ENFORCE_BOUNDS
     /* SGJ: make sure step rhocur stays inside [lb,ub] */
     if (x[i__] + rhocur > ub[i__]) {
 	 if (x[i__] - rhocur >= lb[i__])
@@ -768,7 +672,6 @@ static nlopt_result cobylb(int *n, int *m, int *mpp,
 	 else
 	      rhocur = 0.5 * (x[i__] - lb[i__]);
     }
-#endif
     sim[i__ + i__ * sim_dim1] = rhocur;
     simi[i__ + i__ * simi_dim1] = 1.0 / rhocur;
   }
@@ -1083,7 +986,6 @@ L140:
     /* SGJ, 2010: pseudo-randomize simplex steps (see LCG comments above) */
     dx[i__] = dxsign * dx[i__] * lcg_urand(&seed, 0.01, 1);
     /* SGJ: make sure dx step says in [lb,ub] */
-#if ENFORCE_BOUNDS
     {
 	 double xi = sim[i__ + np * sim_dim1];
     fixdx:
@@ -1098,7 +1000,6 @@ L140:
 	      }
 	 }
     }
-#endif
     sim[i__ + jdrop * sim_dim1] = dx[i__];
     temp += simi[jdrop + i__ * simi_dim1] * dx[i__];
   }
@@ -1136,7 +1037,6 @@ L370:
   rc = trstlp(n, m, &a[a_offset], &con[1], &rho, &dx[1], &ifull, &iact[1], &w[
       iz], &w[izdota], &w[ivmc], &w[isdirn], &w[idxnew], &w[ivmd]);
   if (rc != NLOPT_SUCCESS) goto L600;
-#if ENFORCE_BOUNDS
   /* SGJ: since the bound constraints are linear, we should never get
      a dx that lies outside the [lb,ub] constraints here, but we'll
      enforce this anyway just to be paranoid */
@@ -1146,7 +1046,6 @@ L370:
        if (xi + dx[i__] > ub[i__]) dx[i__] = ub[i__] - xi;
        if (xi + dx[i__] < lb[i__]) dx[i__] = xi - lb[i__];
   }
-#endif
   if (ifull == 0) {
     temp = 0.;
     i__1 = *n;
@@ -1480,44 +1379,6 @@ static nlopt_result trstlp(int *n, int *m, double *a,
   int kl, kp, kw;
   int nact, icon = 0, mcon;
   int nactx = 0;
-
-
-/* This subroutine calculates an N-component vector DX by applying the */
-/* following two stages. In the first stage, DX is set to the shortest */
-/* vector that minimizes the greatest violation of the constraints */
-/*   A(1,K)*DX(1)+A(2,K)*DX(2)+...+A(N,K)*DX(N) .GE. B(K), K=2,3,...,M, */
-/* subject to the Euclidean length of DX being at most RHO. If its length is */
-/* strictly less than RHO, then we use the resultant freedom in DX to */
-/* minimize the objective function */
-/*      -A(1,M+1)*DX(1)-A(2,M+1)*DX(2)-...-A(N,M+1)*DX(N) */
-/* subject to no increase in any greatest constraint violation. This */
-/* notation allows the gradient of the objective function to be regarded as */
-/* the gradient of a constraint. Therefore the two stages are distinguished */
-/* by MCON .EQ. M and MCON .GT. M respectively. It is possible that a */
-/* degeneracy may prevent DX from attaining the target length RHO. Then the */
-/* value IFULL=0 would be set, but usually IFULL=1 on return. */
-
-/* In general NACT is the number of constraints in the active set and */
-/* IACT(1),...,IACT(NACT) are their indices, while the remainder of IACT */
-/* contains a permutation of the remaining constraint indices. Further, Z is */
-/* an orthogonal matrix whose first NACT columns can be regarded as the */
-/* result of Gram-Schmidt applied to the active constraint gradients. For */
-/* J=1,2,...,NACT, the number ZDOTA(J) is the scalar product of the J-th */
-/* column of Z with the gradient of the J-th active constraint. DX is the */
-/* current vector of variables and here the residuals of the active */
-/* constraints should be zero. Further, the active constraints have */
-/* nonnegative Lagrange multipliers that are held at the beginning of */
-/* VMULTC. The remainder of this vector holds the residuals of the inactive */
-/* constraints at DX, the ordering of the components of VMULTC being in */
-/* agreement with the permutation of the indices of the constraints that is */
-/* in IACT. All these residuals are nonnegative, which is achieved by the */
-/* shift RESMAX that makes the least residual zero. */
-
-/* Initialize Z and some other variables. The value of RESMAX will be */
-/* appropriate to DX=0, while ICON will be the index of a most violated */
-/* constraint if RESMAX is positive. Usually during the first stage the */
-/* vector SDIRN gives a search direction that reduces all the active */
-/* constraint violations by one simultaneously. */
 
   /* Parameter adjustments */
   z_dim1 = *n;
@@ -2049,9 +1910,6 @@ L390:
     resmax = resold + ratio * (resmax - resold);
   }
 
-/* If the full step is not acceptable then begin another iteration. */
-/* Otherwise switch to stage two or end the calculation. */
-
   if (icon > 0) {
     goto L70;
   }
@@ -2064,9 +1922,6 @@ L480:
   iact[mcon] = mcon;
   vmultc[mcon] = 0.;
   goto L60;
-
-/* We employ any freedom that may be available to reduce the objective */
-/* function before returning a DX whose length is less than RHO. */
 
 L490:
   if (mcon == *m) {

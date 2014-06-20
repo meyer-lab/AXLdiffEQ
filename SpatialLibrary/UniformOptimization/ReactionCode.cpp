@@ -19,7 +19,6 @@ using namespace std;
 
 double endoImpair = 1; ///< Extent by which to impair endocytosis of Gas6-bound species.
 double degImpair = 1;
-__thread double internalFrac = 0.5;
 double diffD[Nspecies];
 const double fgMgConv = 135.2;
 
@@ -46,16 +45,16 @@ int AXL_react(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     double dR9 = r->xFwd5 * x_d[3] * x_d[3] - r->xRev5 * x_d[6];
     double dR11 = r->xFwd6 * x_d[0] * x_d[5] - r->xRev6 * x_d[6];
     
-    double dR32 = r->Binding1 * x_d[7] * x_d[13] / 623 - r->Unbinding1 * x_d[8];
-    double dR33 = r->Binding2 * x_d[7] * x_d[13] / 623 - r->Unbinding2 * x_d[9];
-    double dR34 = r->Binding2 * x_d[8] * x_d[13] / 623 - r->Unbinding2 * x_d[10];
-    double dR35 = r->Binding1 * x_d[9] * x_d[13] / 623 - r->Unbinding1 * x_d[10];
+    double dR32 = r->Binding1 * x_d[7] * x_d[13] / r->internalV - r->Unbinding1 * x_d[8];
+    double dR33 = r->Binding2 * x_d[7] * x_d[13] / r->internalV - r->Unbinding2 * x_d[9];
+    double dR34 = r->Binding2 * x_d[8] * x_d[13] / r->internalV - r->Unbinding2 * x_d[10];
+    double dR35 = r->Binding1 * x_d[9] * x_d[13] / r->internalV - r->Unbinding1 * x_d[10];
     double dR36 = r->xFwd1 * x_d[7] * x_d[8] - r->xRev1 * x_d[11];
     double dR37 = r->xFwd2 * x_d[7] * x_d[9] - r->xRev2 * x_d[11];
     double dR38 = r->xFwd3 * x_d[7] * x_d[10] - r->xRev3 * x_d[12];
     double dR39 = r->xFwd4 * x_d[8] * x_d[8] - r->xRev4 * x_d[12]; // Checked
     double dR40 = r->xFwd5 * x_d[9] * x_d[9] - r->xRev5 * x_d[12]; // Checked
-    double dR41 = r->xFwd6 * x_d[13] * x_d[11] / 623 - r->xRev6 * x_d[12]; // Checked
+    double dR41 = r->xFwd6 * x_d[13] * x_d[11] / r->internalV - r->xRev6 * x_d[12]; // Checked
     
     dxdt_d[1] = - dR7 - dR6 - dR5 - dR1 - dR2 + r->expression; // AXL
     dxdt_d[2] = -2*(dR8) - dR5 + dR1 - dR3                   ; // AXLgas1
@@ -74,28 +73,19 @@ int AXL_react(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     dxdt_d[13] = -dR41 - dR32 - dR33 - dR34 - dR35 - r->kDeg*x_d[13];
     
     
-    dxdt_d[1] += -x_d[1]*(r->internalize + r->pYinternalize*r->scaleA) + r->kRec*(1-r->fElse)*x_d[7]*internalFrac; // Endocytosis, recycling
-    dxdt_d[7] += x_d[1]*(r->internalize + r->pYinternalize*r->scaleA)/internalFrac - r->kRec*(1-r->fElse)*x_d[7] - r->kDeg*r->fElse*x_d[7]; // Endocytosis, recycling, degradation
+    dxdt_d[1] += -x_d[1]*(r->internalize + r->pYinternalize*r->scaleA) + r->kRec*(1-r->fElse)*x_d[7]*r->internalFrac; // Endocytosis, recycling
+    dxdt_d[7] += x_d[1]*(r->internalize + r->pYinternalize*r->scaleA)/r->internalFrac - r->kRec*(1-r->fElse)*x_d[7] - r->kDeg*r->fElse*x_d[7]; // Endocytosis, recycling, degradation
     
     for (int ii = 2; ii < 6; ii++) {
-        dxdt_d[ii]  += -x_d[ii]*(r->internalize + r->pYinternalize*r->scaleA)*endoImpair + r->kRec*(1-r->fElse)*x_d[ii+6]*internalFrac; // Endocytosis, recycling
-        dxdt_d[ii+6] += x_d[ii]*(r->internalize + r->pYinternalize*r->scaleA)/internalFrac*endoImpair - r->kRec*(1-r->fElse)*x_d[ii+6] // Endocytosis, recycling
+        dxdt_d[ii]  += -x_d[ii]*(r->internalize + r->pYinternalize*r->scaleA)*endoImpair + r->kRec*(1-r->fElse)*x_d[ii+6]*r->internalFrac; // Endocytosis, recycling
+        dxdt_d[ii+6] += x_d[ii]*(r->internalize + r->pYinternalize*r->scaleA)/r->internalFrac*endoImpair - r->kRec*(1-r->fElse)*x_d[ii+6] // Endocytosis, recycling
         - r->kDeg*r->fElse*x_d[ii+6]*degImpair; // Degradation
     }
     
-    dxdt_d[6]  += -x_d[6]*(r->internalize + r->pYinternalize)*endoImpair + r->kRec*(1-r->fD2)*x_d[12]*internalFrac; // Endocytosis, recycling
-    dxdt_d[12] += x_d[6]*(r->internalize + r->pYinternalize)/internalFrac*endoImpair - r->kRec*(1-r->fD2)*x_d[12] - r->kDeg*r->fD2*x_d[12]*degImpair; // Endocytosis, recycling, degradation
+    dxdt_d[6]  += -x_d[6]*(r->internalize + r->pYinternalize)*endoImpair + r->kRec*(1-r->fD2)*x_d[12]*r->internalFrac; // Endocytosis, recycling
+    dxdt_d[12] += x_d[6]*(r->internalize + r->pYinternalize)/r->internalFrac*endoImpair - r->kRec*(1-r->fD2)*x_d[12] - r->kDeg*r->fD2*x_d[12]*degImpair; // Endocytosis, recycling, degradation
     
     return 0;
-}
-
-double GasCalc (N_Vector state) {
-    double Gas = Ith(state,2) + Ith(state,3) + 2*Ith(state,4) + Ith(state,5) + 2*Ith(state,6) +
-    internalFrac*(Ith(state,8) + Ith(state,9) + 2*Ith(state,10) + Ith(state,11) + 2*Ith(state,12));
-    
-    Gas += Ith(state,13);
-    
-    return Gas;
 }
 
 double surfAXL (N_Vector state) {
@@ -152,46 +142,28 @@ int AXL_react_diff(double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
 // This takes the model state and calculates the amount of phosphorylated species
 double pYcalc (N_Vector state, struct rates p) {
     double pYa = Ith(state,1) + Ith(state,2) + Ith(state,3) + Ith(state,4) + 2*Ith(state,5) +
-    internalFrac*(Ith(state,7) + Ith(state,8) + Ith(state,9) + Ith(state,10) + 2*Ith(state,11));
+    p.internalFrac*(Ith(state,7) + Ith(state,8) + Ith(state,9) + Ith(state,10) + 2*Ith(state,11));
     
     pYa *= p.scaleA;
     
-    pYa += 2*Ith(state,6) + internalFrac*(2*Ith(state,12));
-    
-    return pYa;
-}
-
-// This takes the model state and calculates the amount of phosphorylated species
-double pYcalc (N_Vector state, double scaleA) {
-    double pYa = Ith(state,1) + Ith(state,2) + Ith(state,3) + Ith(state,4) + 2*Ith(state,5) +
-    internalFrac*(Ith(state,7) + Ith(state,8) + Ith(state,9) + Ith(state,10) + 2*Ith(state,11));
-    
-    pYa *= scaleA;
-    
-    pYa += 2*Ith(state,6) + internalFrac*(2*Ith(state,12));
+    pYa += 2*Ith(state,6) + p.internalFrac*(2*Ith(state,12));
     
     return pYa;
 }
 
 // This takes the model state and calculates the total amount of receptor in a cell
-double totCalc (N_Vector state) {
+double totCalc (N_Vector state, struct rates p) {
     double total = 0;
     
     for (int ii = 1; ii < 7; ii++) total += Ith(state,ii);
-    for (int ii = 7; ii < 13; ii++) total += Ith(state,ii)*internalFrac;
+    for (int ii = 7; ii < 13; ii++) total += Ith(state,ii)*p.internalFrac;
     
     total += Ith(state,5);
     total += Ith(state,6);
-    total += Ith(state,11)*internalFrac;
-    total += Ith(state,12)*internalFrac;
+    total += Ith(state,11)*p.internalFrac;
+    total += Ith(state,12)*p.internalFrac;
     
     return total/fgMgConv;
-}
-
-double D2Calc (N_Vector state) {
-    double total = 2*Ith(state,6) + internalFrac*(2*Ith(state,12));
-    
-    return total/totCalc(state)/fgMgConv;
 }
 
 
@@ -217,6 +189,8 @@ struct rates Param(param_type params) {
     out.kDeg = params[12];
     out.fElse = params[13];
     out.fD2 = params[14];
+    out.internalFrac = 0.5;
+    out.internalV = 623;
     out.xRev5 = out.xRev3*out.Unbinding1/out.Unbinding2;
     out.xRev4 = out.xRev3*out.Unbinding2/out.Unbinding1;
     out.xRev2 = out.xRev1*out.Unbinding1/out.Unbinding2;

@@ -2,8 +2,6 @@ function outter = cLibA549endoVary (in)
 
 in = 10.^in;
 
-in = [in zeros(size(in,1),1)];
-
 %unloadlibrary('libOptimize');
 if ~libisloaded('libOptimize')
     loadlibrary('libOptimize.dylib','BlasHeader.h')

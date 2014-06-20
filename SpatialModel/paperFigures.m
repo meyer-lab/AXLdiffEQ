@@ -23,7 +23,7 @@ DO_LONG_TIME_SCALE = 0;
 SHOW_FIT = 0;
 DO_SPATIAL_PRED = 0;
 LOCAL_SENSITIVITY = 0;
-SPATIAL_TIMECOURSE = 0;
+SPATIAL_TIMECOURSE = 1;
 
 %% Do spatial time course
 
@@ -34,6 +34,7 @@ if SPATIAL_TIMECOURSE
 	
 	GasConc = -1.204;
 	
+    subplot(1,2,1);
 	
 	pY = cLib_diff_profile_pYavg (tps, params, params(end), params(end-1), GassF([3 GasConc],xx), D*0.1, 1, 1, 0);
 	plot(tps,pY / pY(1),'r');
@@ -44,7 +45,14 @@ if SPATIAL_TIMECOURSE
 	
 	pY = cLib_profile (tps, params, params(end), params(end-1), 10^GasConc, 0);
 	plot(tps,pY / pY(1),'k');
-	
+    
+    
+    
+    subplot(1,2,2);
+    
+	pY = cLib_profile (tps, params, params(end), params(end-1), 10^GasConc, 2);
+	plot(tps,pY / pY(1),'k');
+    
 end
 
 
@@ -200,7 +208,7 @@ end
 
 if DO_IMPAIRED_ENDO
 	
-	h = waitbar(0,'Starting impaired endocytosis prediction...');
+	h = waitbar(0,'Starting impaired endocytosis prediction...'); %#ok<*UNRCH>
 
     figure(figIDX);
     figIDX = figIDX + 1;
@@ -232,7 +240,7 @@ if DO_SPATIAL_PRED
     A = logspace(-2,3,10);
 
     for ii = 1:length(A)
-        BB(:,ii) = GassF([A(ii) GasConc shapeParam],xx);
+        BB(:,ii) = GassF([A(ii) GasConc shapeParam],xx); %#ok<SAGROW>
     end
 
     subplot(2,2,1);
@@ -246,22 +254,28 @@ if DO_SPATIAL_PRED
     localPY = zeros(length(A),4);
     avgPY = zeros(length(A),4);
 
-    for ii = 1:length(A)
+    parfor ii = 1:length(A)
+        localPYz = zeros(1,4);
+        avgPYz = zeros(1,4);
+        
         temp = ffSpat([A(ii) GasConc],0);
-        localPY(ii,1) = temp(1);
-        avgPY(ii,1) = mean(temp.*xx);
+        localPYz(1) = temp(1);
+        avgPYz(1) = mean(temp.*xx);
         
         temp = ffSpat([A(ii) GasConc],0.1);
-        localPY(ii,2) = temp(1);
-        avgPY(ii,2) = mean(temp.*xx);
+        localPYz(2) = temp(1);
+        avgPYz(2) = mean(temp.*xx);
 
         temp = ffSpat([A(ii) GasConc],1);
-        localPY(ii,3) = temp(1);
-        avgPY(ii,3) = mean(temp.*xx);
+        localPYz(3) = temp(1);
+        avgPYz(3) = mean(temp.*xx);
         
         temp = ffSpat([A(ii) GasConc],10);
-        localPY(ii,4) = temp(1);
-        avgPY(ii,4) = mean(temp.*xx);
+        localPYz(4) = temp(1);
+        avgPYz(4) = mean(temp.*xx);
+        
+        localPY(ii,:) = localPYz;
+        avgPY(ii,:) = avgPYz;
         
         disp(ii);
     end
@@ -273,7 +287,7 @@ if DO_SPATIAL_PRED
     semilogx(A,localPY(:,2)/localPY(1,2),'g-');
     semilogx(A,localPY(:,3)/localPY(1,3),'b-');
     semilogx(A,localPY(:,4)/localPY(1,4),'r-');
-    axis([min(A) max(A) 0 1200]);
+    axis([min(A) max(A) 0 max(max(localPY / localPY(1,1)))]);
     title('Local predictions');
 
     subplot(2,2,3);
@@ -306,12 +320,12 @@ if DO_SPATIAL_PRED
     clc;
     
     for ii = 1:length(A)
-        B(ii,:) = ttt*meanify(ffSpat([A(ii) GasConc],1));
+        B(ii,:) = ttt*meanify(ffSpat([A(ii) GasConc],1)); %#ok<SAGROW>
         disp(ii);
     end
     
     for ii = 1:size(B,2)
-        B(:,ii) = B(:,ii) - B(1,ii);
+        B(:,ii) = B(:,ii) - B(1,ii); %#ok<SAGROW>
     end
 
     semilogx(A,B);

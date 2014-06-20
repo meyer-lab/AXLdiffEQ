@@ -179,87 +179,6 @@ extern "C" int matlabEntryA549VaryEndo(double *dataPtr, double *pIn, int nIn) {
     return 0;
 }
 
-
-
-extern "C" int matlabEntryWithSi(double *dataPtr, double *pIn, int nIn) {
-    const int nThreads = 8;
-    queue<queT> runThese;
-    thread t[nThreads];
-    atomic<bool> *done = new atomic<bool>(nThreads);
-    queT in;
-
-    for (size_t ii = 0; ii < (size_t) abs(nIn); ii++) {
-        param_type pInSlice;
-
-        for (size_t jj = 0; jj < pInSlice.size(); jj++) {
-            pInSlice[jj] = pIn[(size_t) ii*pInSlice.size() + jj];
-        }
-
-        in.In = pInSlice;
-        in.out = &dataPtr[ii];
-        runThese.push(in);
-     }
-
-
-    for (int ii = 0; ii < nThreads; ii++) {
-
-        // End if the queue is empty
-        if (runThese.size() == 0) break;
-
-        t[ii] = thread(calcErrorRefWithSi,runThese.front().In,runThese.front().out, &done[ii]);
-        runThese.pop();
-    }
-
-    while (runThese.size() > 0) {
-        for (int ii = 0; ii < nThreads; ii++) {
-
-            // End if the queue is empty
-            if (runThese.size() == 0) break;
-
-
-            if (done[ii] == true) {
-                t[ii].join();
-                done[ii] = false;
-                t[ii] = thread(calcErrorRefWithSi,runThese.front().In,runThese.front().out, &done[ii]);
-                runThese.pop();
-            }
-        }
-    }
-
-    // Clear out the last running threads
-    for (int ii = 0; ii < std::min(nThreads,nIn); ii++) t[ii].join();
-
-    delete done;
-    return 0;
-}
-
-extern "C" double calcErrorOneCellLine (int cellLine, const double *pIn) {
-    const size_t numPs = 17;
-    
-    param_type pInTemp;
-    
-    for (size_t ii = 0; ii < (numPs - 2); ii++) {
-        pInTemp[ii] = pIn[ii];
-        //cout << pIn[ii] << endl;
-    }
-    
-    struct rates pInC = Param(pInTemp);
-    pInC.expression = pIn[16];
-    
-    return calcErrorOneLine (pInC, (size_t) cellLine, pIn[15]);
-}
-
-/// Function for fitting a parameter set from R
-extern "C" void rEntry(double *dataPtr, const double *pIn) {
-    param_type pInSlice;
-    for (size_t jj = 0; jj < pInSlice.size(); jj++) {
-        pInSlice[jj] = pIn[jj];
-        cout << pIn[jj] << endl;
-    }
-    
-    *dataPtr = calcError(pInSlice);
-}
-
 extern "C" int calcProfileMatlab(double *dataPtr, double *params, double *tps, int nTps, double autocrine, double AXL, double GasStim, int frac) {
     param_type pIn;
     
@@ -314,9 +233,9 @@ extern "C" int matlabDiffTPS_pY(double *dataPtr, double AXLin, double *GasIn, in
             if (frac == 0) {
                 dataPtr[time*((size_t) abs(gridIn)) + gridP] = pYcalc(state, pInS);
             } else if (frac == 1) {
-                dataPtr[time*((size_t) abs(gridIn)) + gridP] = pYcalc(state, pInS) / totCalc(state);
+                dataPtr[time*((size_t) abs(gridIn)) + gridP] = pYcalc(state, pInS) / totCalc(state, pInS);
             } else {
-                dataPtr[time*((size_t) abs(gridIn)) + gridP] = totCalc(state);
+                dataPtr[time*((size_t) abs(gridIn)) + gridP] = totCalc(state, pInS);
             }
         }
     }

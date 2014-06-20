@@ -117,8 +117,8 @@ void calcProfile (N_Vector outData, N_Vector surfData, N_Vector outStim, N_Vecto
             throw runtime_error(string("Error in CVode integration within calcProfile."));
         }
         
-        Ith(outStim,stimuli) = pYcalc(state,params)/totCalc(state);
-        Ith(outStimTot,stimuli) = totCalc(state);
+        Ith(outStim,stimuli) = pYcalc(state,params)/totCalc(state,params);
+        Ith(outStimTot,stimuli) = totCalc(state,params);
         Ith(surfStim,stimuli) = surfAXL(state);
     }
     
@@ -272,7 +272,8 @@ void calcErrorRefA549VaryEndo (param_type params, double *out, atomic<bool> *don
     struct rates pp = Param(params);
     pp.expression = params[16];
     
-    internalFrac = params[17];
+    pp.internalFrac = params[17];
+    pp.internalV = params[18];
     
     *out = calcErrorA549Full(pp, params[15]);
     *done = true;
@@ -412,7 +413,7 @@ void calcSiLigand (N_Vector totalL, N_Vector pYL, struct rates params, double au
     CVodeFree(&cvode_mem);
 
     Ith(pYL,0) = pYcalc(init_state, params);
-    Ith(totalL,0) = totCalc(init_state);
+    Ith(totalL,0) = totCalc(init_state, params);
 
     // Initialize state based on autocrine ligand
     try {
@@ -426,7 +427,7 @@ void calcSiLigand (N_Vector totalL, N_Vector pYL, struct rates params, double au
     CVodeFree(&cvode_mem);
 
     Ith(pYL,1) = pYcalc(init_state, params);
-    Ith(totalL,1) = totCalc(init_state);
+    Ith(totalL,1) = totCalc(init_state, params);
 
     N_VDestroy_Serial(init_state);
 }
@@ -533,15 +534,11 @@ void calcProfileSet (double *outData, double *tps, struct rates params, int nTps
         if (frac == 0) {
             outData[ii] = pYcalc(state,params);
         } else if (frac == 1) {
-            outData[ii] = pYcalc(state,params) / totCalc(state);
+            outData[ii] = pYcalc(state,params) / totCalc(state,params);
         } else if (frac == 2) {
-            outData[ii] = totCalc(state);
-        } else if (frac == 3) {
-            outData[ii] = GasCalc(state);
+            outData[ii] = totCalc(state,params);
         } else if (frac == 4) {
             outData[ii] = surfAXL(state);
-        } else if (frac == 5) {
-            outData[ii] = D2Calc(state);
         } else {
             throw runtime_error(string("Bad option."));
         }
@@ -560,15 +557,11 @@ void calcProfileSet (double *outData, double *tps, struct rates params, int nTps
         if (frac == 0) {
             outData[ii] = pYcalc(state,params);
         } else if (frac == 1) {
-            outData[ii] = pYcalc(state,params) / totCalc(state);
+            outData[ii] = pYcalc(state,params) / totCalc(state,params);
         } else if (frac == 2) {
-            outData[ii] = totCalc(state);
-        } else if (frac == 3) {
-            outData[ii] = GasCalc(state);
+            outData[ii] = totCalc(state,params);
         } else if (frac == 4) {
             outData[ii] = surfAXL(state);
-        } else if (frac == 5) {
-            outData[ii] = D2Calc(state);
         } else {
             throw runtime_error(string("Bad option."));
         }
