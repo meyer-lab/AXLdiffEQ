@@ -8,6 +8,14 @@
 #include <queue>
 #include <iostream>
 #include <thread>
+
+#ifdef __clang__
+#include <atomic>
+#else
+#include <stdatomic.h>
+#endif
+
+
 #include "CVodeHelpers.h"
 #include "ReactionCode.h"
 #include "ModelRunning.h"
@@ -130,6 +138,37 @@ extern "C" int matlabEntryA549(double *dataPtr, double *pIn, int nIn) {
     return 0;
 }
 
+
+extern "C" double multiPyEntry(double *pIn) {
+    queue<queT> runThese;
+    thread t[4];
+    
+    struct rates params[4];
+    double data[4];
+    
+    for (size_t ii = 0; ii < 4; ii++) params[ii] = Param_multi(pIn);
+    params[0].expression = pIn[16];
+    params[1].expression = pIn[17];
+    params[2].expression = pIn[18];
+    params[3].expression = pIn[19];
+    params[0].scaleA = pIn[20];
+    params[1].scaleA = pIn[21];
+    params[2].scaleA = pIn[22];
+    params[3].scaleA = pIn[23];
+
+    t[0] = thread(A549Multi,        params[0],    pIn[24], &data[0]); // inP, cellLine, autocrine, data
+    t[1] = thread(oneCellLineMulti, params[1], 0, pIn[25], &data[1]); // inP, cellLine, autocrine, data
+    t[2] = thread(oneCellLineMulti, params[2], 2, pIn[26], &data[2]); // inP, cellLine, autocrine, data
+    t[3] = thread(oneCellLineMulti, params[3], 3, pIn[27], &data[3]); // inP, cellLine, autocrine, data
+    
+    
+    // Clear out the last running threads
+    for (int ii = 0; ii < 4; ii++) t[ii].join();
+
+    return data[0] + data[1] + data[2] + data[3];
+}
+
+
 extern "C" int matlabEntryA549VaryEndo(double *dataPtr, double *pIn, int nIn) {
     const int nThreads = 8;
     queue<queT> runThese;
@@ -178,6 +217,42 @@ extern "C" int matlabEntryA549VaryEndo(double *dataPtr, double *pIn, int nIn) {
     delete done;
     return 0;
 }
+
+extern "C" double matlabEntryA549VaryEndoPy(double *pIn) {
+    atomic<bool> done;
+    param_type pInSlice;
+    
+    for (size_t ii = 0; ii < (size_t) abs(1); ii++) {
+        for (size_t jj = 0; jj < pInSlice.size(); jj++) {
+            pInSlice[jj] = pIn[(size_t) ii*pInSlice.size() + jj];
+            //cout << pInSlice[jj] << endl;
+        }
+    }
+    double error = -1;
+    
+    calcErrorRefA549VaryEndo(pInSlice, &error, &done);
+
+    return error;
+}
+
+extern "C" double matlabEntryBT549VaryEndoPy(double *pIn) {
+    param_type pInSlice;
+    
+    for (size_t ii = 0; ii < (size_t) abs(1); ii++) {
+        for (size_t jj = 0; jj < pInSlice.size(); jj++) {
+            pInSlice[jj] = pIn[(size_t) ii*pInSlice.size() + jj];
+        }
+    }
+    
+    struct rates params = Param(pInSlice);
+    
+    params.expression = pInSlice[16];
+    params.internalFrac = pInSlice[17];
+    params.internalV = pInSlice[18];
+    
+    return calcErrorOneLine (params, 3, pInSlice[15]);
+}
+
 
 extern "C" int calcProfileMatlab(double *dataPtr, double *params, double *tps, int nTps, double autocrine, double AXL, double GasStim, int frac) {
     param_type pIn;

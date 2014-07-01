@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		93096ED1194B26EC0034EEE9 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93096ED0194B26EC0034EEE9 /* XCTest.framework */; };
 		9359E6A719476F44007DB3B6 /* libOptimize.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9370A68817E7534800791D49 /* libOptimize.dylib */; };
 		9359E6B21947734B007DB3B6 /* Testing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6B11947734B007DB3B6 /* Testing.m */; };
 		9359E6C919478931007DB3B6 /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6B419478931007DB3B6 /* cobyla.c */; };
@@ -63,7 +62,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		93096ED0194B26EC0034EEE9 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		9359E6A119476F44007DB3B6 /* Optimize Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Optimize Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9359E6B11947734B007DB3B6 /* Testing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Testing.m; path = UniformOptimization/Testing.m; sourceTree = "<group>"; };
 		9359E6B419478931007DB3B6 /* cobyla.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cobyla.c; sourceTree = "<group>"; };
@@ -102,7 +100,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93096ED1194B26EC0034EEE9 /* XCTest.framework in Frameworks */,
 				9359E6A719476F44007DB3B6 /* libOptimize.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -145,7 +142,6 @@
 		93A2528917E60FF800FC8307 = {
 			isa = PBXGroup;
 			children = (
-				93096ED0194B26EC0034EEE9 /* XCTest.framework */,
 				9389C47E18E3A2A30015B8B2 /* CVode */,
 				93A2529717E60FF800FC8307 /* UniformOptimization.1 */,
 				9385E03918CF36FB00FEB938 /* ReactionCode.cpp */,
@@ -473,6 +469,7 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -523,6 +520,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;

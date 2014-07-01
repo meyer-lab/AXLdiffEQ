@@ -44,8 +44,8 @@ void DenseScale(double c, DlsMat A) {
   denseScale(c, A->cols, A->M, A->N);
 }
 
-long int denseGETRF(double **a, long int m, long int n, long int *p) {
-  long int i, j, k, l;
+size_t denseGETRF(double **a, size_t m, size_t n, long int *p) {
+  size_t i, j, k, l;
   double *col_j, *col_k;
   double temp, mult, a_kj;
 

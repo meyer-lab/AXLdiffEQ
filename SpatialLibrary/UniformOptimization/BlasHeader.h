@@ -20,9 +20,11 @@ int matlabDiffTPS_pY(double *, double , double *, int , double , double *, doubl
 int matlabDiffTPS_pYavg(double *, double, double *, int, double , double *, double *, int, double *, double, double, int);
 void rEntry(double *, const double *);
 double calcErrorOneCellLine (int, const double *);
-int matlabEntryWithSi(double *, double *, int);
 int matlabEntryA549(double *, double *, int);
 int matlabEntryA549VaryEndo(double *dataPtr, double *pIn, int nIn);
+double matlabEntryA549VaryEndoPy(double *);
+double matlabEntryBT549VaryEndoPy(double *);
+double multiPyEntry(double *);
     
 #ifdef __cplusplus
 }

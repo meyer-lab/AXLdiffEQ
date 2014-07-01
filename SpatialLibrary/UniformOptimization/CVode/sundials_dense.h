@@ -76,7 +76,7 @@ extern "C" {
 long int DenseGETRF(DlsMat A, long int *p);
 void DenseGETRS(DlsMat A, long int *p, double *b);
 
-long int denseGETRF(double **a, long int m, long int n, long int *p);
+size_t denseGETRF(double **a, size_t m, size_t n, long int *p);
 void denseGETRS(double **a, long int n, long int *p, double *b);
 
 

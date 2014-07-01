@@ -11,11 +11,20 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <algorithm>
+#include <thread>
+
+#ifdef __clang__
+#include <atomic>
+#else
+#include <stdatomic.h>
+#endif
+
+#include <stdexcept>
 #include <sstream>
 #include <fstream>
 #include "cobyla.h"
 #include <math.h>
-//#include "nlopt.h"
 #include "ModelRunning.h"
 #include "CVodeHelpers.h"
 
@@ -27,9 +36,32 @@ struct inData {
     const double *errorMeas; ///< Error for pY measurement.
 };
 
+void calcKinetic () {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+
+
+
+
+
+
+
+
 // Calculate phosphorylation at time points measured
 void calcProfile (N_Vector outData, N_Vector surfData, N_Vector outStim, N_Vector outStimTot, N_Vector surfStim, struct rates params, double autocrine, double expression) {
     params.expression = expression;
+    
+    thread t[NELEMS(GassDose)];
     
     N_Vector init_state = N_VNew_Serial(Nspecies);
     N_Vector state = N_VNew_Serial(Nspecies);
@@ -125,6 +157,7 @@ void calcProfile (N_Vector outData, N_Vector surfData, N_Vector outStim, N_Vecto
     /* Free y and abstol vectors */
     N_VDestroy_Serial(state);
     N_VDestroy_Serial(init_state);
+    
     CVodeFree(&cvode_mem);
 }
 
@@ -183,7 +216,7 @@ double errorFuncOpt (N_Vector fitt, const double *pYmeas, const double *errorMea
     stop.maxeval = 1E9;
     stop.force_stop = 0;
     
-    int flag = cobyla_minimize(1, errorOpt, &dataS, 0, nullptr, 0, nullptr, &lower, &upper, &xx, &ff, &stop, &dx);
+    int flag = cobyla_minimize(1, errorOpt, &dataS, 0, NULL, 0, NULL, &lower, &upper, &xx, &ff, &stop, &dx);
     
     if (flag < 0) throw runtime_error(string("Error during error optimization step."));
     
@@ -228,6 +261,11 @@ double calcErrorOneLine (struct rates inP, size_t cellLine, double autocrine) {
     return error;
 }
 
+void oneCellLineMulti (struct rates inP, size_t cellLine, double autocrine, double *data) {
+    *data = calcErrorOneLine (inP, cellLine, autocrine);
+}
+
+
 double calcErrorA549Full (struct rates inP, double autocrine) {
     N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
     N_Vector surfData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
@@ -258,6 +296,10 @@ double calcErrorA549Full (struct rates inP, double autocrine) {
     N_VDestroy_Serial(surfStim);
     
     return error;
+}
+
+void A549Multi (struct rates inP, double autocrine, double *data) {
+    *data = calcErrorA549Full (inP, autocrine);
 }
 
 void calcErrorRefA549 (param_type params, double *out, atomic<bool> *done) {
@@ -313,47 +355,6 @@ double calcError (param_type inP) {
     return error;
 }
 
-
-double calcErrorAA (param_type inP) {
-    struct rates params = Param(inP);
-    
-    N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
-    N_Vector dummyData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
-    N_Vector outStim = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector dummyStim = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector outStimTot = N_VNew_Serial(NELEMS(GassDose));
-    
-    double error = 0;
-    
-    unsigned short ii = 1;
-    
-    try {
-        calcProfile (outData, dummyData, outStim, outStimTot, dummyStim, params, inP[15+ii], inP[15+NfitCells+ii]);
-        
-        error += errorFuncOpt (outData, &pY[ii*NELEMS(Gass)*NELEMS(times)], &pYerror[ii*NELEMS(Gass)*NELEMS(times)]);
-        error += errorFuncOpt (outStim, pYdose[ii], DoseError[ii]);
-        error += errorFuncFix (outStimTot, DoseTot[ii], DoseTotErr[ii]);
-    } catch (exception &e) {
-        errorLogger(&e);
-        
-        error = 1E6;
-    }
-    
-    N_VDestroy_Serial(outData);
-    N_VDestroy_Serial(dummyData);
-    N_VDestroy_Serial(outStim);
-    N_VDestroy_Serial(dummyStim);
-    N_VDestroy_Serial(outStimTot);
-    
-    return error;
-}
-
-
-void calcErrorRefAA (param_type params, double *out, atomic<bool> *done) {
-    *out = calcErrorAA(params);
-    *done = true;
-}
-
 double calcErrorAll (struct rates inP, const double *expression, const double *autocrine) {
     N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
     N_Vector dummyData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
@@ -392,79 +393,6 @@ double errorFunc (double fitt, double pYmeas, double errorMeas) {
 
 void calcErrorRef (param_type params, double *out, atomic<bool> *done) {
     *out = calcError(params);
-    *done = true;
-}
-
-void calcSiLigand (N_Vector totalL, N_Vector pYL, struct rates params, double autocrine, double expression) {
-	params.expression = expression;
-    N_Vector init_state = N_VNew_Serial(Nspecies);
-
-    void *cvode_mem = NULL;
-
-    // Initialize state based on autocrine ligand
-    try {
-        cvode_mem = initState(init_state, params, autocrine);
-    } catch (exception &e) {
-        N_VDestroy_Serial(init_state);
-        CVodeFree(&cvode_mem);
-        throw;
-    }
-
-    CVodeFree(&cvode_mem);
-
-    Ith(pYL,0) = pYcalc(init_state, params);
-    Ith(totalL,0) = totCalc(init_state, params);
-
-    // Initialize state based on autocrine ligand
-    try {
-        cvode_mem = initState(init_state, params, 0.0);
-    } catch (exception &e) {
-        N_VDestroy_Serial(init_state);
-        CVodeFree(&cvode_mem);
-        throw;
-    }
-
-    CVodeFree(&cvode_mem);
-
-    Ith(pYL,1) = pYcalc(init_state, params);
-    Ith(totalL,1) = totCalc(init_state, params);
-
-    N_VDestroy_Serial(init_state);
-}
-
-
-double calcErrorSi (param_type inP) {
-    struct rates params = Param(inP);
-
-    N_Vector totalData = N_VNew_Serial(2);
-    N_Vector pYdata = N_VNew_Serial(2);
-
-    double error = 0;
-
-    for (unsigned short ii = 0; ii < NfitCells; ii++) {
-        try {
-        	calcSiLigand (totalData, pYdata, params, inP[15+ii], inP[15+NfitCells+ii]);
-
-            if (siPY[ii][0] != 0) error += errorFuncOpt (pYdata, siPY[ii], siPYerr[ii]);
-            if (siTOT[ii][0] != 0) error += errorFuncOpt (totalData, siTOT[ii], siTOTerr[ii]);
-        } catch (exception &e) {
-        	N_VDestroy_Serial(totalData);
-        	N_VDestroy_Serial(pYdata);
-            errorLogger(&e);
-
-            return 1E6;
-        }
-    }
-
-    N_VDestroy_Serial(totalData);
-    N_VDestroy_Serial(pYdata);
-
-    return error;
-}
-
-void calcErrorRefWithSi (param_type params, double *out, atomic<bool> *done) {
-    *out = calcError(params);
-    *out += calcErrorSi(params);
     *done = true;
 }
 

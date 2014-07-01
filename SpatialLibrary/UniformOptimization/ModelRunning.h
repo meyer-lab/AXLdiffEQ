@@ -10,7 +10,14 @@
 #define __UniformOptimization__ModelRunning__
 
 #include "ReactionCode.h"
+
+#ifdef __clang__
 #include <atomic>
+#else
+#include <stdatomic.h>
+#endif
+
+
 
 #define autocrineT 10000
 #define print_CV_err 0
@@ -87,35 +94,6 @@ static const double DoseTotErr[][7] = {
     {28, 37, 49, 22, 33, 24, 20},      // U87
     {20, 50, 13, 30, 13, 16, 21}};     // BT549
 
-// Warfarin, then siGas
-static const double siPY[][2] = {
-		{0, 0}, // A172
-		{1.179, 1.596}, // A549
-		{0.240, 1.641}, // U87
-		{0.497, 0.008}, // BT549
-        {0.329, 0.402}}; // MB231
-
-static const double siPYerr[][2] = {
-		{0, 0}, // A172
-		{0.171, 0.107}, // A549
-		{0.045, 0.049}, // U87
-		{0.113, 0.029}, // BT549
-        {0.058, 0.169}}; // MB231
-
-static const double siTOT[][2] = {
-		{0, 0}, // A172
-		{1.037, 1.543}, // A549
-		{0.715, 0.395}, // U87
-		{1.816, 0.130}, // BT549
-        {1.053, 0.295}}; // MB231
-
-static const double siTOTerr[][2] = {
-		{0, 0}, // A172
-		{0.033, 0.034}, // A549
-		{0.050, 0.050}, // U87
-		{0.047, 0.014}, // BT549
-        {0.038, 0.005}}; // MB231
-
 double calcError (param_type);
 void errorLogger (std::exception *);
 void*initState(N_Vector, struct rates, double);
@@ -124,11 +102,11 @@ void calcErrorRef (param_type, double *, std::atomic<bool> *);
 void calcProfileSet (double *, double *, struct rates, int, double, double, double, int);
 double calcErrorOneLine (struct rates, size_t, double);
 double calcErrorAll (struct rates, const double *, const double *);
-void calcErrorRefWithSi (param_type, double *, std::atomic<bool> *);
-double calcErrorSi (param_type);
 void errorLogger (std::stringstream &);
 void calcErrorRefA549 (param_type, double *, std::atomic<bool> *);
 double calcErrorA549Full (struct rates inP, double autocrine);
 void calcErrorRefA549VaryEndo (param_type, double *, std::atomic<bool> *);
+void oneCellLineMulti (struct rates inP, size_t cellLine, double autocrine, double *data);
+void A549Multi (struct rates inP, double autocrine, double *data);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

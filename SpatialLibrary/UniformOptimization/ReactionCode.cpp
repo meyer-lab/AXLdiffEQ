@@ -202,3 +202,39 @@ struct rates Param(param_type params) {
     
     return out;
 }
+
+
+struct rates Param_multi(double *params) {
+    struct rates out;
+    
+    for (size_t ii = 0; ii < 15; ii++) {
+        if (params[ii] < 0) throw invalid_argument(string("An input model parameter is outside the physical range."));
+    }
+    
+    out.Binding1 = params[0];
+    out.Binding2 = params[1];
+    out.Unbinding1 = params[2];
+    out.Unbinding2 = params[3];
+    out.xFwd1 = params[4];
+    out.xRev1 = params[5];
+    out.xFwd3 = params[6];
+    out.xRev3 = params[7];
+    out.internalize = params[8];
+    out.pYinternalize = params[9];
+    out.kRec = params[10];
+    out.kDeg = params[11];
+    out.fElse = params[12];
+    out.fD2 = params[13];
+    out.internalFrac = params[14];
+    out.internalV = params[15];
+    out.xRev5 = out.xRev3*out.Unbinding1/out.Unbinding2;
+    out.xRev4 = out.xRev3*out.Unbinding2/out.Unbinding1;
+    out.xRev2 = out.xRev1*out.Unbinding1/out.Unbinding2;
+    out.xFwd2 = out.xFwd1*out.Binding1/out.Binding2;
+    out.xFwd4 = out.xFwd3*out.Binding2/out.Binding1;
+    out.xFwd5 = out.xFwd3*out.Binding1/out.Binding2;
+    out.xFwd6 = out.xFwd3*out.Binding2/out.xFwd1;
+    out.xRev6 = out.xRev3*out.Unbinding2/out.xRev1;
+    
+    return out;
+}

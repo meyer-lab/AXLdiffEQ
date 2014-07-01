@@ -49,7 +49,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
         throw runtime_error(string("Error calling CVodeCreate in solver_setup."));
     }
     
-    CVodeSetErrHandlerFn(cvode_mem, &errorHandler, nullptr);
+    CVodeSetErrHandlerFn(cvode_mem, &errorHandler, NULL);
     
 
     /* Call CVodeInit to initialize the integrator memory and specify the
@@ -107,7 +107,7 @@ void solverReset (void *cvode_mem, N_Vector init) {
 }
 
 void* solver_setup (N_Vector init, void *params, CVRhsFn f) {
-    return solver_setup (init, params, 1E-3, 1E-6, f);
+    return solver_setup (init, params, 1E-4, 1E-7, f);
 }
 
 void PrintFinalStats(void *cvode_mem)

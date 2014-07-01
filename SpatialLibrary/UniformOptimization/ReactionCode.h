@@ -58,5 +58,6 @@ double pYcalc (N_Vector, struct rates);
 double totCalc (N_Vector, struct rates);
 struct rates Param(param_type);
 double surfAXL (N_Vector);
+struct rates Param_multi(double *params);
 
 #endif /* defined(__UniformOptimization__ReactionCode__) */
