@@ -96,17 +96,18 @@ static const double DoseTotErr[][7] = {
 
 double calcError (param_type);
 void errorLogger (std::exception *);
-void*initState(N_Vector, struct rates, double);
+void*initState(N_Vector, struct rates *, double);
 void diffusionSolution(double *, double, double *, int, double, double *, double *, int, double *, double, double);
 void calcErrorRef (param_type, double *, std::atomic<bool> *);
-void calcProfileSet (double *, double *, struct rates, int, double, double, double, int);
 double calcErrorOneLine (struct rates, size_t, double);
 double calcErrorAll (struct rates, const double *, const double *);
 void errorLogger (std::stringstream &);
 void calcErrorRefA549 (param_type, double *, std::atomic<bool> *);
 double calcErrorA549Full (struct rates inP, double autocrine);
 void calcErrorRefA549VaryEndo (param_type, double *, std::atomic<bool> *);
-void oneCellLineMulti (struct rates inP, size_t cellLine, double autocrine, double *data);
-void A549Multi (struct rates inP, double autocrine, double *data);
+void oneCellLineMulti (struct rates, size_t, double, double *);
+void A549Multi (struct rates, double, double *data);
+void calcProfile (N_Vector, N_Vector, N_Vector, N_Vector, N_Vector, struct rates *, double, double);
+void calcProfileSet (double *outData, double *tps, struct rates *params, int nTps, double autocrine, double AXL, double GasStim, int frac);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

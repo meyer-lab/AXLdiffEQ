@@ -52,10 +52,16 @@ struct rates {
     double internalV; 
 };
 
+struct diffRates {
+    struct rates params;
+    N_Vector reactIn;
+    N_Vector reactOut;
+};
+
 int AXL_react(double, N_Vector, N_Vector, void *);
 int AXL_react_diff(double, N_Vector, N_Vector, void *);
-double pYcalc (N_Vector, struct rates);
-double totCalc (N_Vector, struct rates);
+double pYcalc (N_Vector, struct rates *);
+double totCalc (N_Vector, struct rates *);
 struct rates Param(param_type);
 double surfAXL (N_Vector);
 struct rates Param_multi(double *params);

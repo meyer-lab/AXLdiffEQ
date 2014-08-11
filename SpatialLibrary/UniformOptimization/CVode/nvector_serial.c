@@ -352,7 +352,7 @@ N_Vector N_VClone_Serial(N_Vector w)
         
         /* Attach data */
         NV_OWN_DATA_S(v) = 1;
-        NV_DATA_S(v)     = data;
+        NV_DATA_S(v) = data;
         
     }
     

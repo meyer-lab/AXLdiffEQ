@@ -307,69 +307,70 @@ int CVDlsGetLastFlag(void *cvode_mem, long int *flag)
  * Finally, the actual computation of the jth column of the Jacobian is 
  * done with a call to N_VLinearSum.
  * -----------------------------------------------------------------
- */ 
+ */
 
 int cvDlsDenseDQJac(long int N, double t,
-                    N_Vector y, N_Vector fy, 
+                    N_Vector y, N_Vector fy,
                     DlsMat Jac, void *data,
                     N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
 {
-  double fnorm, minInc, inc, inc_inv, yjsaved, srur;
-  double *tmp2_data, *y_data, *ewt_data;
-  N_Vector ftemp, jthCol;
-  long int j;
-  int retval = 0;
-
-  CVodeMem cv_mem;
-  CVDlsMem cvdls_mem;
-
-  /* data points to cvode_mem */
-  cv_mem = (CVodeMem) data;
-  cvdls_mem = (CVDlsMem) lmem;
-
-  /* Save pointer to the array in tmp2 */
-  tmp2_data = N_VGetArrayPointer(tmp2);
-
-  /* Rename work vectors for readibility */
-  ftemp = tmp1; 
-  jthCol = tmp2;
-
-  /* Obtain pointers to the data for ewt, y */
-  ewt_data = N_VGetArrayPointer(ewt);
-  y_data   = N_VGetArrayPointer(y);
-
-  /* Set minimum increment based on uround and norm of f */
-  srur = RSqrt(uround);
-  fnorm = N_VWrmsNorm(fy, ewt);
-  minInc = (fnorm != 0.0) ?
-           (MIN_INC_MULT * ABS(h) * uround * N * fnorm) : 1.0;
-
-  for (j = 0; j < N; j++) {
-
-    /* Generate the jth col of J(tn,y) */
-
-    N_VSetArrayPointer(DENSE_COL(Jac,j), jthCol);
-
-    yjsaved = y_data[j];
-    inc = MAX(srur*ABS(yjsaved), minInc/ewt_data[j]);
-    y_data[j] += inc;
-
-    retval = f(t, y, ftemp, user_data);
-    nfeDQ++;
-    if (retval != 0) break;
+    double fnorm, minInc, inc, inc_inv, yjsaved, srur;
+    double *tmp2_data, *y_data, *ewt_data;
+    N_Vector ftemp, jthCol;
+    long int j;
+    int retval = 0;
     
-    y_data[j] = yjsaved;
-
-    inc_inv = 1.0/inc;
-    N_VLinearSum(inc_inv, ftemp, -inc_inv, fy, jthCol);
-
-    DENSE_COL(Jac,j) = N_VGetArrayPointer(jthCol);
-  }
-
-  /* Restore original array pointer in tmp2 */
-  N_VSetArrayPointer(tmp2_data, tmp2);
-
-  return(retval);
+    CVodeMem cv_mem;
+    CVDlsMem cvdls_mem;
+    
+    /* data points to cvode_mem */
+    cv_mem = (CVodeMem) data;
+    cvdls_mem = (CVDlsMem) lmem;
+    
+    /* Save pointer to the array in tmp2 */
+    tmp2_data = N_VGetArrayPointer(tmp2);
+    
+    /* Rename work vectors for readibility */
+    ftemp = tmp1;
+    jthCol = tmp2;
+    
+    /* Obtain pointers to the data for ewt, y */
+    ewt_data = N_VGetArrayPointer(ewt);
+    y_data   = N_VGetArrayPointer(y);
+    
+    /* Set minimum increment based on uround and norm of f */
+    srur = RSqrt(uround);
+    fnorm = N_VWrmsNorm(fy, ewt);
+    minInc = (fnorm != 0.0) ?
+    (MIN_INC_MULT * ABS(h) * uround * N * fnorm) : 1.0;
+    
+    for (j = 0; j < N; j++) {
+        
+        /* Generate the jth col of J(tn,y) */
+        
+        N_VSetArrayPointer(DENSE_COL(Jac,j), jthCol);
+        
+        yjsaved = y_data[j];
+        inc = MAX(srur*ABS(yjsaved), minInc/ewt_data[j]);
+        y_data[j] += inc;
+        
+        retval = f(t, y, ftemp, user_data);
+        nfeDQ++;
+        if (retval != 0) break;
+        
+        y_data[j] = yjsaved;
+        
+        inc_inv = 1.0/inc;
+        N_VLinearSum(inc_inv, ftemp, -inc_inv, fy, jthCol);
+        
+        DENSE_COL(Jac,j) = N_VGetArrayPointer(jthCol);
+    }
+    
+    /* Restore original array pointer in tmp2 */
+    N_VSetArrayPointer(tmp2_data, tmp2);
+    
+    
+    return(retval);
 }
 
 /*

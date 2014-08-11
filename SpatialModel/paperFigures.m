@@ -21,9 +21,9 @@ DO_ALL_OUTPUTS = 0;
 DO_IMPAIRED_ENDO = 0;
 DO_LONG_TIME_SCALE = 0;
 SHOW_FIT = 0;
-DO_SPATIAL_PRED = 0;
+DO_SPATIAL_PRED = 1;
 LOCAL_SENSITIVITY = 0;
-SPATIAL_TIMECOURSE = 1;
+SPATIAL_TIMECOURSE = 0;
 
 %% Do spatial time course
 
@@ -237,7 +237,7 @@ if DO_SPATIAL_PRED
     figIDX = figIDX + 1;
     
     xx = linspace(0,1,100);
-    A = logspace(-2,3,10);
+    A = logspace(-2,3,5);
 
     for ii = 1:length(A)
         BB(:,ii) = GassF([A(ii) GasConc shapeParam],xx); %#ok<SAGROW>
@@ -324,9 +324,9 @@ if DO_SPATIAL_PRED
         disp(ii);
     end
     
-    for ii = 1:size(B,2)
-        B(:,ii) = B(:,ii) - B(1,ii); %#ok<SAGROW>
-    end
+    %for ii = 1:size(B,2)
+    %    B(:,ii) = B(:,ii) - B(1,ii); %#ok<SAGROW>
+    %end
 
     semilogx(A,B);
     axis([min(A) max(A) min(min(B)) max(max(B))]);

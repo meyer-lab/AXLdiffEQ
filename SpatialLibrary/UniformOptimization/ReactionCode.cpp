@@ -12,6 +12,7 @@
 #include <array>
 #include <vector>
 #include <string>
+#include <iostream>
 #include <stdexcept>
 
 
@@ -85,6 +86,10 @@ int AXL_react(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     dxdt_d[6]  += -x_d[6]*(r->internalize + r->pYinternalize)*endoImpair + r->kRec*(1-r->fD2)*x_d[12]*r->internalFrac; // Endocytosis, recycling
     dxdt_d[12] += x_d[6]*(r->internalize + r->pYinternalize)/r->internalFrac*endoImpair - r->kRec*(1-r->fD2)*x_d[12] - r->kDeg*r->fD2*x_d[12]*degImpair; // Endocytosis, recycling, degradation
     
+    
+    if (degImpair != 1) cout << endl << "error" << endl;
+    
+    
     return 0;
 }
 
@@ -93,6 +98,8 @@ double surfAXL (N_Vector state) {
 }
 
 int AXL_react_diff(double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
+    struct diffRates *pInD = (struct diffRates *) user_data;
+    
     double* xx_d = NV_DATA_S(xx);
     double* dxxdt_d = NV_DATA_S(dxxdt);
     size_t pos, spec;
@@ -116,52 +123,46 @@ int AXL_react_diff(double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
         }
     }
     
-    N_Vector reactIn = N_VNew_Serial(Nspecies);
-    N_Vector reactOut = N_VNew_Serial(Nspecies);
-    
     // Add in the reaction for each location
     for (size_t jj = 0; jj < grid_size; jj++) {
-        for (size_t ii = 0; ii < Nspecies; ii++) Ith(reactIn,ii) = xx_d[ii*grid_size + jj];
+        for (size_t ii = 0; ii < Nspecies; ii++) Ith(pInD->reactIn,ii) = xx_d[ii*grid_size + jj];
         
-        AXL_react(t,reactIn,reactOut,user_data);
+        AXL_react(t,pInD->reactIn,pInD->reactOut,&pInD->params);
         
         // Convert by diffusion coefficient and add in reaction
         for (size_t ii = 0; ii < Nspecies; ii++) {
             dxxdt_d[ii*grid_size + jj] *= diffD[ii];
-            dxxdt_d[ii*grid_size + jj] += Ith(reactOut,ii);
+            dxxdt_d[ii*grid_size + jj] += Ith(pInD->reactOut,ii);
         }
     }
-    
-    N_VDestroy_Serial(reactIn);
-    N_VDestroy_Serial(reactOut);
     
     return 0;
 }
 
 
 // This takes the model state and calculates the amount of phosphorylated species
-double pYcalc (N_Vector state, struct rates p) {
+double pYcalc (N_Vector state, struct rates *p) {
     double pYa = Ith(state,1) + Ith(state,2) + Ith(state,3) + Ith(state,4) + 2*Ith(state,5) +
-    p.internalFrac*(Ith(state,7) + Ith(state,8) + Ith(state,9) + Ith(state,10) + 2*Ith(state,11));
+    p->internalFrac*(Ith(state,7) + Ith(state,8) + Ith(state,9) + Ith(state,10) + 2*Ith(state,11));
     
-    pYa *= p.scaleA;
+    pYa *= p->scaleA;
     
-    pYa += 2*Ith(state,6) + p.internalFrac*(2*Ith(state,12));
+    pYa += 2*Ith(state,6) + p->internalFrac*(2*Ith(state,12));
     
     return pYa;
 }
 
 // This takes the model state and calculates the total amount of receptor in a cell
-double totCalc (N_Vector state, struct rates p) {
+double totCalc (N_Vector state, struct rates *p) {
     double total = 0;
     
     for (int ii = 1; ii < 7; ii++) total += Ith(state,ii);
-    for (int ii = 7; ii < 13; ii++) total += Ith(state,ii)*p.internalFrac;
+    for (int ii = 7; ii < 13; ii++) total += Ith(state,ii)*p->internalFrac;
     
     total += Ith(state,5);
     total += Ith(state,6);
-    total += Ith(state,11)*p.internalFrac;
-    total += Ith(state,12)*p.internalFrac;
+    total += Ith(state,11)*p->internalFrac;
+    total += Ith(state,12)*p->internalFrac;
     
     return total/fgMgConv;
 }

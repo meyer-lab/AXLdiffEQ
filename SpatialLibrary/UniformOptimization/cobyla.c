@@ -379,7 +379,7 @@ typedef int cobyla_function(int n, int m, double *x, double *f, double *con,
  * The cobyla function returns the usual nlopt_result codes.
  *
  */
-extern nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg, double rhoend, nlopt_stopping *stop, const double *lb, const double *ub,
+nlopt_result cobyla(int n, int m, double *x, double *minf, double rhobeg, double rhoend, nlopt_stopping *stop, const double *lb, const double *ub,
                            int message, cobyla_function *calcfc, func_wrap_state *state);
 
 nlopt_result cobyla_minimize(unsigned n, nlopt_func f, void *f_data,

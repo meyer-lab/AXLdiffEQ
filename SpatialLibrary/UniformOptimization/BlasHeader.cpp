@@ -15,7 +15,7 @@
 #include <stdatomic.h>
 #endif
 
-
+#include <sstream>
 #include "CVodeHelpers.h"
 #include "ReactionCode.h"
 #include "ModelRunning.h"
@@ -222,11 +222,8 @@ extern "C" double matlabEntryA549VaryEndoPy(double *pIn) {
     atomic<bool> done;
     param_type pInSlice;
     
-    for (size_t ii = 0; ii < (size_t) abs(1); ii++) {
-        for (size_t jj = 0; jj < pInSlice.size(); jj++) {
-            pInSlice[jj] = pIn[(size_t) ii*pInSlice.size() + jj];
-            //cout << pInSlice[jj] << endl;
-        }
+    for (size_t jj = 0; jj < pInSlice.size(); jj++) {
+        pInSlice[jj] = pIn[jj];
     }
     double error = -1;
     
@@ -235,14 +232,32 @@ extern "C" double matlabEntryA549VaryEndoPy(double *pIn) {
     return error;
 }
 
+extern "C" double matlabEntryA549VaryEndoPyRed(double *pIn) {
+    atomic<bool> done;
+    param_type pInSlice;
+    double error = -1;
+    
+    pInSlice[0] = 1.2;
+    pInSlice[1] = pIn[0];
+    pInSlice[2] = 0.042;
+    
+    for (size_t i = 3; i < 14; i++) pInSlice[i] = pIn[i - 2];
+    
+    pInSlice[14] = 1; // fD2
+    pInSlice[15] = pIn[12];
+    pInSlice[16] = pIn[13];
+    pInSlice[17] = pIn[14];
+    pInSlice[18] = pIn[15];
+    
+    calcErrorRefA549VaryEndo(pInSlice, &error, &done);
+    
+    return error;
+}
+
 extern "C" double matlabEntryBT549VaryEndoPy(double *pIn) {
     param_type pInSlice;
     
-    for (size_t ii = 0; ii < (size_t) abs(1); ii++) {
-        for (size_t jj = 0; jj < pInSlice.size(); jj++) {
-            pInSlice[jj] = pIn[(size_t) ii*pInSlice.size() + jj];
-        }
-    }
+    for (size_t j = 0; j < pInSlice.size(); j++) pInSlice[j] = pIn[j];
     
     struct rates params = Param(pInSlice);
     
@@ -253,14 +268,43 @@ extern "C" double matlabEntryBT549VaryEndoPy(double *pIn) {
     return calcErrorOneLine (params, 3, pInSlice[15]);
 }
 
+extern "C" double matlabEntryBT549VaryEndoPyRed(double *pIn) {
+    param_type pInS;
+    
+    pInS[0] = 1.2;
+    pInS[1] = pIn[0];
+    pInS[2] = 0.042;
+    pInS[3] = pIn[1];
+    pInS[4] = pIn[2];
+    pInS[5] = pIn[3];
+    pInS[6] = pIn[4];
+    pInS[7] = pIn[5];
+    pInS[8] = pIn[6];
+    pInS[9] = pIn[7];
+    pInS[10] = pIn[8];
+    pInS[11] = pIn[9];
+    pInS[12] = pIn[10];
+    pInS[13] = pIn[11];
+    pInS[14] = 1; // fD2
+    
+    struct rates params = Param(pInS);
+    
+    params.expression = pIn[13];
+    params.internalFrac = pIn[14];
+    params.internalV = pIn[15];
+    
+    return calcErrorOneLine (params, 3, pIn[12]);
+}
+
 
 extern "C" int calcProfileMatlab(double *dataPtr, double *params, double *tps, int nTps, double autocrine, double AXL, double GasStim, int frac) {
     param_type pIn;
+    struct rates pInS = Param(pIn);
     
     for (size_t ii = 0; ii < pIn.size(); ii++) pIn[ii] = params[ii];
     
     try {
-        calcProfileSet (dataPtr, tps, Param(pIn), nTps, autocrine, AXL, GasStim, frac);
+        calcProfileSet (dataPtr, tps, &pInS, nTps, autocrine, AXL, GasStim, frac);
     } catch (std::exception &e) {
         errorLogger(&e);
         return 1;
@@ -306,11 +350,11 @@ extern "C" int matlabDiffTPS_pY(double *dataPtr, double AXLin, double *GasIn, in
             }
             
             if (frac == 0) {
-                dataPtr[time*((size_t) abs(gridIn)) + gridP] = pYcalc(state, pInS);
+                dataPtr[time*((size_t) abs(gridIn)) + gridP] = pYcalc(state, &pInS);
             } else if (frac == 1) {
-                dataPtr[time*((size_t) abs(gridIn)) + gridP] = pYcalc(state, pInS) / totCalc(state, pInS);
+                dataPtr[time*((size_t) abs(gridIn)) + gridP] = pYcalc(state, &pInS) / totCalc(state, &pInS);
             } else {
-                dataPtr[time*((size_t) abs(gridIn)) + gridP] = totCalc(state, pInS);
+                dataPtr[time*((size_t) abs(gridIn)) + gridP] = totCalc(state, &pInS);
             }
         }
     }

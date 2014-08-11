@@ -97,6 +97,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     
     CVodeSetMaxConvFails(cvode_mem, 50);
     CVodeSetMaxNumSteps(cvode_mem, 1E5);
+    //CVodeSetStabLimDet(cvode_mem, 1);
     
     return cvode_mem;
 }
@@ -107,7 +108,7 @@ void solverReset (void *cvode_mem, N_Vector init) {
 }
 
 void* solver_setup (N_Vector init, void *params, CVRhsFn f) {
-    return solver_setup (init, params, 1E-4, 1E-7, f);
+    return solver_setup (init, params, 1E-2, 1E-6, f);
 }
 
 void PrintFinalStats(void *cvode_mem)

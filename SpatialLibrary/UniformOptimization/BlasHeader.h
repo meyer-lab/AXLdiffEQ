@@ -25,6 +25,8 @@ int matlabEntryA549VaryEndo(double *dataPtr, double *pIn, int nIn);
 double matlabEntryA549VaryEndoPy(double *);
 double matlabEntryBT549VaryEndoPy(double *);
 double multiPyEntry(double *);
+double matlabEntryA549VaryEndoPyRed(double *pIn);
+double matlabEntryBT549VaryEndoPyRed(double *pIn);
     
 #ifdef __cplusplus
 }
