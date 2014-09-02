@@ -10,29 +10,29 @@
 	<string>UniformOptimization</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>3E7FB992-9DBC-437C-9ACC-A1517A36A3E0</key>
+		<key>BD6BE61FECF0FBB9327A065D60A65EE817A58027</key>
 		<string>https://github.com/thanatosmin/AXLdiffEQ.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>SpatialLibrary/UniformOptimization.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>3E7FB992-9DBC-437C-9ACC-A1517A36A3E0</key>
+		<key>BD6BE61FECF0FBB9327A065D60A65EE817A58027</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/thanatosmin/AXLdiffEQ.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>3E7FB992-9DBC-437C-9ACC-A1517A36A3E0</string>
+	<string>BD6BE61FECF0FBB9327A065D60A65EE817A58027</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>3E7FB992-9DBC-437C-9ACC-A1517A36A3E0</string>
+			<string>BD6BE61FECF0FBB9327A065D60A65EE817A58027</string>
 			<key>IDESourceControlWCCName</key>
 			<string>AXLdiffEQ</string>
 		</dict>

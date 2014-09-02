@@ -41,7 +41,7 @@ struct queT {
 /// 	nIn: number of parameter sets inputted
 /// Output: 0 regardless. Fitness will be 1e10 if simulation fails.
 extern "C" int matlabEntry(double *dataPtr, double *pIn, int nIn) {
-    const int nThreads = 8;
+    const int nThreads = 12;
     queue<queT> runThese;
     thread t[nThreads];
     atomic<bool> *done = new atomic<bool>(nThreads);
@@ -90,7 +90,7 @@ extern "C" int matlabEntry(double *dataPtr, double *pIn, int nIn) {
 }
 
 extern "C" int matlabEntryA549(double *dataPtr, double *pIn, int nIn) {
-    const int nThreads = 8;
+    const int nThreads = 12;
     queue<queT> runThese;
     thread t[nThreads];
     atomic<bool> *done = new atomic<bool>(nThreads);

@@ -20,7 +20,7 @@ int main () {
     double data[1];
     double retVal;
 
-    for (size_t tt = 0; tt < 1000; tt++) {
+    for (size_t tt = 0; tt < 100000; tt++) {
         retVal = matlabEntryA549(data, params, 1);
     }
     

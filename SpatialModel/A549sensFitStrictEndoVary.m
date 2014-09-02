@@ -1,4 +1,6 @@
-function A549sensFitStrictEndoVary(IDX)
+%function A549sensFitStrictEndoVary(IDX)
+IDX = 3;
+
 clc;
 rng('shuffle');
 slices = 80;
@@ -18,7 +20,7 @@ maxx = log10([6,6,1E5,1E5,... % 'B1','B2','U1','U2'
 % ScaleA upped from 0.1
 
 Dopts = psoptimset('Vectorized','on','TimeLimit',8*60*60,'CompletePoll','on','CompleteSearch','on',...
-        'MaxFunEvals',1E10,'MaxIter',1E10,'Display','diagnose');
+        'MaxFunEvals',1E10,'MaxIter',1E10,'Display','iter');
 
 A = zeros(2,length(minn));
 A(1,3) = 1;
@@ -31,11 +33,11 @@ for ii = 1:slices
     
     params = minn + (rand(size(minn)) .* (maxx - minn));
     
-    try
+    %try
         [paramOpt{ii},fitIDXglobal(ii)] = patternsearch(@cLibA549endoVary,params,A,b,[],[],minn,maxx,[],Dopts);
-    catch
-        fitIDXglobal(ii) = 1E6;
-    end
+    %catch
+    %    fitIDXglobal(ii) = 1E6;
+    %end
 
     save(['./StrictSensEndoVary/' randName '-' mat2str(IDX)]);
 end
