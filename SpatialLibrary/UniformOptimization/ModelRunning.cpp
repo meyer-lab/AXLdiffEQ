@@ -25,8 +25,7 @@
 #include <sstream>
 #include <fstream>
 #include <chrono>
-#include <nlopt.h>
-//#include <nlopt.hpp>
+#include <cobyla.h>
 #include <math.h>
 #include "ModelRunning.h"
 #include "CVodeHelpers.h"

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7218E53619B63CEB00205194 /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 7218E53419B63CEB00205194 /* cobyla.c */; };
+		7218E53719B63CEB00205194 /* cobyla.h in Headers */ = {isa = PBXBuildFile; fileRef = 7218E53519B63CEB00205194 /* cobyla.h */; };
 		9359E6A719476F44007DB3B6 /* libOptimize.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9370A68817E7534800791D49 /* libOptimize.dylib */; };
 		9359E6B21947734B007DB3B6 /* Testing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6B11947734B007DB3B6 /* Testing.m */; };
 		935C638618D1E4A50069EF58 /* ModelRunning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935C638318D1E4A50069EF58 /* ModelRunning.cpp */; };
@@ -57,6 +59,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7218E53419B63CEB00205194 /* cobyla.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cobyla.c; path = ../../../../../.Trash/cobyla.c; sourceTree = "<group>"; };
+		7218E53519B63CEB00205194 /* cobyla.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cobyla.h; path = ../../../../../.Trash/cobyla.h; sourceTree = "<group>"; };
 		9359E6A119476F44007DB3B6 /* Optimize Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Optimize Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9359E6B11947734B007DB3B6 /* Testing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Testing.m; path = UniformOptimization/Testing.m; sourceTree = "<group>"; };
 		935C638318D1E4A50069EF58 /* ModelRunning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelRunning.cpp; path = UniformOptimization/ModelRunning.cpp; sourceTree = "<group>"; };
@@ -121,6 +125,8 @@
 				93A2529E17E6101300FC8307 /* BlasHeader.cpp */,
 				93A2529F17E6101300FC8307 /* BlasHeader.h */,
 				9359E6B11947734B007DB3B6 /* Testing.m */,
+				7218E53419B63CEB00205194 /* cobyla.c */,
+				7218E53519B63CEB00205194 /* cobyla.h */,
 				939CB06B19634F8100960F90 /* Test */,
 				93A2529317E60FF800FC8307 /* Products */,
 			);
@@ -143,6 +149,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7218E53719B63CEB00205194 /* cobyla.h in Headers */,
 				9385E03D18CF36FB00FEB938 /* ReactionCode.h in Headers */,
 				9385E03818CF36C100FEB938 /* CVodeHelpers.h in Headers */,
 				935C638718D1E4A50069EF58 /* ModelRunning.h in Headers */,
@@ -270,6 +277,7 @@
 				9385E03C18CF36FB00FEB938 /* ReactionCode.cpp in Sources */,
 				9385E03718CF36C100FEB938 /* CVodeHelpers.cpp in Sources */,
 				935C638618D1E4A50069EF58 /* ModelRunning.cpp in Sources */,
+				7218E53619B63CEB00205194 /* cobyla.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,7 +391,6 @@
 					"-lsundials_cvode",
 					"-lsundials_nvecserial",
 					"-lsundials_cvodes",
-					"-lnlopt_cxx",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
@@ -430,7 +437,6 @@
 					"-lsundials_cvode",
 					"-lsundials_nvecserial",
 					"-lsundials_cvodes",
-					"-lnlopt_cxx",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
