@@ -6,18 +6,18 @@
 //  Copyright (c) 2014 Aaron Meyer. All rights reserved.
 //
 
-#include "CVode/nvector_serial.h"  /* serial N_Vector types, fcts., macros */
-#include "CVode/cvode.h"             /* prototypes for CVODE fcts., consts. */
+#include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
+#include "cvode/cvode.h"             /* prototypes for CVODE fcts., consts. */
 #include <string>
-#include "CVode/cvode_dense.h"       /* prototype for CVDense */
-#include "CVode/cvode_direct.h"
+#include "cvode/cvode_dense.h"       /* prototype for CVDense */
+#include <cvode/cvode_direct.h>
 #include <sstream>
 #include <iostream>
 #include <stdexcept>
 #include "CVodeHelpers.h"
 #include "ReactionCode.h"
 #include "ModelRunning.h"
-#include "CVode/sundials_dense.h"
+#include <sundials/sundials_dense.h>
 
 #define IJth(A,i,j) DENSE_ELEM(A,i-1,j-1)
 

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Aaron Meyer. All rights reserved.
 //
 
-#include "CVode/sundials_nvector.h"
-#include "CVode/cvode.h"
+#include "sundials/sundials_nvector.h"
+#include "cvode/cvode.h"
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -25,7 +25,8 @@
 #include <sstream>
 #include <fstream>
 #include <chrono>
-#include "cobyla.h"
+#include <nlopt.h>
+//#include <nlopt.hpp>
 #include <math.h>
 #include "ModelRunning.h"
 #include "CVodeHelpers.h"
