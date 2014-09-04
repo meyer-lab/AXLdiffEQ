@@ -13,11 +13,13 @@ The external MatLab library may be accessed by the following function interfaces
 Description | Fits parameter set to data, returning chi-squared of data fit. Multithreaded.
 ----------- | --------------------------------------------------------------------------
 Parameters  | Double*: Output vector as long as the number of parameter sets passed.
- & Double*:  \\
- & Int: Number of parameter sets passed in. \\
-Returns & Zero always. Integration failures will return error of $10^6$. \\
-\end{tabular}
-\\
+            | Double*: 
+            | Int: Number of parameter sets passed in.
+Returns     | Zero always. Integration failures will return error of 10^6.
+
+
+
+
 \begin{tabular}{r| p{4.7in}}
 \hline
 \multicolumn{2}{ l }{  \texttt{rEntry} } \\
