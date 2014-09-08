@@ -24,7 +24,7 @@
 
 using namespace std;
 
-void errorHandler(int error_code, const char *module, const char *function, char *msg, void *eh_data) {
+void errorHandler(int error_code, const char *module, const char *function, char *msg, void *) {
     if (error_code == CV_WARNING) return;
     
     stringstream OutMesg;
@@ -77,7 +77,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     }
     
     // Call CVDense to specify the CVDENSE dense linear solver
-    flag = CVLapackDense(cvode_mem, NV_LENGTH_S(init));
+    flag = CVLapackDense(cvode_mem, (int) NV_LENGTH_S(init));
     
     if (flag < 0) {
         CVodeFree(&cvode_mem);

@@ -164,7 +164,7 @@ void calcProfile (N_Vector outData, N_Vector surfData, N_Vector outStim, N_Vecto
     }
 }
 
-double errorOpt(unsigned n, const double *x, double *grad, void *data) {
+double errorOpt(unsigned, const double *x, double *grad, void *data) {
     struct inData *dataS = (struct inData *) data;
     double xx = 0;
     

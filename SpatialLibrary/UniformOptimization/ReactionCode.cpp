@@ -24,7 +24,7 @@ double diffD[Nspecies];
 const double fgMgConv = 135.2;
 
 
-int AXL_react(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
+int AXL_react(double, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     struct rates *r = (struct rates *) user_data;
     double* x_d = NV_DATA_S(xIn);
     double* dxdt_d = NV_DATA_S(dxdtIn);

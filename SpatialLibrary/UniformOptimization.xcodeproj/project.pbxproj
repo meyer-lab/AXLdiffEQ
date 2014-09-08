@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7218E53619B63CEB00205194 /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 7218E53419B63CEB00205194 /* cobyla.c */; };
-		7218E53719B63CEB00205194 /* cobyla.h in Headers */ = {isa = PBXBuildFile; fileRef = 7218E53519B63CEB00205194 /* cobyla.h */; };
+		72D53AE719BE025D001E0AC6 /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 72D53AE519BE025D001E0AC6 /* cobyla.c */; };
+		72D53AE819BE025D001E0AC6 /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 72D53AE519BE025D001E0AC6 /* cobyla.c */; };
+		72D53AE919BE025D001E0AC6 /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 72D53AE519BE025D001E0AC6 /* cobyla.c */; };
+		72D53AEA19BE025D001E0AC6 /* cobyla.h in Headers */ = {isa = PBXBuildFile; fileRef = 72D53AE619BE025D001E0AC6 /* cobyla.h */; };
 		9359E6A719476F44007DB3B6 /* libOptimize.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9370A68817E7534800791D49 /* libOptimize.dylib */; };
 		9359E6B21947734B007DB3B6 /* Testing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6B11947734B007DB3B6 /* Testing.m */; };
 		935C638618D1E4A50069EF58 /* ModelRunning.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935C638318D1E4A50069EF58 /* ModelRunning.cpp */; };
@@ -18,7 +20,6 @@
 		9385E03818CF36C100FEB938 /* CVodeHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 9385E03518CF36C100FEB938 /* CVodeHelpers.h */; };
 		9385E03C18CF36FB00FEB938 /* ReactionCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9385E03918CF36FB00FEB938 /* ReactionCode.cpp */; };
 		9385E03D18CF36FB00FEB938 /* ReactionCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9385E03A18CF36FB00FEB938 /* ReactionCode.h */; };
-		939CB06D19634F8100960F90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939CB06C19634F8100960F90 /* main.cpp */; };
 		939CB07219634FEC00960F90 /* libOptimize.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9370A68817E7534800791D49 /* libOptimize.dylib */; };
 /* End PBXBuildFile section */
 
@@ -59,8 +60,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7218E53419B63CEB00205194 /* cobyla.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cobyla.c; path = ../../../../../.Trash/cobyla.c; sourceTree = "<group>"; };
-		7218E53519B63CEB00205194 /* cobyla.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cobyla.h; path = ../../../../../.Trash/cobyla.h; sourceTree = "<group>"; };
+		72D53AE519BE025D001E0AC6 /* cobyla.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cobyla.c; path = UniformOptimization/cobyla.c; sourceTree = "<group>"; };
+		72D53AE619BE025D001E0AC6 /* cobyla.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cobyla.h; path = UniformOptimization/cobyla.h; sourceTree = "<group>"; };
 		9359E6A119476F44007DB3B6 /* Optimize Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Optimize Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9359E6B11947734B007DB3B6 /* Testing.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Testing.m; path = UniformOptimization/Testing.m; sourceTree = "<group>"; };
 		935C638318D1E4A50069EF58 /* ModelRunning.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelRunning.cpp; path = UniformOptimization/ModelRunning.cpp; sourceTree = "<group>"; };
@@ -71,7 +72,6 @@
 		9385E03918CF36FB00FEB938 /* ReactionCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ReactionCode.cpp; path = UniformOptimization/ReactionCode.cpp; sourceTree = "<group>"; };
 		9385E03A18CF36FB00FEB938 /* ReactionCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReactionCode.h; path = UniformOptimization/ReactionCode.h; sourceTree = "<group>"; };
 		939CB06A19634F8100960F90 /* Test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Test; sourceTree = BUILT_PRODUCTS_DIR; };
-		939CB06C19634F8100960F90 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		93A2529717E60FF800FC8307 /* UniformOptimization.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = UniformOptimization.1; path = UniformOptimization/UniformOptimization.1; sourceTree = "<group>"; };
 		93A2529E17E6101300FC8307 /* BlasHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlasHeader.cpp; path = UniformOptimization/BlasHeader.cpp; sourceTree = "<group>"; };
 		93A2529F17E6101300FC8307 /* BlasHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlasHeader.h; path = UniformOptimization/BlasHeader.h; sourceTree = "<group>"; };
@@ -104,14 +104,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		939CB06B19634F8100960F90 /* Test */ = {
-			isa = PBXGroup;
-			children = (
-				939CB06C19634F8100960F90 /* main.cpp */,
-			);
-			path = Test;
-			sourceTree = "<group>";
-		};
 		93A2528917E60FF800FC8307 = {
 			isa = PBXGroup;
 			children = (
@@ -125,9 +117,8 @@
 				93A2529E17E6101300FC8307 /* BlasHeader.cpp */,
 				93A2529F17E6101300FC8307 /* BlasHeader.h */,
 				9359E6B11947734B007DB3B6 /* Testing.m */,
-				7218E53419B63CEB00205194 /* cobyla.c */,
-				7218E53519B63CEB00205194 /* cobyla.h */,
-				939CB06B19634F8100960F90 /* Test */,
+				72D53AE519BE025D001E0AC6 /* cobyla.c */,
+				72D53AE619BE025D001E0AC6 /* cobyla.h */,
 				93A2529317E60FF800FC8307 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -149,7 +140,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7218E53719B63CEB00205194 /* cobyla.h in Headers */,
+				72D53AEA19BE025D001E0AC6 /* cobyla.h in Headers */,
 				9385E03D18CF36FB00FEB938 /* ReactionCode.h in Headers */,
 				9385E03818CF36C100FEB938 /* CVodeHelpers.h in Headers */,
 				935C638718D1E4A50069EF58 /* ModelRunning.h in Headers */,
@@ -266,6 +257,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9359E6B21947734B007DB3B6 /* Testing.m in Sources */,
+				72D53AE819BE025D001E0AC6 /* cobyla.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,7 +269,7 @@
 				9385E03C18CF36FB00FEB938 /* ReactionCode.cpp in Sources */,
 				9385E03718CF36C100FEB938 /* CVodeHelpers.cpp in Sources */,
 				935C638618D1E4A50069EF58 /* ModelRunning.cpp in Sources */,
-				7218E53619B63CEB00205194 /* cobyla.c in Sources */,
+				72D53AE719BE025D001E0AC6 /* cobyla.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +277,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				939CB06D19634F8100960F90 /* main.cpp in Sources */,
+				72D53AE919BE025D001E0AC6 /* cobyla.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,18 +348,15 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = avx2;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
-				FRAMEWORK_SEARCH_PATHS = /usr/local/lib;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
+				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
@@ -381,8 +370,8 @@
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_PARAMETER = NO;
-				GENERATE_PROFILING_CODE = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GENERATE_PROFILING_CODE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include/;
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
@@ -394,7 +383,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -405,13 +394,13 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = avx2;
 				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
-				FRAMEWORK_SEARCH_PATHS = /usr/local/lib;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -426,13 +415,13 @@
 				GCC_WARN_SIGN_COMPARE = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_PARAMETER = NO;
-				GENERATE_PROFILING_CODE = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GENERATE_PROFILING_CODE = NO;
 				HEADER_SEARCH_PATHS = /usr/local/include/;
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = "";
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-lsundials_cvode",
 					"-lsundials_nvecserial",
@@ -440,7 +429,7 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
-				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -499,7 +488,7 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
@@ -517,12 +506,17 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -532,10 +526,7 @@
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-Wno-documentation",
-				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-v";
 				SDKROOT = macosx;
 			};
@@ -554,7 +545,7 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
@@ -567,12 +558,17 @@
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SHADOW = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -581,10 +577,7 @@
 				);
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-Wno-documentation",
-				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-v";
 				SDKROOT = macosx;
 			};
