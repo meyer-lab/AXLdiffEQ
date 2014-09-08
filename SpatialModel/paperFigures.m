@@ -236,8 +236,8 @@ if DO_SPATIAL_PRED
     figure(figIDX);
     figIDX = figIDX + 1;
     
-    xx = linspace(0,1,100);
-    A = logspace(-2,3,10);
+    xx = linspace(0,1,120);
+    A = logspace(-2,3,16);
 
     for ii = 1:length(A)
         BB(:,ii) = GassF([A(ii) GasConc shapeParam],xx); %#ok<SAGROW>
@@ -254,51 +254,51 @@ if DO_SPATIAL_PRED
     localPY = zeros(length(A),4);
     avgPY = zeros(length(A),4);
 
-%     parfor ii = 1:length(A)
-%         localPYz = zeros(1,4);
-%         avgPYz = zeros(1,4);
-%         
-%         temp = ffSpat([A(ii) GasConc],0);
-%         localPYz(1) = temp(1);
-%         avgPYz(1) = mean(temp.*xx);
-%         
-%         temp = ffSpat([A(ii) GasConc],0.1);
-%         localPYz(2) = temp(1);
-%         avgPYz(2) = mean(temp.*xx);
-% 
-%         temp = ffSpat([A(ii) GasConc],1);
-%         localPYz(3) = temp(1);
-%         avgPYz(3) = mean(temp.*xx);
-%         
-%         temp = ffSpat([A(ii) GasConc],10);
-%         localPYz(4) = temp(1);
-%         avgPYz(4) = mean(temp.*xx);
-%         
-%         localPY(ii,:) = localPYz;
-%         avgPY(ii,:) = avgPYz;
-%         
-%         disp(ii);
-%     end
-%     
-%     subplot(2,2,2);
-%     hold off;
-%     semilogx(A,localPY(:,1)/localPY(1,1),'k-');
-%     hold on;
-%     semilogx(A,localPY(:,2)/localPY(1,2),'g-');
-%     semilogx(A,localPY(:,3)/localPY(1,3),'b-');
-%     semilogx(A,localPY(:,4)/localPY(1,4),'r-');
-%     axis([min(A) max(A) 0 max(max(localPY / localPY(1,1)))]);
-%     title('Local predictions');
-% 
-%     subplot(2,2,3);
-%     hold off;
-%     semilogx(A,avgPY(:,1)/avgPY(1,1),'k-');
-%     hold on;
-%     semilogx(A,avgPY(:,2)/avgPY(1,2),'g-');
-%     semilogx(A,avgPY(:,3)/avgPY(1,3),'b-');
-%     semilogx(A,avgPY(:,4)/avgPY(1,4),'r-');
-%     axis([min(A) max(A) 0 2.2]);
-%     title('Average predictions');
+    parfor ii = 1:length(A)
+        localPYz = zeros(1,4);
+        avgPYz = zeros(1,4);
+        
+        temp = ffSpat([A(ii) GasConc],0);
+        localPYz(1) = temp(1);
+        avgPYz(1) = mean(temp.*xx);
+        
+        temp = ffSpat([A(ii) GasConc],0.1);
+        localPYz(2) = temp(1);
+        avgPYz(2) = mean(temp.*xx);
+
+        temp = ffSpat([A(ii) GasConc],1);
+        localPYz(3) = temp(1);
+        avgPYz(3) = mean(temp.*xx);
+        
+        temp = ffSpat([A(ii) GasConc],10);
+        localPYz(4) = temp(1);
+        avgPYz(4) = mean(temp.*xx);
+        
+        localPY(ii,:) = localPYz;
+        avgPY(ii,:) = avgPYz;
+        
+        disp(ii);
+    end
+    
+    subplot(2,2,2);
+    hold off;
+    semilogx(A,localPY(:,1)/localPY(1,1),'k-');
+    hold on;
+    semilogx(A,localPY(:,2)/localPY(1,2),'g-');
+    semilogx(A,localPY(:,3)/localPY(1,3),'b-');
+    semilogx(A,localPY(:,4)/localPY(1,4),'r-');
+    axis([min(A) max(A) 0 max(max(localPY / localPY(1,1)))]);
+    title('Local predictions');
+
+    subplot(2,2,3);
+    hold off;
+    semilogx(A,avgPY(:,1)/avgPY(1,1),'k-');
+    hold on;
+    semilogx(A,avgPY(:,2)/avgPY(1,2),'g-');
+    semilogx(A,avgPY(:,3)/avgPY(1,3),'b-');
+    semilogx(A,avgPY(:,4)/avgPY(1,4),'r-');
+    axis([min(A) max(A) 0 2.2]);
+    title('Average predictions');
     
     
     % Components

@@ -9,7 +9,7 @@
 #include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
 #include "cvode/cvode.h"             /* prototypes for CVODE fcts., consts. */
 #include <string>
-#include "cvode/cvode_dense.h"       /* prototype for CVDense */
+#include <cvode/cvode_dense.h>       /* prototype for CVDense */
 #include <cvode/cvode_direct.h>
 #include <sstream>
 #include <iostream>
@@ -18,6 +18,7 @@
 #include "ReactionCode.h"
 #include "ModelRunning.h"
 #include <sundials/sundials_dense.h>
+#include <cvode/cvode_lapack.h>
 
 #define IJth(A,i,j) DENSE_ELEM(A,i-1,j-1)
 
@@ -76,7 +77,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     }
     
     // Call CVDense to specify the CVDENSE dense linear solver
-    flag = CVDense(cvode_mem, NV_LENGTH_S(init));
+    flag = CVLapackDense(cvode_mem, NV_LENGTH_S(init));
     
     if (flag < 0) {
         CVodeFree(&cvode_mem);

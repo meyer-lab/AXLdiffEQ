@@ -143,19 +143,12 @@
     double *dInPtr = dIn;
     __block int retVal = 1;
     
-    //[self measureBlock:^{
+    [self measureBlock:^{
         retVal = matlabDiffTPS_pYavg(dataPtr, 548.02, GasInPtr, gridSize, 0.034269, pPtr, tPtr, 1, dInPtr, 1, 1, 0);
-    //}];
+    }];
     
     XCTAssert( retVal == 0, @"Pass");
 }
 
-
-/*- (void)testPerformanceExample {
- // This is an example of a performance test case.
- [self measureBlock:^{
- // Put the code you want to measure the time of here.
- }];
- }*/
 
 @end
