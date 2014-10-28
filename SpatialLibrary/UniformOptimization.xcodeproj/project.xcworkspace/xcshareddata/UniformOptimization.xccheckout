@@ -14,7 +14,7 @@
 		<string>https://github.com/thanatosmin/AXLdiffEQ.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>SpatialLibrary/UniformOptimization.xcodeproj/project.xcworkspace</string>
+	<string>SpatialLibrary/UniformOptimization.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>BD6BE61FECF0FBB9327A065D60A65EE817A58027</key>

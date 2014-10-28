@@ -1,0 +1,18 @@
+Internal CVode error in CVode
+At t = 0 and h = 4.39513e-38, the corrector convergence test failed repeatedly or with |h| = hmin.
+In module: CVODE
+Error code: -4
+
+Integration failure at initial condition.
+Internal CVode error in CVode
+At t = 0 and h = 4.39513e-38, the corrector convergence test failed repeatedly or with |h| = hmin.
+In module: CVODE
+Error code: -4
+
+Integration failure at initial condition.
+Internal CVode error in CVode
+At t = 0 and h = 1.23933e-37, the corrector convergence test failed repeatedly or with |h| = hmin.
+In module: CVODE
+Error code: -4
+
+Integration failure at initial condition.
