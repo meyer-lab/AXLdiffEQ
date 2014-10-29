@@ -18,7 +18,6 @@
 #include "ReactionCode.h"
 #include "ModelRunning.h"
 #include <sundials/sundials_dense.h>
-#include <cvode/cvode_lapack.h>
 
 #define IJth(A,i,j) DENSE_ELEM(A,i-1,j-1)
 
@@ -77,7 +76,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     }
     
     // Call CVDense to specify the CVDENSE dense linear solver
-    flag = CVLapackDense(cvode_mem, (int) NV_LENGTH_S(init));
+    flag = CVDense(cvode_mem, (int) NV_LENGTH_S(init));
     
     if (flag < 0) {
         CVodeFree(&cvode_mem);

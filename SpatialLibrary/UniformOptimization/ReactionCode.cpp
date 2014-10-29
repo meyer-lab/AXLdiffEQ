@@ -74,12 +74,12 @@ int AXL_react(double, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     dxdt_d[13] = -dR41 - dR32 - dR33 - dR34 - dR35 - r->kDeg*x_d[13];
     
     
-    dxdt_d[1] += -x_d[1]*(r->internalize + r->pYinternalize*r->scaleA) + r->kRec*(1-r->fElse)*x_d[7]*r->internalFrac; // Endocytosis, recycling
-    dxdt_d[7] += x_d[1]*(r->internalize + r->pYinternalize*r->scaleA)/r->internalFrac - r->kRec*(1-r->fElse)*x_d[7] - r->kDeg*r->fElse*x_d[7]; // Endocytosis, recycling, degradation
+    dxdt_d[1] += -x_d[1]*(r->internalize) + r->kRec*(1-r->fElse)*x_d[7]*r->internalFrac; // Endocytosis, recycling
+    dxdt_d[7] += x_d[1]*(r->internalize)/r->internalFrac - r->kRec*(1-r->fElse)*x_d[7] - r->kDeg*r->fElse*x_d[7]; // Endocytosis, recycling, degradation
     
     for (int ii = 2; ii < 6; ii++) {
-        dxdt_d[ii]  += -x_d[ii]*(r->internalize + r->pYinternalize*r->scaleA)*endoImpair + r->kRec*(1-r->fElse)*x_d[ii+6]*r->internalFrac; // Endocytosis, recycling
-        dxdt_d[ii+6] += x_d[ii]*(r->internalize + r->pYinternalize*r->scaleA)/r->internalFrac*endoImpair - r->kRec*(1-r->fElse)*x_d[ii+6] // Endocytosis, recycling
+        dxdt_d[ii]  += -x_d[ii]*r->internalize*endoImpair + r->kRec*(1-r->fElse)*x_d[ii+6]*r->internalFrac; // Endocytosis, recycling
+        dxdt_d[ii+6] += x_d[ii]*r->internalize/r->internalFrac*endoImpair - r->kRec*(1-r->fElse)*x_d[ii+6] // Endocytosis, recycling
         - r->kDeg*r->fElse*x_d[ii+6]*degImpair; // Degradation
     }
     
@@ -142,12 +142,7 @@ int AXL_react_diff(double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
 
 // This takes the model state and calculates the amount of phosphorylated species
 double pYcalc (N_Vector state, struct rates *p) {
-    double pYa = Ith(state,1) + Ith(state,2) + Ith(state,3) + Ith(state,4) + 2*Ith(state,5) +
-    p->internalFrac*(Ith(state,7) + Ith(state,8) + Ith(state,9) + Ith(state,10) + 2*Ith(state,11));
-    
-    pYa *= p->scaleA;
-    
-    pYa += 2*Ith(state,6) + p->internalFrac*(2*Ith(state,12));
+    double pYa = 2*Ith(state,6) + p->internalFrac*(2*Ith(state,12));
     
     return pYa;
 }
@@ -171,25 +166,26 @@ double totCalc (N_Vector state, struct rates *p) {
 struct rates Param(param_type params) {
     struct rates out;
     
-    for (size_t ii = 0; ii < 15; ii++) {
+    for (size_t ii = 0; ii < 11; ii++) {
         if (params[ii] < 0) throw invalid_argument(string("An input model parameter is outside the physical range."));
     }
     
-    out.Binding1 = params[0];
-    out.Binding2 = params[1];
-    out.Unbinding1 = params[2];
-    out.Unbinding2 = params[3];
-    out.xFwd1 = params[4];
-    out.xRev1 = params[5];
-    out.xFwd3 = params[6];
-    out.xRev3 = params[7];
-    out.internalize = params[8];
-    out.pYinternalize = params[9];
-    out.scaleA = params[10];
-    out.kRec = params[11];
-    out.kDeg = params[12];
-    out.fElse = params[13];
-    out.fD2 = params[14];
+    out.Binding1 = 1.2;
+    out.Binding2 = params[0];
+    out.Unbinding1 = 0.042;
+    out.Unbinding2 = params[1];
+    out.xFwd1 = params[2];
+    out.xRev1 = params[3];
+    out.xFwd3 = params[4];
+    out.xRev3 = params[5];
+    out.internalize = params[6];
+    out.pYinternalize = params[7];
+    out.kRec = params[8];
+    out.kDeg = params[9];
+    out.fElse = params[10];
+    out.expression = params[11];
+    out.autocrine = params[12];
+    out.fD2 = 1;
     out.internalFrac = 0.5;
     out.internalV = 623;
     out.xRev5 = out.xRev3*out.Unbinding1/out.Unbinding2;
@@ -205,37 +201,3 @@ struct rates Param(param_type params) {
 }
 
 
-struct rates Param_multi(double *params) {
-    struct rates out;
-    
-    for (size_t ii = 0; ii < 15; ii++) {
-        if (params[ii] < 0) throw invalid_argument(string("An input model parameter is outside the physical range."));
-    }
-    
-    out.Binding1 = params[0];
-    out.Binding2 = params[1];
-    out.Unbinding1 = params[2];
-    out.Unbinding2 = params[3];
-    out.xFwd1 = params[4];
-    out.xRev1 = params[5];
-    out.xFwd3 = params[6];
-    out.xRev3 = params[7];
-    out.internalize = params[8];
-    out.pYinternalize = params[9];
-    out.kRec = params[10];
-    out.kDeg = params[11];
-    out.fElse = params[12];
-    out.fD2 = params[13];
-    out.internalFrac = params[14];
-    out.internalV = params[15];
-    out.xRev5 = out.xRev3*out.Unbinding1/out.Unbinding2;
-    out.xRev4 = out.xRev3*out.Unbinding2/out.Unbinding1;
-    out.xRev2 = out.xRev1*out.Unbinding1/out.Unbinding2;
-    out.xFwd2 = out.xFwd1*out.Binding1/out.Binding2;
-    out.xFwd4 = out.xFwd3*out.Binding2/out.Binding1;
-    out.xFwd5 = out.xFwd3*out.Binding1/out.Binding2;
-    out.xFwd6 = out.xFwd3*out.Binding2/out.xFwd1;
-    out.xRev6 = out.xRev3*out.Unbinding2/out.xRev1;
-    
-    return out;
-}

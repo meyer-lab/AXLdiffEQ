@@ -40,7 +40,6 @@ struct rates {
     double xRev5;      ///< Reaction 5 reverse rate.
     double xFwd6;      ///< Reaction 6 forward rate.
     double xRev6;      ///< Reaction 6 reverse rate.
-    double scaleA;     ///< Signaling capacity of non-D2 species.
     double expression; ///< AXL expression rate.
     double internalize;///< Non-pY species internalization rate.
     double pYinternalize;///< pY species internalization rate.
@@ -49,7 +48,8 @@ struct rates {
     double fElse;      ///< Recycling fraction for non-D2 species.
     double fD2;        ///< Recycling fraction for D2.
     double internalFrac;
-    double internalV; 
+    double internalV;
+    double autocrine;
 };
 
 struct diffRates {
@@ -64,6 +64,5 @@ double pYcalc (N_Vector, struct rates *);
 double totCalc (N_Vector, struct rates *);
 struct rates Param(param_type);
 double surfAXL (N_Vector);
-struct rates Param_multi(double *params);
 
 #endif /* defined(__UniformOptimization__ReactionCode__) */

@@ -40,17 +40,20 @@ struct inData {
     const double *errorMeas; ///< Error for pY measurement.
 };
 
-void calcKinetic (double *outData, double *surfData, struct rates *params, const double *init_state, int *retVal) {
+void calcKinetic (double *outData, double *totData, struct rates *params) {
+    N_Vector init_state = N_VNew_Serial(Nspecies);
+    void *cvode_mem = NULL;
+    
+    // Initialize state based on autocrine ligand
+    cvode_mem = initState(init_state, params);
     N_Vector state = N_VNew_Serial(Nspecies);
-
-    int flag;
-    void *cvode_mem;
     
     cvode_mem = solver_setup (state, params, AXL_react);
     if (cvode_mem == NULL) {
-        *retVal = -1;
         N_VDestroy_Serial(state);
+        N_VDestroy_Serial(init_state);
         CVodeFree(&cvode_mem);
+        throw runtime_error(string("Error during solver threads."));
         return;
     }
 
@@ -58,7 +61,7 @@ void calcKinetic (double *outData, double *surfData, struct rates *params, const
     for (unsigned int stimuli = 0; stimuli < NELEMS(Gass); stimuli++) {
         
         for (int xx = 0; xx < Nspecies; xx++) {
-            Ith(state,xx) = init_state[xx];
+            Ith(state,xx) = Ith(init_state,xx);
         }
         
         Ith(state,0) += Gass[stimuli];
@@ -69,99 +72,25 @@ void calcKinetic (double *outData, double *surfData, struct rates *params, const
         /* In loop, call CVode, print results, and test for error.
          Break out of loop when NOUT preset output times have been reached.  */
         
-        outData[stimuli*NELEMS(times)] = pYcalc(state,params);
-        surfData[stimuli*NELEMS(times)] = surfAXL(state);
-        
-        for (unsigned int ii = 1; ii < NELEMS(times); ii++) {
-            flag = CVode(cvode_mem, times[ii], state, &t, CV_NORMAL);
+        for (unsigned int ii = 0; ii < NELEMS(times); ii++) {
+            int flag = CVode(cvode_mem, times[ii], state, &t, CV_NORMAL);
             
             if (flag < 0) {
-                *retVal = -1;
                 N_VDestroy_Serial(state);
+                N_VDestroy_Serial(init_state);
                 CVodeFree(&cvode_mem);
+                throw runtime_error(string("Error during solver threads."));
                 return;
             }
             
             outData[stimuli*NELEMS(times) + ii] = pYcalc(state,params);
-            surfData[stimuli*NELEMS(times) + ii] = surfAXL(state);
+            totData[stimuli*NELEMS(times) + ii] = totCalc(state,params);
         }
     }
     
-    *retVal = 0;
     N_VDestroy_Serial(state);
     CVodeFree(&cvode_mem);
-}
-
-void calcDose (double *outStim, double *outStimTot, double *surfStim, struct rates *params, const double *init_stateD, size_t stimuli, int *retVal) {
-    N_Vector state = N_VNew_Serial(Nspecies);
-    int flag;
-    void *cvode_mem = NULL;
-    
-    cvode_mem = solver_setup (state, params, AXL_react);
-    if (cvode_mem == NULL) {
-        *retVal = -1;
-        N_VDestroy_Serial(state);
-        CVodeFree(&cvode_mem);
-        return;
-    }
-    
-    /* We've got the initial state, so now run through the dose data */
-
-    // Load the initial state (t = 0)
-    for (int xx = 0; xx < Nspecies; xx++) Ith(state,xx) = init_stateD[xx];
-    
-    Ith(state,0) += GassDose[stimuli];
-    double t = 0;
-    
-    solverReset(cvode_mem, state);
-
-    flag = CVode(cvode_mem, DoseTime, state, &t, CV_NORMAL);
-    if (flag < 0) {
-        *retVal = -1;
-        N_VDestroy_Serial(state);
-        CVodeFree(&cvode_mem);
-        return;
-    }
-    
-    outStim[stimuli] = pYcalc(state,params)/totCalc(state,params);
-    outStimTot[stimuli] = totCalc(state,params);
-    surfStim[stimuli] = surfAXL(state);
-
-    *retVal = 0;
-    N_VDestroy_Serial(state);
-    CVodeFree(&cvode_mem);
-}
-
-// Calculate phosphorylation at time points measured
-void calcProfile (N_Vector outData, N_Vector surfData, N_Vector outStim, N_Vector outStimTot, N_Vector surfStim, struct rates *params, double autocrine, double expression) {
-    params->expression = expression;
-    
-    N_Vector init_state = N_VNew_Serial(Nspecies);
-    void *cvode_mem = NULL;
-    int ee[NELEMS(GassDose) + 1];
-    thread tt[NELEMS(GassDose) + 1];
-    
-    // Initialize state based on autocrine ligand
-    cvode_mem = initState(init_state, params, autocrine);
-    
-    tt[0] = thread(calcKinetic, NVp(outData), NVp(surfData), params, NVp(init_state), &ee[0]);
-    
-    for (size_t ii = 1; ii <= NELEMS(GassDose); ii++) {
-        tt[ii] = thread(calcDose, NVp(outStim), NVp(outStimTot), NVp(surfStim), params, NVp(init_state), ii-1, &ee[ii]);
-    }
-    
-    for (size_t z = 0; z < NELEMS(tt); z++) tt[z].join();
-    
-    /* Free y and abstol vectors */
     N_VDestroy_Serial(init_state);
-    CVodeFree(&cvode_mem);
-    
-    for (size_t z = 0; z < NELEMS(ee); z++) {
-        if (ee[z] != 0) {
-            throw runtime_error(string("Error during solver threads."));
-            return;
-        }
-    }
 }
 
 double errorOpt(unsigned, const double *x, double *grad, void *data) {
@@ -235,179 +164,47 @@ double errorFuncFix (N_Vector fitt, const double *pYmeas, const double *errorMea
     return xx;
 }
 
-double calcErrorOneLine (struct rates inP, size_t cellLine, double autocrine) {
+double calcError (struct rates inP) {
     N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
-    N_Vector surfData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
-    N_Vector outStim = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector outStimTot = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector surfStim = N_VNew_Serial(NELEMS(GassDose));
+    N_Vector totData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
     
     double error = 0;
     
     try {
-        calcProfile (outData, surfData, outStim, outStimTot, surfStim, &inP, autocrine, inP.expression);
+        calcKinetic(NVp(outData), NVp(totData), &inP);
         
-        error += errorFuncOpt (outData, &pY[cellLine*NELEMS(Gass)*NELEMS(times)], &pYerror[cellLine*NELEMS(Gass)*NELEMS(times)]);
-        error += errorFuncOpt (outStim, pYdose[cellLine], DoseError[cellLine]);
-        error += errorFuncFix (outStimTot, DoseTot[cellLine], DoseTotErr[cellLine]);
+        error += errorFuncOpt (outData, pY[0], pYerror[0]);
     } catch (exception &e) {
         errorLogger(&e);
         error = 1E8;
     }
     
     N_VDestroy_Serial(outData);
-    N_VDestroy_Serial(surfData);
-    N_VDestroy_Serial(outStim);
-    N_VDestroy_Serial(outStimTot);
-    N_VDestroy_Serial(surfStim);
+    N_VDestroy_Serial(totData);
     
     return error;
 }
 
-void oneCellLineMulti (struct rates inP, size_t cellLine, double autocrine, double *data) {
-    *data = calcErrorOneLine (inP, cellLine, autocrine);
-}
 
-
-double calcErrorA549Full (struct rates inP, double autocrine) {
-    N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
-    N_Vector surfData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
-    N_Vector outStim = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector outStimTot = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector surfStim = N_VNew_Serial(NELEMS(GassDose));
-    
-    double error = 0;
-    
-    try {
-        calcProfile (outData, surfData, outStim, outStimTot, surfStim, &inP, autocrine, inP.expression);
-        
-        error += errorFuncOpt (outData, &pY[1*NELEMS(Gass)*NELEMS(times)], &pYerror[1*NELEMS(Gass)*NELEMS(times)]);
-        error += errorFuncOpt (surfData, surf[1], surfError[1]);
-        error += errorFuncOpt (outStim, pYdose[1], DoseError[1]);
-        error += errorFuncFix (outStimTot, DoseTot[1], DoseTotErr[1]);
-        error += errorFuncOpt (surfStim, surfDose[1], surfDoseError[1]);
-    } catch (exception &e) {
-        errorLogger(&e);
-        
-        error = 1E8;
-    }
-    
-    N_VDestroy_Serial(outData);
-    N_VDestroy_Serial(surfData);
-    N_VDestroy_Serial(outStim);
-    N_VDestroy_Serial(outStimTot);
-    N_VDestroy_Serial(surfStim);
-    
-    return error;
-}
-
-void A549Multi (struct rates inP, double autocrine, double *data) {
-    *data = calcErrorA549Full (inP, autocrine);
-}
-
-void calcErrorRefA549 (param_type params, double *out, atomic<bool> *done) {
-    struct rates pp = Param(params);
-    pp.expression = params[16];
-    
-    *out = calcErrorA549Full(pp, params[15]);
-    *done = true;
-}
-
-void calcErrorRefA549VaryEndo (param_type params, double *out, atomic<bool> *done) {
-    struct rates pp = Param(params);
-    pp.expression = params[16];
-    
-    pp.internalFrac = params[17];
-    pp.internalV = params[18];
-    
-    *out = calcErrorA549Full(pp, params[15]);
-    *done = true;
-}
-
-
-double calcError (param_type inP) {
-    struct rates params = Param(inP);
-
-    N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
-    N_Vector dummyData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
-    N_Vector outStim = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector dummyStim = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector outStimTot = N_VNew_Serial(NELEMS(GassDose));
-
-    double error = 0;
-
-    for (unsigned short ii = 0; ii < NfitCells; ii++) {
-        try {
-            calcProfile (outData, dummyData, outStim, outStimTot, dummyStim, &params, inP[15+ii], inP[15+NfitCells+ii]);
-
-            error += errorFuncOpt (outData, &pY[ii*NELEMS(Gass)*NELEMS(times)], &pYerror[ii*NELEMS(Gass)*NELEMS(times)]);
-            error += errorFuncOpt (outStim, pYdose[ii], DoseError[ii]);
-            error += errorFuncFix (outStimTot, DoseTot[ii], DoseTotErr[ii]);
-        } catch (exception &e) {
-            errorLogger(&e);
-            error = 1E8;
-        }
-    }
-
-    N_VDestroy_Serial(outData);
-    N_VDestroy_Serial(dummyData);
-    N_VDestroy_Serial(dummyStim);
-    N_VDestroy_Serial(outStim);
-    N_VDestroy_Serial(outStimTot);
-
-    return error;
-}
-
-double calcErrorAll (struct rates inP, const double *expression, const double *autocrine) {
-    N_Vector outData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
-    N_Vector dummyData = N_VNew_Serial(NELEMS(Gass)*NELEMS(times));
-    N_Vector outStim = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector dummyStim = N_VNew_Serial(NELEMS(GassDose));
-    N_Vector outStimTot = N_VNew_Serial(NELEMS(GassDose));
-
-    double error = 0;
-
-    for (unsigned short ii = 0; ii < 3; ii++) {
-        try {
-            calcProfile (outData, dummyData, outStim, outStimTot, dummyStim, &inP, autocrine[ii], expression[ii]);
-
-            error += errorFuncOpt (outData, &pY[ii*NELEMS(Gass)*NELEMS(times)], &pYerror[ii*NELEMS(Gass)*NELEMS(times)]);
-            error += errorFuncOpt (outStim, pYdose[ii], DoseError[ii]);
-            error += errorFuncFix (outStimTot, DoseTot[ii], DoseTotErr[ii]);
-        } catch (exception &e) {
-            errorLogger(&e);
-
-            error = 1E8;
-        }
-    }
-
-    N_VDestroy_Serial(outData);
-    N_VDestroy_Serial(dummyData);
-    N_VDestroy_Serial(outStim);
-    N_VDestroy_Serial(dummyStim);
-    N_VDestroy_Serial(outStimTot);
-
-    return error;
-}
 
 double errorFunc (double fitt, double pYmeas, double errorMeas) {
     return pow((((double)fitt) - pYmeas) / errorMeas, 2);
 }
 
 void calcErrorRef (param_type params, double *out, atomic<bool> *done) {
-    *out = calcError(params);
+    *out = calcError(Param(params));
     *done = true;
 }
 
 // Calculate the initial state by waiting a long time with autocrine Gas
-void *initState( N_Vector init, struct rates *params, double autocrine) {
+void *initState( N_Vector init, struct rates *params) {
     endoImpair = 1.0;
     degImpair = 1.0;
     double t;
     
     for (int ii = 0; ii < Nspecies ; ii++) Ith(init,ii) = 0;
     
-    Ith(init,0) = autocrine;
+    Ith(init,0) = params->autocrine;
     Ith(init,1) = 1.5e5;
     Ith(init,7) = 1.5e5;
     
@@ -427,9 +224,7 @@ void *initState( N_Vector init, struct rates *params, double autocrine) {
 
 
 /// Calculate phosphorylation at time points measured
-void calcProfileSet (double *outData, double *tps, struct rates *params, int nTps, double autocrine, double AXL, double GasStim, int frac) {
-    params->expression = AXL;
-    
+void calcProfileSet (double *outData, double *tps, struct rates *params, int nTps, double GasStim, int frac) {
     N_Vector state = N_VNew_Serial(Nspecies);
     
     double t; ///< Time position of the solver.
@@ -439,7 +234,7 @@ void calcProfileSet (double *outData, double *tps, struct rates *params, int nTp
     
     // Initialize state based on autocrine ligand
     try {
-        cvode_mem = initState(state, params, autocrine);
+        cvode_mem = initState(state, params);
     } catch (exception &e) {
         N_VDestroy_Serial(state);
         throw;
@@ -531,7 +326,7 @@ void errorLogger (stringstream &e) {
 
 
 
-void diffusionSolution(double *dataPtr, double AXLin, double *GasIn, int gridIn, double autocrine, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn) {
+void diffusionSolution(double *dataPtr, double AXLin, double *GasIn, int gridIn, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn) {
     
     // Common
     double t = 0;
@@ -558,7 +353,7 @@ void diffusionSolution(double *dataPtr, double AXLin, double *GasIn, int gridIn,
     
     // Initialize state based on autocrine ligand
     try {
-        cvode_mem = initState(init_state, &pInS, autocrine);
+        cvode_mem = initState(init_state, &pInS);
     } catch (exception &e) {
         N_VDestroy_Serial(init_state);
         throw;
