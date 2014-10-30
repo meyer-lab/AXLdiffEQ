@@ -21,7 +21,7 @@ extern double diffD[Nspecies];
 extern double endoImpair; ///< Extent by which to impair endocytosis of Gas6-bound species.
 extern double degImpair;
 
-typedef std::array< double , 19 > param_type;
+#define numParams 13
 
 struct rates {
     double Binding1;   ///< Forward binding rate for Ig1
@@ -62,7 +62,7 @@ int AXL_react(double, N_Vector, N_Vector, void *);
 int AXL_react_diff(double, N_Vector, N_Vector, void *);
 double pYcalc (N_Vector, struct rates *);
 double totCalc (N_Vector, struct rates *);
-struct rates Param(param_type);
+struct rates Param(double*);
 double surfAXL (N_Vector);
 
 #endif /* defined(__UniformOptimization__ReactionCode__) */

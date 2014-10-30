@@ -11,15 +11,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <thread>
 #include <iostream>
-
-#ifdef __clang__
-#include <atomic>
-#else
-#include <stdatomic.h>
-#endif
-
 #include <stdexcept>
 #include <exception>
 #include <sstream>
@@ -174,6 +166,7 @@ double calcError (struct rates inP) {
         calcKinetic(NVp(outData), NVp(totData), &inP);
         
         error += errorFuncOpt (outData, pY[0], pYerror[0]);
+        error += errorFuncFix (totData, tot[0], totError[0]);
     } catch (exception &e) {
         errorLogger(&e);
         error = 1E8;
@@ -191,7 +184,7 @@ double errorFunc (double fitt, double pYmeas, double errorMeas) {
     return pow((((double)fitt) - pYmeas) / errorMeas, 2);
 }
 
-void calcErrorRef (param_type params, double *out, atomic<bool> *done) {
+void calcErrorRef (double *params, double *out, atomic<bool> *done) {
     *out = calcError(Param(params));
     *done = true;
 }
@@ -205,8 +198,6 @@ void *initState( N_Vector init, struct rates *params) {
     for (int ii = 0; ii < Nspecies ; ii++) Ith(init,ii) = 0;
     
     Ith(init,0) = params->autocrine;
-    Ith(init,1) = 1.5e5;
-    Ith(init,7) = 1.5e5;
     
     void *cvode_mem = solver_setup (init, params, AXL_react);
     if (cvode_mem == NULL) throw runtime_error(string("Error with solver setup in initState."));
@@ -326,7 +317,7 @@ void errorLogger (stringstream &e) {
 
 
 
-void diffusionSolution(double *dataPtr, double AXLin, double *GasIn, int gridIn, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn) {
+void diffusionSolution(double *dataPtr, double *GasIn, int gridIn, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn) {
     
     // Common
     double t = 0;
@@ -336,17 +327,7 @@ void diffusionSolution(double *dataPtr, double AXLin, double *GasIn, int gridIn,
     for (int ii = 0; ii < Nspecies; ii++) diffD[ii] = dIn[ii];
     
     // Create the parameter structure
-    param_type pIn;
-    struct rates pInS;
-    
-    for (size_t ii = 0; ii < pIn.size(); ii++) pIn[ii] = params[ii];
-
-    pInS = Param(pIn);
-    pInS.expression = AXLin;
-    
-    
-    
-    // Done creating parameter structure
+    struct rates pInS = Param(params);
     
     // Get initial state
     N_Vector init_state = N_VNew_Serial(Nspecies);

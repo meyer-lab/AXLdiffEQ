@@ -162,11 +162,10 @@ double totCalc (N_Vector state, struct rates *p) {
     return total/fgMgConv;
 }
 
-
-struct rates Param(param_type params) {
+struct rates Param(double *params) {
     struct rates out;
     
-    for (size_t ii = 0; ii < 11; ii++) {
+    for (size_t ii = 0; ii < 13; ii++) {
         if (params[ii] < 0) throw invalid_argument(string("An input model parameter is outside the physical range."));
     }
     

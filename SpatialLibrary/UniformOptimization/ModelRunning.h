@@ -13,7 +13,7 @@
 #include <atomic>
 
 #define autocrineT 10000
-#define print_CV_err 1
+#define print_CV_err 0
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
 #define NELEMS(x)  (sizeof(x) / sizeof(x[0]))
 
@@ -39,29 +39,30 @@ static const double pYerror[6][2] = { ///< Error for short time scale pY measure
     {0.812417951, 0.812417951}};
 
 static const double tot[6][2] = {
-    {242.9578093, 227.1923827},
-    {221.8099578, 236.6570748},
-    {213.0225396, 254.8630804},
-    {184.0914948, 243.3181911},
-    {189.8325909, 223.5550426},
-    {188.5457582, 188.5457582}}; // A549
+    {3443.11, 3219.69},
+    {3143.41, 3353.82},
+    {3018.88, 3611.82},
+    {2608.88, 3448.21},
+    {2690.24, 3168.14},
+    {2672.00, 2672.00}}; // A549
 
 static const double totError[6][2] = {
-    {12.30, 9.32},
-    {13.34, 9.17},
-    {17.34, 15.91},
-    {10.93, 14.38},
-    {9.08, 13.22},
-    {5.83, 5.83}}; // A549
+    {174.38, 132.10},
+    {189.03, 129.93},
+    {245.75, 225.42},
+    {154.89, 203.72},
+    {128.72, 187.34},
+    {82.62, 82.62}}; // A549
 
-double calcError (param_type);
+double calcError (struct rates);
 void errorLogger (std::exception *);
 void*initState(N_Vector, struct rates *);
-void diffusionSolution(double *dataPtr, double AXLin, double *GasIn, int gridIn, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn);
-void calcErrorRef (param_type, double *, std::atomic<bool> *);
+void diffusionSolution(double *dataPtr, double *GasIn, int gridIn, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn);
+void calcErrorRef (double*, double *, std::atomic<bool> *);
 double calcErrorOneLine (struct rates, size_t, double);
 void errorLogger (std::stringstream &);
 void calcProfile (N_Vector, N_Vector, N_Vector, N_Vector, N_Vector, struct rates *, double, double);
 void calcProfileSet (double *outData, double *tps, struct rates *params, int nTps, double GasStim, int frac);
+
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */
