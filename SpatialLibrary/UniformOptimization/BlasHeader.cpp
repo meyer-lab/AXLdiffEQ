@@ -5,7 +5,7 @@
  *   Copyright (c) 2013 Aaron Meyer. All rights reserved.
  */
 
-#include <queue>
+//#include <queue>
 #include <iostream>
 #include <sstream>
 #include "CVodeHelpers.h"
@@ -77,6 +77,34 @@ extern "C" int matlabDiffTPS_pY(double *dataPtr, double *GasIn, int gridIn, doub
     N_VDestroy_Serial(state);
     return 0;
 }
+
+extern "C" double pyDiffTPS_Activation(double GasC, double *params, double tp, double *dIn) {
+    double tps[2] = {0, tp};
+    const int gridIn = 30;
+    double GasIn[gridIn];
+    
+    for (size_t ii = 0; ii < gridIn; ii++) {
+        if (ii < ((double) gridIn / 15)) {
+            GasIn[ii] = GasC;
+        } else {
+            GasIn[ii] = 0;
+        }
+    }
+    
+    double dataPtr[2];
+    
+    
+    int flag = matlabDiffTPS_pYavg(dataPtr, GasIn, gridIn, params, tps, 2, dIn, 1, 1, 0);
+    
+    if (flag == -1) {
+        return -100;
+    } else {
+        return dataPtr[1] / dataPtr[0];
+    }
+}
+
+
+
 
 extern "C" int matlabDiffTPS_pYavg(double *dataPtr, double *GasIn, int gridIn, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn, int frac) {
     

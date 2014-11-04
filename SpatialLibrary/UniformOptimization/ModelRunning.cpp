@@ -34,13 +34,10 @@ struct inData {
 
 void calcKinetic (double *outData, double *totData, struct rates *params) {
     N_Vector init_state = N_VNew_Serial(Nspecies);
-    void *cvode_mem = NULL;
-    
-    // Initialize state based on autocrine ligand
-    cvode_mem = initState(init_state, params);
     N_Vector state = N_VNew_Serial(Nspecies);
+    void *cvode_mem = initState(init_state, params);
+    // Initialize state based on autocrine ligand
     
-    cvode_mem = solver_setup (state, params, AXL_react);
     if (cvode_mem == NULL) {
         N_VDestroy_Serial(state);
         N_VDestroy_Serial(init_state);
@@ -182,11 +179,6 @@ double calcError (struct rates inP) {
 
 double errorFunc (double fitt, double pYmeas, double errorMeas) {
     return pow((((double)fitt) - pYmeas) / errorMeas, 2);
-}
-
-void calcErrorRef (double *params, double *out, atomic<bool> *done) {
-    *out = calcError(Param(params));
-    *done = true;
 }
 
 // Calculate the initial state by waiting a long time with autocrine Gas

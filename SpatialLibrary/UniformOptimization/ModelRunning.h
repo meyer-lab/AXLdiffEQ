@@ -10,7 +10,6 @@
 #define __UniformOptimization__ModelRunning__
 
 #include "ReactionCode.h"
-#include <atomic>
 
 #define autocrineT 10000
 #define print_CV_err 0
@@ -58,7 +57,6 @@ double calcError (struct rates);
 void errorLogger (std::exception *);
 void*initState(N_Vector, struct rates *);
 void diffusionSolution(double *dataPtr, double *GasIn, int gridIn, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn);
-void calcErrorRef (double*, double *, std::atomic<bool> *);
 double calcErrorOneLine (struct rates, size_t, double);
 void errorLogger (std::stringstream &);
 void calcProfile (N_Vector, N_Vector, N_Vector, N_Vector, N_Vector, struct rates *, double, double);

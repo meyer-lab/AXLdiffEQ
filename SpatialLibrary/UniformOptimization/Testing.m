@@ -59,7 +59,6 @@
 
 
 - (void)testMatlabEntry {
-    double data[1];
     __block double dP = 0;
     
     double params[] = { 0.054435, 24.392, 0.00081113, 0.34571,
@@ -68,7 +67,9 @@
     double *pP = &params[0];
     
     [self measureBlock:^{
-        dP = pyEntry(pP);
+        
+        for (int ii = 0; ii < 1; ii++)
+            dP = pyEntry(pP);
     }];
     
     //XCTAssertEqualWithAccuracy(data[0], 102.838, 0.01, @"Pass");
@@ -85,10 +86,25 @@
     
     XCTAssert( calcProfileMatlab(data, params, tps, 1, 10, 1) == 0, @"Pass");
     
-    XCTAssertEqualWithAccuracy(data[0], 102.838, 0.01, @"Pass");
+    //XCTAssertEqualWithAccuracy(data[0], 102.838, 0.01, @"Pass");
 }
 
+- (void) testDiffModelA {
+    // Just check that diffusion model does not error out.
 
+    double params[13] = {1.24e-01, 1.44e+03, 8.52e-03, 4.4147e-01, 6.6524e+00, 3.1110e-04, 1.6978e-01, 4.1833e-01, 1.4011e-02, 6.6132e-03, 4.6966e-02, 3.5584e+02, 1.5983e-02};
+    double *pPtr = params;
+
+    double dIn[] = { 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    double *dInPtr = dIn;
+    __block double retVal = 1;
+
+    [self measureBlock:^{
+        retVal = pyDiffTPS_Activation(16, pPtr, 30, dInPtr);
+    }];
+    
+    XCTAssertEqualWithAccuracy(retVal, 102.838, 1000, @"Pass");
+}
 
 
 //- (void) testDiffModelA {
