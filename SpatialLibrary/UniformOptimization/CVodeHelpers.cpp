@@ -56,8 +56,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     /* Call CVodeInit to initialize the integrator memory and specify the
      * user's right hand side function in y'=f(t,y), the inital time T0, and
      * the initial dependent variable vector y. */
-    flag = CVodeInit(cvode_mem, f, 0.0, init);
-    if (flag < 0) {
+    if (CVodeInit(cvode_mem, f, 0.0, init) < 0) {
         CVodeFree(&cvode_mem);
         throw runtime_error(string("Error calling CVodeInit in solver_setup."));
     }
@@ -83,28 +82,16 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
         flag = CVLapackDense(cvode_mem, (int) NV_LENGTH_S(init));
     }
     
-    
-    
     if (flag < 0) {
         CVodeFree(&cvode_mem);
         throw runtime_error(string("Error calling CVDense in solver_setup."));
     }
     
-    if (flag < 0) {
-        CVodeFree(&cvode_mem);
-        throw runtime_error(string("Error calling CVJac in solver_setup."));
-    }
-    
     // Pass along the parameter structure to the differential equations
-    flag = CVodeSetUserData(cvode_mem, params);
-    if (flag < 0) {
+    if (CVodeSetUserData(cvode_mem, params) < 0) {
         CVodeFree(&cvode_mem);
         throw runtime_error(string("Error calling CVodeSetUserData in solver_setup."));
     }
-    
-    CVodeSetMaxConvFails(cvode_mem, 50);
-    CVodeSetMaxNumSteps(cvode_mem, 1E5);
-    //CVodeSetStabLimDet(cvode_mem, 1);
     
     return cvode_mem;
 }
@@ -115,7 +102,7 @@ void solverReset (void *cvode_mem, N_Vector init) {
 }
 
 void* solver_setup (N_Vector init, void *params, CVRhsFn f) {
-    return solver_setup (init, params, 1E-3, 1E-8, f);
+    return solver_setup (init, params, 1E-3, 1E-6, f);
 }
 
 void PrintFinalStats(void *cvode_mem)

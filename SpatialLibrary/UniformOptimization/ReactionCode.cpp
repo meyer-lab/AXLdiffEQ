@@ -77,10 +77,20 @@ int AXL_react(double, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     dxdt_d[1] += -x_d[1]*(r->internalize) + r->kRec*(1-r->fElse)*x_d[7]*r->internalFrac; // Endocytosis, recycling
     dxdt_d[7] += x_d[1]*(r->internalize)/r->internalFrac - r->kRec*(1-r->fElse)*x_d[7] - r->kDeg*r->fElse*x_d[7]; // Endocytosis, recycling, degradation
     
-    for (int ii = 2; ii < 6; ii++) {
+    for (int ii = 2; ii < 5; ii++) {
         dxdt_d[ii]  += -x_d[ii]*r->internalize*endoImpair + r->kRec*(1-r->fElse)*x_d[ii+6]*r->internalFrac; // Endocytosis, recycling
         dxdt_d[ii+6] += x_d[ii]*r->internalize/r->internalFrac*endoImpair - r->kRec*(1-r->fElse)*x_d[ii+6] // Endocytosis, recycling
         - r->kDeg*r->fElse*x_d[ii+6]*degImpair; // Degradation
+    }
+    
+    // D1 trafficking
+    if (r->pD1 == 1) {
+        dxdt_d[5]  += -x_d[5]*(r->internalize + r->pYinternalize)*endoImpair + r->kRec*(1-r->fD2)*x_d[11]*r->internalFrac; // Endocytosis, recycling
+        dxdt_d[11] += x_d[5]*(r->internalize + r->pYinternalize)/r->internalFrac*endoImpair - r->kRec*(1-r->fD2)*x_d[11] - r->kDeg*r->fD2*x_d[11]*degImpair; // Endocytosis, recycling, degradation
+    } else {
+        dxdt_d[5]  += -x_d[5]*r->internalize*endoImpair + r->kRec*(1-r->fElse)*x_d[11]*r->internalFrac; // Endocytosis, recycling
+        dxdt_d[11] += x_d[5]*r->internalize/r->internalFrac*endoImpair - r->kRec*(1-r->fElse)*x_d[11] // Endocytosis, recycling
+        - r->kDeg*r->fElse*x_d[11]*degImpair; // Degradation
     }
     
     dxdt_d[6]  += -x_d[6]*(r->internalize + r->pYinternalize)*endoImpair + r->kRec*(1-r->fD2)*x_d[12]*r->internalFrac; // Endocytosis, recycling
@@ -142,9 +152,23 @@ int AXL_react_diff(double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
 
 // This takes the model state and calculates the amount of phosphorylated species
 double pYcalc (N_Vector state, struct rates *p) {
-    double pYa = 2*Ith(state,6) + p->internalFrac*(2*Ith(state,12));
+    if (p->pD1 == 1) {
+        return 2*Ith(state,6) + 2*Ith(state,5) + p->internalFrac*(2*Ith(state,12) + 2*Ith(state,11));
+    } else {
+        return 2*Ith(state,6) + p->internalFrac*(2*Ith(state,12));
+    }
     
-    return pYa;
+    
+}
+
+// This takes the model state and calculates the amount of phosphorylated species
+double surfpY (N_Vector state, struct rates *p) {
+    if (p->pD1 == 1) {
+        return 2*Ith(state,6) + 2*Ith(state,5);
+    } else {
+        return 2*Ith(state,6);
+    }
+    
 }
 
 // This takes the model state and calculates the total amount of receptor in a cell
@@ -165,7 +189,7 @@ double totCalc (N_Vector state, struct rates *p) {
 struct rates Param(double *params) {
     struct rates out;
     
-    for (size_t ii = 0; ii < 13; ii++) {
+    for (size_t ii = 0; ii < 14; ii++) {
         if (params[ii] < 0) throw invalid_argument(string("An input model parameter is outside the physical range."));
     }
     
@@ -187,6 +211,8 @@ struct rates Param(double *params) {
     out.fD2 = 1;
     out.internalFrac = 0.5;
     out.internalV = 623;
+    out.pD1 = (int) params[13];
+    
     out.xRev5 = out.xRev3*out.Unbinding1/out.Unbinding2;
     out.xRev4 = out.xRev3*out.Unbinding2/out.Unbinding1;
     out.xRev2 = out.xRev1*out.Unbinding1/out.Unbinding2;

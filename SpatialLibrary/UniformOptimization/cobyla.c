@@ -88,6 +88,7 @@ typedef struct {
 #include <string.h>
 #include <float.h>
 
+
 /*************************************************************************/
 
 int nlopt_isinf(double x) {

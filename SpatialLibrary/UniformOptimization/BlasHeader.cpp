@@ -19,6 +19,11 @@ extern "C" double pyEntry(double *pIn) {
     return calcError(Param(pIn));
 }
 
+extern "C" double pyEntryFull(double *pIn) {
+    return calcErrorFull(Param(pIn));
+}
+
+
 extern "C" int calcProfileMatlab(double *dataPtr, double *params, double *tps, int nTps, double GasStim, int frac) {
     struct rates pInS = Param(params);
     
@@ -119,12 +124,38 @@ extern "C" int matlabDiffTPS_pYavg(double *dataPtr, double *GasIn, int gridIn, d
         summ = 0;
         
         for (size_t gridP = 0; gridP < (size_t) abs(gridIn); gridP++) {
-            summ += dataPtrTemp[time*((size_t) abs(gridIn)) + gridP]/(gridIn)*(gridP);
+            summ += dataPtrTemp[time*((size_t) abs(gridIn)) + gridP]*((double) gridP);
         }
         
-        dataPtr[time] = 2*summ/gridIn;
+        
+        dataPtr[time] = 2*summ/gridIn/gridIn;
     }
     
     return 0;
 }
+
+
+extern "C" double pyDiff_pYavg(double *params, double *dIn) {
+    double tps[2] = {0, 10};
+    double GasIn[80];
+    
+    for (size_t ii = 0; ii < NELEMS(GasIn); ii++) {
+        GasIn[ii] = 0;
+    }
+    
+    GasIn[0] = 16;
+    GasIn[1] = 16;
+    
+    double dataPtr[2];
+    
+    int retVal = matlabDiffTPS_pYavg(dataPtr, GasIn, 80, params, tps, 2, dIn, 1, 1, 0);
+    
+    if (retVal == 0) {
+        return dataPtr[1] / dataPtr[0];
+    } else {
+        return -1;
+    }
+}
+
+
 

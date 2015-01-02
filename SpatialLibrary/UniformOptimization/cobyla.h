@@ -52,6 +52,7 @@ double *gradient, /* NULL if not needed */
 void *func_data);
 
 
+
 /* stopping criteria */
 typedef struct {
     unsigned n;
