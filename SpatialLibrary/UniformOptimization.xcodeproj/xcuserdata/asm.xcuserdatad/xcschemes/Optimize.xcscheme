@@ -20,6 +20,20 @@
                ReferencedContainer = "container:UniformOptimization.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "939CB06919634F8100960F90"
+               BuildableName = "Test"
+               BlueprintName = "Test"
+               ReferencedContainer = "container:UniformOptimization.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

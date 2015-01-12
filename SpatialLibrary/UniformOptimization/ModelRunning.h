@@ -9,12 +9,49 @@
 #ifndef __UniformOptimization__ModelRunning__
 #define __UniformOptimization__ModelRunning__
 
-#include "ReactionCode.h"
+#include "sundials/sundials_nvector.h"
 
 #define autocrineT 10000
-#define print_CV_err 0
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
 #define NELEMS(x)  (sizeof(x) / sizeof(x[0]))
+
+#define Nspecies 13
+#define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
+
+//#define numParams 14
+
+struct rates {
+    double Binding1;   ///< Forward binding rate for Ig1
+    double Binding2;   ///< Forward binding rate for Ig2
+    double Unbinding1; ///< Reverse binding rate for Ig1
+    double Unbinding2; ///< Reverse binding rate for Ig2
+    double xFwd1;      ///< Reaction 1 forward rate.
+    double xRev1;      ///< Reaction 1 reverse rate.
+    double xFwd2;      ///< Reaction 2 forward rate.
+    double xRev2;      ///< Reaction 2 reverse rate.
+    double xFwd3;      ///< Reaction 3 forward rate.
+    double xRev3;      ///< Reaction 3 reverse rate.
+    double xFwd4;      ///< Reaction 4 forward rate.
+    double xRev4;      ///< Reaction 4 reverse rate.
+    double xFwd5;      ///< Reaction 5 forward rate.
+    double xRev5;      ///< Reaction 5 reverse rate.
+    double xFwd6;      ///< Reaction 6 forward rate.
+    double xRev6;      ///< Reaction 6 reverse rate.
+    double expression; ///< AXL expression rate.
+    double internalize;///< Non-pY species internalization rate.
+    double pYinternalize;///< pY species internalization rate.
+    double kRec;       ///< Recycling rate.
+    double kDeg;       ///< Degradation rate.
+    double fElse;      ///< Recycling fraction for non-D2 species.
+    double fD2;        ///< Recycling fraction for D2.
+    int pD1;
+    double internalFrac;
+    double internalV;
+    double autocrine;
+    double gasCur;
+};
+
+
 
 
 static const double times[] = {60, 240}; ///< Times of kinetic measurements.
@@ -86,14 +123,13 @@ static const double surfDoseFull[7] = {0.065354474, 0.094518425, 0.107833781, 0.
 
 
 double calcError (struct rates);
-void errorLogger (std::exception *);
 void*initState(N_Vector, struct rates *);
-void diffusionSolution(double *dataPtr, double *GasIn, int gridIn, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn);
-double calcErrorOneLine (struct rates, size_t, double);
-void errorLogger (std::stringstream &);
 void calcProfile (N_Vector, N_Vector, N_Vector, N_Vector, N_Vector, struct rates *, double, double);
 void calcProfileSet (double *outData, double *tps, struct rates *params, int nTps, double GasStim, int frac);
 double calcErrorFull (struct rates);
+int AXL_react(double, N_Vector, N_Vector, void *);
+struct rates Param(double*);
+struct rates ParamNew(double*);
 
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

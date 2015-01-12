@@ -15,15 +15,210 @@
 #include <stdexcept>
 #include <thread>
 #include <exception>
-#include <sstream>
-#include <fstream>
-#include <chrono>
 #include <cobyla.h>
 #include <cmath>
 #include "ModelRunning.h"
 #include "CVodeHelpers.h"
 
 using namespace std;
+
+const double fgMgConv = 135.2;
+
+
+int AXL_react(double, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
+    struct rates *r = (struct rates *) user_data;
+    double* x_d = NV_DATA_S(xIn);
+    double* dxdt_d = NV_DATA_S(dxdtIn);
+    
+    // 0 AXL   // 1 A1    // 2 A2
+    // 3 A12    // 4 D1    // 5 D2    // 6 AXLi
+    // 7 A1i    // 8 A2i   // 9 A12i // 10 D1i    // 11 D2i   // 12 Gasi
+    
+    double dR1 = r->Binding1 * x_d[0] * r->gasCur - r->Unbinding1 * x_d[1];
+    double dR2 = r->Binding2 * x_d[0] * r->gasCur - r->Unbinding2 * x_d[2];
+    double dR3 = r->Binding2 * x_d[1] * r->gasCur - r->Unbinding2 * x_d[3];
+    double dR4 = r->Binding1 * x_d[2] * r->gasCur - r->Unbinding1 * x_d[3];
+    double dR5 = r->xFwd1 * x_d[0] * x_d[1] - r->xRev1 * x_d[4];
+    double dR6 = r->xFwd2 * x_d[0] * x_d[2] - r->xRev2 * x_d[4];
+    double dR7 = r->xFwd3 * x_d[0] * x_d[3] - r->xRev3 * x_d[5];
+    double dR8 = r->xFwd4 * x_d[1] * x_d[1] - r->xRev4 * x_d[5];
+    double dR9 = r->xFwd5 * x_d[2] * x_d[2] - r->xRev5 * x_d[5];
+    double dR11 = r->xFwd6 * r->gasCur * x_d[4] - r->xRev6 * x_d[5];
+    
+    double dR32 = r->Binding1 * x_d[6] * x_d[12] / r->internalV - r->Unbinding1 * x_d[7];
+    double dR33 = r->Binding2 * x_d[6] * x_d[12] / r->internalV - r->Unbinding2 * x_d[8];
+    double dR34 = r->Binding2 * x_d[7] * x_d[12] / r->internalV - r->Unbinding2 * x_d[9];
+    double dR35 = r->Binding1 * x_d[8] * x_d[12] / r->internalV - r->Unbinding1 * x_d[9];
+    double dR36 = r->xFwd1 * x_d[6] * x_d[7] - r->xRev1 * x_d[10];
+    double dR37 = r->xFwd2 * x_d[6] * x_d[8] - r->xRev2 * x_d[10];
+    double dR38 = r->xFwd3 * x_d[6] * x_d[9] - r->xRev3 * x_d[11];
+    double dR39 = r->xFwd4 * x_d[7] * x_d[7] - r->xRev4 * x_d[11]; // Checked
+    double dR40 = r->xFwd5 * x_d[8] * x_d[8] - r->xRev5 * x_d[11]; // Checked
+    double dR41 = r->xFwd6 * x_d[12] * x_d[10] / r->internalV - r->xRev6 * x_d[11]; // Checked
+    
+    dxdt_d[0] = - dR7 - dR6 - dR5 - dR1 - dR2 + r->expression; // AXL
+    dxdt_d[1] = -2*(dR8) - dR5 + dR1 - dR3                   ; // AXLgas1
+    dxdt_d[2] = -2*(dR9) - dR6 + dR2 - dR4                   ; // AXLgas2
+    dxdt_d[3] = -dR7 + dR3 + dR4                             ; // AXLgas12
+    dxdt_d[4] = -dR11 + dR6 + dR5                            ; // AXLdimer1
+    dxdt_d[5] = dR11 + dR9 + dR8 + dR7                       ; // AXLdimer2
+    
+    dxdt_d[6]  = - dR38 - dR37 - dR36 - dR32 - dR33          ; // AXLi
+    dxdt_d[7]  = -2*(dR39) - dR36 + dR32 - dR34              ; // AXLgas1i
+    dxdt_d[8]  = -2*(dR40) - dR37 + dR33 - dR35              ; // AXLgas2i
+    dxdt_d[9] = -dR38 + dR34 + dR35                         ; // AXLgas12i
+    dxdt_d[10] = -dR41 + dR37 + dR36                          ; // AXLdimer1i
+    dxdt_d[11] = dR41 + dR40 + dR39 + dR38                   ; // AXLdimer2i
+    
+    dxdt_d[12] = -dR41 - dR32 - dR33 - dR34 - dR35 - r->kDeg*x_d[12];
+    
+    
+    dxdt_d[0] += -x_d[0]*(r->internalize) + r->kRec*(1-r->fElse)*x_d[6]*r->internalFrac; // Endocytosis, recycling
+    dxdt_d[6] += x_d[0]*(r->internalize)/r->internalFrac - r->kRec*(1-r->fElse)*x_d[6] - r->kDeg*r->fElse*x_d[6]; // Endocytosis, recycling, degradation
+    
+    for (int ii = 1; ii < 4; ii++) {
+        dxdt_d[ii]  += -x_d[ii]*r->internalize + r->kRec*(1-r->fElse)*x_d[ii+6]*r->internalFrac; // Endocytosis, recycling
+        dxdt_d[ii+6] += x_d[ii]*r->internalize/r->internalFrac - r->kRec*(1-r->fElse)*x_d[ii+6] // Endocytosis, recycling
+        - r->kDeg*r->fElse*x_d[ii+6]; // Degradation
+    }
+    
+    // D1 trafficking
+    if (r->pD1 == 1) {
+        dxdt_d[4]  += -x_d[4]*(r->internalize + r->pYinternalize) + r->kRec*(1-r->fD2)*x_d[10]*r->internalFrac; // Endocytosis, recycling
+        dxdt_d[10] += x_d[4]*(r->internalize + r->pYinternalize)/r->internalFrac - r->kRec*(1-r->fD2)*x_d[10] - r->kDeg*r->fD2*x_d[10]; // Endocytosis, recycling, degradation
+    } else {
+        dxdt_d[4]  += -x_d[4]*r->internalize + r->kRec*(1-r->fElse)*x_d[10]*r->internalFrac; // Endocytosis, recycling
+        dxdt_d[10] += x_d[4]*r->internalize/r->internalFrac - r->kRec*(1-r->fElse)*x_d[10] // Endocytosis, recycling
+        - r->kDeg*r->fElse*x_d[10]; // Degradation
+    }
+    
+    dxdt_d[5]  += -x_d[5]*(r->internalize + r->pYinternalize) + r->kRec*(1-r->fD2)*x_d[11]*r->internalFrac; // Endocytosis, recycling
+    dxdt_d[11] += x_d[5]*(r->internalize + r->pYinternalize)/r->internalFrac - r->kRec*(1-r->fD2)*x_d[11] - r->kDeg*r->fD2*x_d[11]; // Endocytosis, recycling, degradation
+    
+    
+    return 0;
+}
+
+double surfAXL (N_Vector state) {
+    return Ith(state,0) + Ith(state,1) + Ith(state,2) + Ith(state,3) + 2*Ith(state,4) + 2*Ith(state,5);
+}
+
+
+// This takes the model state and calculates the amount of phosphorylated species
+double pYcalc (N_Vector state, struct rates *p) {
+    if (p->pD1 == 1) {
+        return 2*Ith(state,5) + 2*Ith(state,4) + p->internalFrac*(2*Ith(state,11) + 2*Ith(state,10));
+    } else {
+        return 2*Ith(state,5) + p->internalFrac*(2*Ith(state,11));
+    }
+}
+
+// This takes the model state and calculates the amount of phosphorylated species
+double surfpY (N_Vector state, struct rates *p) {
+    if (p->pD1 == 1) {
+        return 2*Ith(state,5) + 2*Ith(state,4);
+    } else {
+        return 2*Ith(state,5);
+    }
+    
+}
+
+// This takes the model state and calculates the total amount of receptor in a cell
+double totCalc (N_Vector state, struct rates *p) {
+    double total = 0;
+    
+    for (int ii = 0; ii < 6; ii++) total += Ith(state,ii);
+    for (int ii = 6; ii < 12; ii++) total += Ith(state,ii)*p->internalFrac;
+    
+    total += Ith(state,4);
+    total += Ith(state,5);
+    total += Ith(state,10)*p->internalFrac;
+    total += Ith(state,11)*p->internalFrac;
+    
+    return total/fgMgConv;
+}
+
+struct rates Param(double *params) {
+    struct rates out;
+    
+    for (size_t ii = 0; ii < 14; ii++) {
+        if (params[ii] < 0) throw invalid_argument(string("An input model parameter is outside the physical range."));
+            }
+    
+    out.Binding1 = 1.2;
+    out.Binding2 = params[0];
+    out.Unbinding1 = 0.042;
+    out.Unbinding2 = params[1];
+    out.xFwd1 = params[2];
+    out.xRev1 = params[3];
+    out.xFwd3 = params[4];
+    out.xRev3 = params[5];
+    out.internalize = params[6];
+    out.pYinternalize = params[7];
+    out.kRec = params[8];
+    out.kDeg = params[9];
+    out.fElse = params[10];
+    out.expression = params[11];
+    out.autocrine = params[12];
+    out.fD2 = 1;
+    out.internalFrac = 0.5;
+    out.internalV = 623;
+    out.pD1 = (int) params[13];
+    
+    out.xRev5 = out.xRev3*out.Unbinding1/out.Unbinding2;
+    out.xRev4 = out.xRev3*out.Unbinding2/out.Unbinding1;
+    out.xRev2 = out.xRev1*out.Unbinding1/out.Unbinding2;
+    out.xFwd2 = out.xFwd1*out.Binding1/out.Binding2;
+    out.xFwd4 = out.xFwd3*out.Binding2/out.Binding1;
+    out.xFwd5 = out.xFwd3*out.Binding1/out.Binding2;
+    out.xFwd6 = out.xFwd3*out.Binding2/out.xFwd1;
+    out.xRev6 = out.xRev3*out.Unbinding2/out.xRev1;
+    
+    return out;
+}
+
+struct rates ParamNew(double *params) {
+    struct rates out;
+    
+    for (size_t ii = 0; ii < 14; ii++) {
+        if (params[ii] < 0) throw invalid_argument(string("An input model parameter is outside the physical range."));
+    }
+    
+    out.Binding1 = 1.2;
+    out.Binding2 = 0.06;
+    out.Unbinding1 = 0.042;
+    out.Unbinding2 = params[0];
+    out.xFwd1 = params[1];
+    out.xRev1 = params[2];
+    out.xFwd3 = params[1];
+    out.xRev3 = params[3];
+    out.internalize = params[4];
+    out.pYinternalize = params[5];
+    out.kRec = params[6];
+    out.kDeg = params[7];
+    out.fElse = params[8];
+    out.expression = params[9];
+    out.autocrine = params[10];
+    out.fD2 = 1;
+    out.internalFrac = params[11];
+    out.internalV = params[12];
+    out.pD1 = (int) params[13];
+    
+    out.xRev5 = out.xRev3*out.Unbinding1/out.Unbinding2;
+    out.xRev4 = out.xRev3*out.Unbinding2/out.Unbinding1;
+    out.xRev2 = out.xRev1*out.Unbinding1/out.Unbinding2;
+    out.xFwd2 = out.xFwd1*out.Binding1/out.Binding2;
+    out.xFwd4 = out.xFwd3*out.Binding2/out.Binding1;
+    out.xFwd5 = out.xFwd3*out.Binding1/out.Binding2;
+    out.xFwd6 = out.xFwd3*out.Binding2/out.xFwd1;
+    out.xRev6 = out.xRev3*out.Unbinding2/out.xRev1;
+    
+    return out;
+}
+
+
+/// END REACTION CODE
+
 
 #define NVp N_VGetArrayPointer_Serial
 
@@ -34,9 +229,12 @@ struct inData {
 };
 
 void calcParallel (double *outData, double *totData, double *surfData, size_t stimuli, N_Vector init_state, int *retVal, struct rates *params) {
+    
+    struct rates paramTwo = *params;
+    
     *retVal = 0;
     N_Vector state = N_VClone(init_state);
-    void *cvode_mem = solver_setup(state, params, AXL_react);
+    void *cvode_mem = solver_setup(state, &paramTwo, AXL_react);
     // Initialize state based on autocrine ligand
     
     if (cvode_mem == NULL) {
@@ -51,7 +249,9 @@ void calcParallel (double *outData, double *totData, double *surfData, size_t st
         Ith(state,xx) = Ith(init_state,xx);
     }
     
-    Ith(state,0) += Gass[stimuli];
+    paramTwo.gasCur = paramTwo.gasCur + Gass[stimuli];
+    CVodeSetUserData(cvode_mem, &paramTwo);
+    
     double t = 0;
     
     solverReset(cvode_mem, state);
@@ -80,9 +280,12 @@ void calcParallel (double *outData, double *totData, double *surfData, size_t st
 
 
 void calcParallelFull (double *outData, double *totData, double *surfData, size_t stimuli, N_Vector init_state, int *retVal, struct rates *params) {
+    
+    struct rates paramTwo = *params;
+    
     *retVal = 0;
     N_Vector state = N_VClone(init_state);
-    void *cvode_mem = solver_setup(state, params, AXL_react);
+    void *cvode_mem = solver_setup(state, &paramTwo, AXL_react);
     // Initialize state based on autocrine ligand
     
     if (cvode_mem == NULL) {
@@ -97,7 +300,9 @@ void calcParallelFull (double *outData, double *totData, double *surfData, size_
         Ith(state,xx) = Ith(init_state,xx);
     }
     
-    Ith(state,0) += GassDoseFull[stimuli];
+    paramTwo.gasCur = paramTwo.gasCur + GassDoseFull[stimuli];
+    CVodeSetUserData(cvode_mem, &paramTwo);
+    
     double t = 0;
     
     solverReset(cvode_mem, state);
@@ -347,18 +552,13 @@ double calcErrorFull (struct rates inP) {
     return error;
 }
 
-
-
-
 // Calculate the initial state by waiting a long time with autocrine Gas
 void *initState( N_Vector init, struct rates *params) {
-    endoImpair = 1.0;
-    degImpair = 1.0;
     double t;
     
     for (int ii = 0; ii < Nspecies ; ii++) Ith(init,ii) = 0;
     
-    Ith(init,0) = params->autocrine;
+    params->gasCur = params->autocrine;
     
     void *cvode_mem = solver_setup (init, params, AXL_react);
     if (cvode_mem == NULL) return NULL;
@@ -378,6 +578,7 @@ void *initState( N_Vector init, struct rates *params) {
 /// Calculate phosphorylation at time points measured
 void calcProfileSet (double *outData, double *tps, struct rates *params, int nTps, double GasStim, int frac) {
     N_Vector state = N_VNew_Serial(Nspecies);
+    struct rates paramTwo = *params;
     
     double t; ///< Time position of the solver.
     
@@ -386,14 +587,16 @@ void calcProfileSet (double *outData, double *tps, struct rates *params, int nTp
     
     // Initialize state based on autocrine ligand
     try {
-        cvode_mem = initState(state, params);
+        cvode_mem = initState(state, &paramTwo);
     } catch (exception &e) {
         N_VDestroy_Serial(state);
         throw;
     }
     
+    
     /* We've got the initial state, so now run through the kinetic data */
-    Ith(state,0) += GasStim;
+    paramTwo.gasCur = paramTwo.gasCur + GasStim;
+    CVodeSetUserData(cvode_mem, &paramTwo);
     t = 0;
     
     try {
@@ -454,118 +657,5 @@ void calcProfileSet (double *outData, double *tps, struct rates *params, int nTp
     N_VDestroy_Serial(state);
 }
 
-void errorLogger (exception *e) {
-    ofstream errOut;
-    
-    if (print_CV_err == 0) return;
-    else if (print_CV_err == 1) {
-        cout << e->what() << endl;
-    } else if (print_CV_err == 2) {
-        errOut.open ("error.txt", ios::app);
-        errOut << e->what() << endl;
-        errOut.close();
-    }
-}
-
-void errorLogger (stringstream &e) {
-    ofstream errOut;
-    
-    if (print_CV_err == 0) return;
-    else if (print_CV_err == 1) {
-        cout << e.str() << endl;
-    } else if (print_CV_err == 2) {
-        errOut.open ("error.txt", ios::app);
-        errOut << e.str() << endl;
-        errOut.close();
-    }
-}
 
 
-
-void diffusionSolution(double *dataPtr, double *GasIn, int gridIn, double *params, double *tps, int nTps, double *dIn, double endoImpairIn, double degImpairIn) {
-    
-    // Common
-    double t = 0;
-    void *cvode_mem = NULL;
-    int flag;
-    
-    for (int ii = 0; ii < Nspecies; ii++) diffD[ii] = dIn[ii];
-    
-    // Create the parameter structure
-    struct rates pInS = Param(params);
-    
-    // Get initial state
-    N_Vector init_state = N_VNew_Serial(Nspecies);
-    
-    // Initialize state based on autocrine ligand
-    try {
-        cvode_mem = initState(init_state, &pInS);
-    } catch (exception &e) {
-        N_VDestroy_Serial(init_state);
-        throw;
-    }
-    
-    CVodeFree(&cvode_mem);
-    
-    endoImpair = endoImpairIn;
-    degImpair = degImpairIn;
-    
-    
-    struct diffRates pInD;
-    pInD.params = pInS;
-    pInD.reactIn = N_VNew_Serial(Nspecies);
-    pInD.reactOut = N_VNew_Serial(Nspecies);
-    
-    
-    // Initialize full diffusion model
-    N_Vector state = N_VNew_Serial(Nspecies * gridIn);
-    
-    for (size_t ii = 0; ii < (size_t) abs(gridIn); ii++) {
-        for (size_t spec = 0; spec < Nspecies; spec++) Ith(state,spec*((size_t) gridIn) + ii) = Ith(init_state,spec);
-    }
-    
-    N_VDestroy_Serial(init_state);
-    
-    for (size_t ii = 0; ii < (size_t) abs(gridIn); ii++) Ith(state,ii) = GasIn[ii];
-    // Done initializing diffusion model
-    
-    try {
-        cvode_mem = solver_setup (state, &pInD, AXL_react_diff);
-        
-        if (cvode_mem == NULL) throw runtime_error(string("Uncaught NULL return from solver_setup in diffusion setup."));
-    } catch (exception &e) {
-        N_VDestroy_Serial(pInD.reactIn);
-        N_VDestroy_Serial(pInD.reactOut);
-        N_VDestroy_Serial(state);
-        throw;
-    }
-    
-    size_t tIDX = 0;
-    
-    if (tps[0] == 0) {
-        for (size_t jj = 0; jj < (size_t) NV_LENGTH_S(state); jj++) dataPtr[jj] = Ith(state,jj);
-        tIDX = 1;
-    }
-    
-    for (; tIDX < (size_t) abs(nTps); tIDX++) {
-        flag = CVode(cvode_mem, tps[tIDX], state, &t, CV_NORMAL);
-        
-        if (flag < 0) {
-            N_VDestroy_Serial(pInD.reactIn);
-            N_VDestroy_Serial(pInD.reactOut);
-            N_VDestroy_Serial(state);
-            CVodeFree(&cvode_mem);
-            throw runtime_error(string("CVode error on diffusion solution."));
-        }
-        
-        for (size_t jj = 0; jj < (size_t) NV_LENGTH_S(state); jj++) {
-            dataPtr[tIDX*((size_t) NV_LENGTH_S(state)) + jj] = Ith(state,jj);
-        }
-    }
-    
-    /* Free vectors */
-    N_VDestroy_Serial(pInD.reactIn);
-    N_VDestroy_Serial(pInD.reactOut);
-    N_VDestroy_Serial(state);
-    CVodeFree(&cvode_mem);
-}

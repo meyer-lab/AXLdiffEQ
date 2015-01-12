@@ -2,3 +2,6 @@
 *.dylib
 *.so
 *.pyc
+*.o
+*.dia
+*.d

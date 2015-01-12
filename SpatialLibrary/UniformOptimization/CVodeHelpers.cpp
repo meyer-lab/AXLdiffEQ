@@ -13,16 +13,40 @@
 #include <cvode/cvode_direct.h>
 #include <sstream>
 #include <iostream>
+#include <fstream>
 #include <stdexcept>
 #include "CVodeHelpers.h"
-#include "ReactionCode.h"
-#include "ModelRunning.h"
 #include <sundials/sundials_dense.h>
-#include <cvode/cvode_lapack.h>
 
 #define IJth(A,i,j) DENSE_ELEM(A,i-1,j-1)
 
 using namespace std;
+
+void errorLogger (exception *e) {
+    ofstream errOut;
+    
+    if (print_CV_err == 0) return;
+    else if (print_CV_err == 1) {
+        cout << e->what() << endl;
+    } else if (print_CV_err == 2) {
+        errOut.open ("error.txt", ios::app);
+        errOut << e->what() << endl;
+        errOut.close();
+    }
+}
+
+void errorLogger (stringstream &e) {
+    ofstream errOut;
+    
+    if (print_CV_err == 0) return;
+    else if (print_CV_err == 1) {
+        cout << e.str() << endl;
+    } else if (print_CV_err == 2) {
+        errOut.open ("error.txt", ios::app);
+        errOut << e.str() << endl;
+        errOut.close();
+    }
+}
 
 void errorHandler(int error_code, const char *module, const char *function, char *msg, void *) {
     if (error_code == CV_WARNING) return;
@@ -76,11 +100,7 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     }
     
     // Call CVDense to specify the CVDENSE dense linear solver
-    if ((int) NV_LENGTH_S(init) < 20) {
-        flag = CVDense(cvode_mem, (int) NV_LENGTH_S(init));
-    } else {
-        flag = CVLapackDense(cvode_mem, (int) NV_LENGTH_S(init));
-    }
+    flag = CVDense(cvode_mem, (int) NV_LENGTH_S(init));
     
     if (flag < 0) {
         CVodeFree(&cvode_mem);
@@ -92,6 +112,8 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
         CVodeFree(&cvode_mem);
         throw runtime_error(string("Error calling CVodeSetUserData in solver_setup."));
     }
+    
+    CVodeSetMaxNumSteps(cvode_mem, 5000);
     
     return cvode_mem;
 }

@@ -1,6 +1,9 @@
 clc; clear;
 
-load 77j87EXi
+load widertEXKsu
+fitStruct2 = fitStruct;
+load widerY4h4NgrH
+fitStruct = [fitStruct, fitStruct2];
 
 names ={'B2', 'U2', 'xFwd1','xRev1','xFwd3','xRev3', 'AXLint1','AXLint2',...
     'kRec','kDeg','fElse','AXL2','Gas1','picker'};
@@ -13,52 +16,50 @@ for ii = 1:length(fitStruct)
     params = [params; fitStruct{ii}.paramOpt];
 end
 
-params(fitt > min(fitt)+3,:) = [];
-fitt(fitt > min(fitt)+3) = [];
+cutoff = min(fitt)+2;
 
-%%
+params(fitt > cutoff,:) = [];
+fitt(fitt > cutoff) = [];
+
+IDXrem = params(:,7) < params(:,6);
+
+fitt(IDXrem) = [];
+params(IDXrem,:) = [];
+
+[fitt, IDX] = sort(fitt);
+params = params(IDX,:);
+
 clear fitIDXglobal fitStruct slices symbols A b Dopts ii xxxx fname paramOpt
-
-% for ii = 1:13
-%     subplot(3,5,ii);
-%     
-%     plot(params(:,ii), fitt,'.');
-%     title(names(ii));
-%     axis([minn(ii) maxx(ii) min(fitt) max(fitt)]);
-% end
 
 params = [ones(size(params,1),1)*0.06, 10.^params];
 params(:,end) = params(:,end) > 0.05;
 
-%%
+% % % % % % % % % % % % % % %
 
-xxx = logspace(-2.0,2.0,100);
+xxx = logspace(-2.0,2.0,20);
 
-stimProfile = @(x, pp) cLib_profile ([0 240], x, 10, pp);
+stimProfile = @(x, pp) cLib_profile (240, x, 10, 1);
 
 outter = zeros(size(params,1),9,length(xxx));
 
-for ii = 1:size(params,1)
-    
-    for jj = 1:1
-        for xx = 1:length(xxx)
-            params2 = params(ii,:);
-            params2(jj) = params2(jj)*xxx(xx);
-            params2(jj+2) = params2(jj+2)*xxx(xx);
-            params2(jj+4) = params2(jj+4)*xxx(xx);
-            
+%IDXX = [1:10 12:13];
 
-            B = stimProfile(params(ii,:), 1);
-            C = stimProfile(params2, 1);
-            %D = stimProfile(params2, 3);
+IDXX = 3:4;
+
+for ii = 1:size(params,1)
+    B = stimProfile(params(ii,:));
+    
+    for jj = 1:length(IDXX)
+        parfor xx = 1:length(xxx)
+            params2 = params(ii,:);
+            params2(IDXX(jj)) = params2(IDXX(jj))*xxx(xx);
+            params2(IDXX(jj)+2) = params2(IDXX(jj)+2)*xxx(xx);
+            %params2(IDXX(jj)+4) = params2(IDXX(jj)+4)*xxx(xx);
             
+            C = stimProfile(params2);
 
             if ~isempty(C) && ~isempty(B)
-                %B = B(2) / B(1);
-                %C = C(2) / C(1);
-                %D = D(2) / D(1);
-                
-                outter(ii,jj,xx) = C(2) / B(2);
+                outter(ii,jj,xx) = C / B;
             else
                 outter(ii,jj,xx) = NaN;
             end
@@ -67,14 +68,13 @@ for ii = 1:size(params,1)
         
     end 
     
-    for jj = 1:1
-        %subplot(3,3,jj);
-        loglog(xxx,squeeze(outter(:,jj,:))');
-        title(names(jj));
-        
+    if mod(ii,10) == 0
+        for jj = 1:length(IDXX)
+            subplot(3,4,jj);
+            loglog(xxx,squeeze(outter(:,jj,:))');
+            title(names(IDXX(jj)));
+            axis([min(xxx) max(xxx) 0.01 100]);
+        end
+        drawnow;
     end
-    drawnow;
 end
-
-
-
