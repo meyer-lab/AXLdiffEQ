@@ -6,17 +6,17 @@
 //  Copyright (c) 2014 Aaron Meyer. All rights reserved.
 //
 
-#include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
-#include "cvode/cvode.h"             /* prototypes for CVODE fcts., consts. */
+#include "nvector_serial.h"  /* serial N_Vector types, fcts., macros */
+#include "cvode.h"             /* prototypes for CVODE fcts., consts. */
 #include <string>
-#include <cvode/cvode_dense.h>       /* prototype for CVDense */
-#include <cvode/cvode_direct.h>
+#include "cvode_dense.h"     /* prototype for CVDense */
 #include <sstream>
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
 #include "CVodeHelpers.h"
-#include <sundials/sundials_dense.h>
+#include "ModelRunning.h"
+#include "sundials_dense.h"
 
 #define IJth(A,i,j) DENSE_ELEM(A,i-1,j-1)
 
@@ -48,7 +48,7 @@ void errorLogger (stringstream &e) {
     }
 }
 
-void errorHandler(int error_code, const char *module, const char *function, char *msg, void *) {
+static void errorHandler(int error_code, const char *module, const char *function, char *msg, void *) {
     if (error_code == CV_WARNING) return;
     
     stringstream OutMesg;
@@ -63,7 +63,6 @@ void errorHandler(int error_code, const char *module, const char *function, char
 
 
 void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolIn, CVRhsFn f) {
-    int flag;
     void *cvode_mem = NULL;
     
     /* Call CVodeCreate to create the solver memory and specify the
@@ -92,17 +91,15 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
     
     /* Call CVodeSVtolerances to specify the scalar relative tolerance
      * and vector absolute tolerances */
-    flag = CVodeSVtolerances(cvode_mem, reltolIn, abbstol);
-    N_VDestroy_Serial(abbstol);
-    if (flag < 0) {
+    if (CVodeSVtolerances(cvode_mem, reltolIn, abbstol) < 0) {
+        N_VDestroy_Serial(abbstol);
         CVodeFree(&cvode_mem);
         throw runtime_error(string("Error calling CVodeSVtolerances in solver_setup."));
     }
+    N_VDestroy_Serial(abbstol);
     
     // Call CVDense to specify the CVDENSE dense linear solver
-    flag = CVDense(cvode_mem, (int) NV_LENGTH_S(init));
-    
-    if (flag < 0) {
+    if (CVDense(cvode_mem, (int) NV_LENGTH_S(init)) < 0) {
         CVodeFree(&cvode_mem);
         throw runtime_error(string("Error calling CVDense in solver_setup."));
     }
@@ -112,48 +109,17 @@ void* solver_setup (N_Vector init, void *params, double abstolIn, double reltolI
         CVodeFree(&cvode_mem);
         throw runtime_error(string("Error calling CVodeSetUserData in solver_setup."));
     }
-    
+
     CVodeSetMaxNumSteps(cvode_mem, 5000);
     
     return cvode_mem;
 }
 
 void solverReset (void *cvode_mem, N_Vector init) {
-    int flag = CVodeReInit(cvode_mem, 0.0, init);
-    if (flag < 0) throw runtime_error(string("Error at CVode reinit."));
+    if (CVodeReInit(cvode_mem, 0.0, init) < 0) throw runtime_error(string("Error at CVode reinit."));
 }
 
 void* solver_setup (N_Vector init, void *params, CVRhsFn f) {
     return solver_setup (init, params, 1E-3, 1E-6, f);
 }
 
-void PrintFinalStats(void *cvode_mem)
-{
-    long int nst, nfe, nsetups, nje, nfeLS, nni, ncfn, netf, nge;
-    int flag;
-    
-    flag = CVodeGetNumSteps(cvode_mem, &nst);
-    if (flag < 0) return;
-    flag = CVodeGetNumRhsEvals(cvode_mem, &nfe);
-    if (flag < 0) return;
-    flag = CVodeGetNumLinSolvSetups(cvode_mem, &nsetups);
-    if (flag < 0) return;
-    flag = CVodeGetNumErrTestFails(cvode_mem, &netf);
-    if (flag < 0) return;
-    flag = CVodeGetNumNonlinSolvIters(cvode_mem, &nni);
-    if (flag < 0) return;
-    flag = CVodeGetNumNonlinSolvConvFails(cvode_mem, &ncfn);
-    if (flag < 0) return;
-    flag = CVDlsGetNumJacEvals(cvode_mem, &nje);
-    if (flag < 0) return;
-    flag = CVDlsGetNumRhsEvals(cvode_mem, &nfeLS);
-    if (flag < 0) return;
-    flag = CVodeGetNumGEvals(cvode_mem, &nge);
-    if (flag < 0) return;
-    
-    printf("\nFinal Statistics:\n");
-    printf("NumSteps = %-6ld RhsEvals  = %-6ld LinSolvSetups = %-6ld CVDRhsEvals = %-6ld CVDJacEvals = %ld\n",
-           nst, nfe, nsetups, nfeLS, nje);
-    printf("NonLinSolveIter = %-6ld NonLinSolvConvFails = %-6ld ErrTestFails = %-6ld nge = %ld\n \n",
-           nni, ncfn, netf, nge);
-}

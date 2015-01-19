@@ -14,23 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9370A68717E7534800791D49"
-               BuildableName = "libOptimize.dylib"
-               BlueprintName = "Optimize"
-               ReferencedContainer = "container:UniformOptimization.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "NO"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "939CB06919634F8100960F90"
-               BuildableName = "Test"
-               BlueprintName = "Test"
+               BlueprintIdentifier = "729ADC261A66B3C900BEB0F7"
+               BuildableName = "Optim"
+               BlueprintName = "Optim"
                ReferencedContainer = "container:UniformOptimization.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -42,23 +28,13 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9359E6A019476F44007DB3B6"
-               BuildableName = "Optimize Tests.xctest"
-               BlueprintName = "Optimize Tests"
-               ReferencedContainer = "container:UniformOptimization.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9370A68717E7534800791D49"
-            BuildableName = "libOptimize.dylib"
-            BlueprintName = "Optimize"
+            BlueprintIdentifier = "729ADC261A66B3C900BEB0F7"
+            BuildableName = "Optim"
+            BlueprintName = "Optim"
             ReferencedContainer = "container:UniformOptimization.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -72,15 +48,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9370A68717E7534800791D49"
-            BuildableName = "libOptimize.dylib"
-            BlueprintName = "Optimize"
+            BlueprintIdentifier = "729ADC261A66B3C900BEB0F7"
+            BuildableName = "Optim"
+            BlueprintName = "Optim"
             ReferencedContainer = "container:UniformOptimization.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -90,15 +66,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9370A68717E7534800791D49"
-            BuildableName = "libOptimize.dylib"
-            BlueprintName = "Optimize"
+            BlueprintIdentifier = "729ADC261A66B3C900BEB0F7"
+            BuildableName = "Optim"
+            BlueprintName = "Optim"
             ReferencedContainer = "container:UniformOptimization.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

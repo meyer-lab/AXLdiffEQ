@@ -173,14 +173,6 @@ static int nlopt_stop_ftol(const nlopt_stopping *s, double f, double oldf) {
     return (relstop(oldf, f, s->ftol_rel, s->ftol_abs));
 }
 
-static int nlopt_stop_evals(const nlopt_stopping *s) {
-    return (s->maxeval > 0 && s->nevals >= s->maxeval);
-}
-
-static int nlopt_stop_forced(const nlopt_stopping *stop) {
-    return stop->force_stop && *(stop->force_stop);
-}
-
 static unsigned nlopt_count_constraints(unsigned p, const nlopt_constraint *c) {
     unsigned i, count = 0;
     for (i = 0; i < p; ++i)
@@ -247,18 +239,15 @@ static int func_wrap(int ni, int mi, double *x, double *f, double *con,
     nlopt_unscale(n, s->scale, xtmp, xtmp);
     
     *f = s->f(n, xtmp, NULL, s->f_data);
-    if (nlopt_stop_forced(s->stop)) return 1;
     i = 0;
     for (j = 0; j < s->m_orig; ++j) {
         nlopt_eval_constraint(con + i, NULL, s->fc+j, n, xtmp);
-        if (nlopt_stop_forced(s->stop)) return 1;
         for (k = 0; k < s->fc[j].m; ++k)
             con[i + k] = -con[i + k];
         i += s->fc[j].m;
     }
     for (j = 0; j < s->p; ++j) {
         nlopt_eval_constraint(con + i, NULL, s->h+j, n, xtmp);
-        if (nlopt_stop_forced(s->stop)) return 1;
         for (k = 0; k < s->h[j].m; ++k)
             con[(i + s->h[j].m) + k] = -con[i + k];
         i += 2 * s->h[j].m;
@@ -632,10 +621,6 @@ static nlopt_result cobylb(int *n, int *m, int *mpp,
      #*&!%*@ Fortran-66 spaghetti code */
     
 L40:
-    if (nlopt_stop_forced(stop)) rc = NLOPT_FORCED_STOP;
-    else if (stop->nevals > 0) {
-        if (nlopt_stop_evals(stop)) rc = NLOPT_MAXEVAL_REACHED;
-    }
     if (rc != NLOPT_SUCCESS) goto L600;
     
     stop->nevals++;
@@ -1165,14 +1150,6 @@ L440:
     /* Branch back for further iterations with the current RHO. */
     
     if (trured > 0. && trured >= prerem * .1) {
-        /* SGJ, 2010: following a suggestion in the SAS manual (which
-         mentions a similar modification to COBYLA, although they didn't
-         publish their source code), increase rho if predicted reduction
-         is sufficiently close to the actual reduction.  Otherwise,
-         COBLYA seems to easily get stuck making very small steps.
-         Also require iflag != 0 (i.e., acceptable simplex), again
-         following SAS suggestion (otherwise I get convergence failure
-         in some cases.) */
         if (trured >= prerem * 0.9 && trured <= prerem * 1.1 && iflag) {
             rho *= 2.0;
         }
@@ -1183,12 +1160,6 @@ L550:
         ibrnch = 0;
         goto L140;
     }
-    
-    /* SGJ, 2008: convergence tests for function vals; note that current
-     best val is stored in datmat[mp + np * datmat_dim1], or in f if
-     ifull == 1, and previous best is in *minf.  This seems like a
-     sensible place to put the convergence test, as it is the same
-     place that Powell checks the x tolerance (rho > rhoend). */
     {
         double fbest = ifull == 1 ? f : datmat[mp + np * datmat_dim1];
         if (fbest < *minf && nlopt_stop_ftol(stop, fbest, *minf)) {
@@ -1275,27 +1246,8 @@ L600:
         x[i__] = sim[i__ + np * sim_dim1];
     }
     f = datmat[mp + np * datmat_dim1];
-    resmax = datmat[*mpp + np * datmat_dim1];
 L620:
     *minf = f;
-    if (*iprint >= 1) {
-        fprintf(stderr, "cobyla: NFVALS = %4d, F =%13.6E, MAXCV =%13.6E\n",
-                stop->nevals, f, resmax);
-        i__1 = iptem;
-        fprintf(stderr, "cobyla: X =");
-        for (i__ = 1; i__ <= i__1; ++i__) {
-            if (i__>1) fprintf(stderr, "  ");
-            fprintf(stderr, "%13.6E", x[i__]);
-        }
-        if (iptem < *n) {
-            i__1 = *n;
-            for (i__ = iptemp; i__ <= i__1; ++i__) {
-                if (!((i__-1) % 4)) fprintf(stderr, "\ncobyla:  ");
-                fprintf(stderr, "%15.6E", x[i__]);
-            }
-        }
-        fprintf(stderr, "\n");
-    }
     return rc;
 } /* cobylb */
 

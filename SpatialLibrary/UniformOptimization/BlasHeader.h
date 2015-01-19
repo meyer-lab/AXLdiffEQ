@@ -15,7 +15,7 @@ extern "C" {
 
     double pyEntry(double *pIn);
     int calcProfileMatlab(double *, double *, double *, int, double, int);
-
+    void pyEntryVec(double *pIn, double *pOut, int n);
     double pyEntryFull(double *);
     double pyEntryNew(double *);
     

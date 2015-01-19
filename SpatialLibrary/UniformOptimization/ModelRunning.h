@@ -9,7 +9,10 @@
 #ifndef __UniformOptimization__ModelRunning__
 #define __UniformOptimization__ModelRunning__
 
-#include "sundials/sundials_nvector.h"
+#include "sundials_nvector.h"
+#include "cvode_impl.h"
+#include "cvode.h"
+#include "sundials_dense.h"
 
 #define autocrineT 10000
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
@@ -54,8 +57,13 @@ struct rates {
 
 
 
-static const double times[] = {60, 240}; ///< Times of kinetic measurements.
-static const double Gass[] = {64, 16, 4, 1, 0.25, 0}; ///< Kinetic Gas6 doses.
+static const double times[2] = {60, 240}; ///< Times of kinetic measurements.
+static const double Gass[6] = {64, 16, 4, 1, 0.25, 0}; ///< Kinetic Gas6 doses.
+static const double kTPS[5] = {0, 0.5, 1, 5, 10};
+
+
+static const double pYk[5] = {4.1, 4.0, 7.5, 11.8, 11.0};
+static const double pYkErr[5] = {1, 0.74, 1.13, 1.39, 1.39};
 
 // Wrapping is outermost cell line, then Gas, then time
 static const double pY[6][2] = { ///< pY measurements on short time scales.
@@ -107,8 +115,6 @@ static const double surfError[6][2] = {
     {0.030, 0.023}}; // A549
 
 
-
-
 static const double timesFull[] = {240}; ///< Times of kinetic measurements.
 static const double GassDoseFull[] = {2.50, 1.25, 0.625, 0.3125, 0.15625, 0.078125, 0.00};
 
@@ -129,7 +135,7 @@ void calcProfileSet (double *outData, double *tps, struct rates *params, int nTp
 double calcErrorFull (struct rates);
 int AXL_react(double, N_Vector, N_Vector, void *);
 struct rates Param(double*);
-struct rates ParamNew(double*);
+int AXL_jac (long int N, double t, N_Vector y, N_Vector fy, DlsMat Jac, void *user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

@@ -19,8 +19,15 @@ extern "C" double pyEntry(double *pIn) {
     return calcError(Param(pIn));
 }
 
-extern "C" double pyEntryNew(double *pIn) {
-    return calcError(ParamNew(pIn));
+extern "C" void pyEntryVec(double *pIn, double *pOut, int n) {
+    for (int ii = 0; ii < n; ii++) {
+        if (pIn[ii*11 + 0] < pIn[ii*11 + 2]) {
+            pOut[ii] = 1E6;
+            continue;
+        }
+        
+        pOut[ii] = calcError(Param(&pIn[ii*11]));
+    }
 }
 
 extern "C" double pyEntryFull(double *pIn) {

@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Optim.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>Optimize.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -13,6 +18,11 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>725DD9251A583AF4003CD876</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>729ADC261A66B3C900BEB0F7</key>
 		<dict>
 			<key>primary</key>
 			<true/>
