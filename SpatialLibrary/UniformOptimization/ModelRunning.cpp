@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <iostream>
 #include <stdexcept>
-#include <thread>
 #include <exception>
 #include "cobyla.h"
 #include <cmath>
@@ -196,60 +195,6 @@ struct inData {
 
 
 
-
-
-
-
-static void calcParallelFull (double *outData, double *totData, double *surfData, size_t stimuli, N_Vector init_state, int *retVal, struct rates *params) {
-    
-    struct rates paramTwo = *params;
-    
-    *retVal = 0;
-    N_Vector state = N_VClone(init_state);
-    void *cvode_mem = solver_setup(state, &paramTwo, AXL_react);
-    // Initialize state based on autocrine ligand
-    
-    if (cvode_mem == NULL) {
-        N_VDestroy_Serial(state);
-        CVodeFree(&cvode_mem);
-        *retVal = 1;
-        return;
-    }
-    
-    /* We've got the initial state, so now run through the kinetic data */
-    for (int xx = 0; xx < Nspecies; xx++) {
-        Ith(state,xx) = Ith(init_state,xx);
-    }
-    
-    paramTwo.gasCur = paramTwo.gasCur + GassDoseFull[stimuli];
-    CVodeSetUserData(cvode_mem, &paramTwo);
-    
-    double t = 0;
-    
-    solverReset(cvode_mem, state);
-    
-    /* In loop, call CVode, print results, and test for error.
-     Break out of loop when NOUT preset output times have been reached.  */
-    
-    for (unsigned int ii = 0; ii < NELEMS(timesFull); ii++) {
-        int flag = CVode(cvode_mem, timesFull[ii], state, &t, CV_NORMAL);
-        
-        if (flag < 0) {
-            N_VDestroy_Serial(state);
-            CVodeFree(&cvode_mem);
-            *retVal = 1;
-            return;
-        }
-        
-        outData[stimuli*NELEMS(timesFull) + ii] = pYcalc(state,params);
-        totData[stimuli*NELEMS(timesFull) + ii] = totCalc(state,params);
-        surfData[stimuli*NELEMS(timesFull) + ii] = surfAXL(state);
-    }
-    
-    N_VDestroy_Serial(state);
-    CVodeFree(&cvode_mem);
-}
-
 static void calcKinetic (double *outData, double *totData, double *surfData, double *earlyPY, struct rates *params) {
     N_Vector init_state = N_VNew_Serial(Nspecies);
     double t;
@@ -273,7 +218,7 @@ static void calcKinetic (double *outData, double *totData, double *surfData, dou
     for (size_t stimuli = 0; stimuli < 6; stimuli++) {
         for (int xx = 0; xx < Nspecies; xx++) Ith(state,xx) = Ith(init_state,xx);
         
-        paramTwo.gasCur = paramTwo.gasCur + Gass[stimuli];
+        paramTwo.gasCur = paramTwo.autocrine + Gass[stimuli];
         CVodeSetUserData(cvode_mem, &paramTwo);
         
         t = 0;
@@ -298,8 +243,6 @@ static void calcKinetic (double *outData, double *totData, double *surfData, dou
             totData[stimuli*NELEMS(times) + ii] = totCalc(state,params);
             surfData[stimuli*NELEMS(times) + ii] = surfAXL(state);
         }
-        
-        stimuli++;
     }
     
     //
@@ -311,7 +254,8 @@ static void calcKinetic (double *outData, double *totData, double *surfData, dou
     /* We've got the initial state, so now run through the kinetic data */
     for (int xx = 0; xx < Nspecies; xx++) Ith(state,xx) = Ith(init_state,xx);
     
-    paramTwo.gasCur = paramTwo.gasCur + 1.25;
+    paramTwo.gasCur = paramTwo.autocrine + 1.25;
+    
     CVodeSetUserData(cvode_mem, &paramTwo);
     
     t = 0;
@@ -337,41 +281,6 @@ static void calcKinetic (double *outData, double *totData, double *surfData, dou
 
     N_VDestroy_Serial(state);
     CVodeFree(&cvode_mem);
-    N_VDestroy_Serial(init_state);
-}
-
-
-
-static void calcKineticFull (double *outData, double *totData, double *surfData, double *, struct rates *params) {
-    N_Vector init_state = N_VNew_Serial(Nspecies);
-    int retVal[7] = {0, 0, 0, 0, 0, 0, 0};
-    thread t[7];
-    
-    void *cvode_mem = initState(init_state, params);
-    // Initialize state based on autocrine ligand
-    
-    if (cvode_mem == NULL) {
-        N_VDestroy_Serial(init_state);
-        throw runtime_error(string("Error during solver threads."));
-        return;
-    }
-    
-    for (size_t ii = 0; ii < 7; ii++) t[ii] = std::thread(calcParallelFull, outData, totData, surfData, ii, init_state, &retVal[ii], params);
-    
-    //*siRatio = pyTotOnSi(params, init_state, &retVal[6]);
-    
-    CVodeFree(&cvode_mem);
-    
-    for (size_t ii = 0; ii < NELEMS(t); ii++) t[ii].join();
-    
-    for (size_t ii = 0; ii < NELEMS(retVal); ii++) {
-        if (retVal[ii] == 1) {
-            N_VDestroy_Serial(init_state);
-            throw runtime_error(string("Error during solver threads."));
-            return;
-        }
-    }
-    
     N_VDestroy_Serial(init_state);
 }
 
@@ -467,33 +376,6 @@ double calcError (struct rates inP) {
     N_VDestroy_Serial(totData);
     N_VDestroy_Serial(surfData);
     N_VDestroy_Serial(earlyPY);
-    return error;
-}
-
-
-double calcErrorFull (struct rates inP) {
-    N_Vector outData = N_VNew_Serial(NELEMS(GassDoseFull)*NELEMS(timesFull));
-    N_Vector totData = N_VNew_Serial(NELEMS(GassDoseFull)*NELEMS(timesFull));
-    N_Vector surfData = N_VNew_Serial(NELEMS(GassDoseFull)*NELEMS(timesFull));
-    double siRatio = 0;
-    
-    double error = 0;
-    
-    try {
-        calcKineticFull(NVp(outData), NVp(totData), NVp(surfData), &siRatio, &inP);
-        
-        error += errorFuncOpt (outData, pYdoseFull, pYdoseFullError);
-        error += errorFuncFix (totData, DoseTotFull, DoseTotFullErr);
-        error += errorFuncOpt (surfData, surfDoseFull, surfDoseFullError);
-    } catch (runtime_error &e) {
-        errorLogger(&e);
-        error = 1E8;
-    }
-    
-    N_VDestroy_Serial(outData);
-    N_VDestroy_Serial(totData);
-    N_VDestroy_Serial(surfData);
-    
     return error;
 }
 

@@ -62,7 +62,7 @@ extern "C" {
  *    M     - number of rows
  *    N     - number of columns
  *    ldim  - leading dimension (ldim >= M)
- *    data  - pointer to a contiguous block of realtype variables
+ *    data  - pointer to a contiguous block of double variables
  *    ldata - length of the data array =ldim*N
  *    cols  - array of pointers. cols[j] points to the first element 
  *            of the j-th column of the matrix in the array data.
@@ -92,7 +92,7 @@ extern "C" {
  *            partial pivoting. The s_mu field holds the upper 
  *            bandwidth allocated for A.
  *    ldim  - leading dimension (ldim >= s_mu)
- *    data  - pointer to a contiguous block of realtype variables
+ *    data  - pointer to a contiguous block of double variables
  *    ldata - length of the data array =ldim*(s_mu+ml+1)
  *    cols  - array of pointers. cols[j] points to the first element 
  *            of the j-th column of the matrix in the array data.
@@ -113,15 +113,15 @@ extern "C" {
 
 typedef struct _DlsMat {
   int type;
-  long int M;
-  long int N;
+  size_t M;
+  size_t N;
   long int ldim;
   long int mu;
   long int ml;
   long int s_mu;
-  realtype *data;
+  double *data;
   long int ldata;
-  realtype **cols;
+  double **cols;
 } *DlsMat;
 
 /*
@@ -137,7 +137,7 @@ typedef struct _DlsMat {
  *
  * DENSE_COL(A,j) references the jth column of the M-by-N dense
  * matrix A, 0 <= j < N. The type of the expression DENSE_COL(A,j) 
- * is (realtype *). After the assignment in the usage above, col_j 
+ * is (double *). After the assignment in the usage above, col_j 
  * may be treated as an array indexed from 0 to M-1. The (i,j)-th 
  * element of A is thus referenced by col_j[i].
  *
@@ -157,7 +157,7 @@ typedef struct _DlsMat {
  *  
  * BAND_COL(A,j) references the diagonal element of the jth column 
  * of the N by N band matrix A, 0 <= j <= N-1. The type of the 
- * expression BAND_COL(A,j) is realtype *. The pointer returned by 
+ * expression BAND_COL(A,j) is double *. The pointer returned by 
  * the call BAND_COL(A,j) can be treated as an array which is 
  * indexed from -(A->mu) to (A->ml).
  * 
@@ -258,13 +258,13 @@ SUNDIALS_EXPORT long int *NewLintArray(long int N);
  * -----------------------------------------------------------------
  * Function: NewRealArray
  * -----------------------------------------------------------------
- * NewRealArray allocates memory an array of N realtype and returns
+ * NewRealArray allocates memory an array of N double and returns
  * the pointer to the memory it allocates. If the request for
  * memory storage cannot be satisfied, it returns NULL.
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT realtype *NewRealArray(long int N);
+SUNDIALS_EXPORT double *NewRealArray(long int N);
 
 /*
  * -----------------------------------------------------------------
@@ -318,16 +318,16 @@ SUNDIALS_EXPORT void PrintMat(DlsMat A);
 
 /*
  * ==================================================================
- * Exported function prototypes (functions working on realtype**)
+ * Exported function prototypes (functions working on double**)
  * ==================================================================
  */
 
-SUNDIALS_EXPORT realtype **newDenseMat(size_t m, size_t n);
-SUNDIALS_EXPORT realtype **newBandMat(long int n, long int smu, long int ml);
-SUNDIALS_EXPORT void destroyMat(realtype **a);
+SUNDIALS_EXPORT double **newDenseMat(size_t m, size_t n);
+SUNDIALS_EXPORT double **newBandMat(long int n, long int smu, long int ml);
+SUNDIALS_EXPORT void destroyMat(double **a);
 SUNDIALS_EXPORT int *newIntArray(int n);
 SUNDIALS_EXPORT long int *newLintArray(long int n);
-SUNDIALS_EXPORT realtype *newRealArray(long int m);
+SUNDIALS_EXPORT double *newRealArray(long int m);
 SUNDIALS_EXPORT void destroyArray(void *v);
 
 

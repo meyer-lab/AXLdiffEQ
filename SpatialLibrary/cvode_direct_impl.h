@@ -80,13 +80,13 @@ typedef struct CVDlsMemRec {
  * -----------------------------------------------------------------
  */
 
-int cvDlsDenseDQJac(long int N, realtype t,
+int cvDlsDenseDQJac(long int N, double t,
 		    N_Vector y, N_Vector fy, 
 		    DlsMat Jac, void *data,
 		    N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
   
 int cvDlsBandDQJac(long int N, long int mupper, long int mlower,
-		   realtype t, N_Vector y, N_Vector fy, 
+		   double t, N_Vector y, N_Vector fy, 
 		   DlsMat Jac, void *data,
 		   N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 

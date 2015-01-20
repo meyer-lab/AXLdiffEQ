@@ -1,10 +1,10 @@
 clc; clear;
 
-load widenoPYIRQ;
-fitStruct2 = fitStruct;
-load widenoPYxLI;
-fitStruct = [fitStruct, fitStruct2];
-% load widev9b;
+load noPYMq0;
+% fitStruct2 = fitStruct;
+% load widenoPYxLI;
+% fitStruct = [fitStruct, fitStruct2];
+% load widenoPYe4M;
 % fitStruct = [fitStruct, fitStruct2];
 
 names = {'U2','xFwd1','xRev3','AXLint1','AXLint2','kRec','kDeg','fElse','AXL','Gas'};
@@ -20,7 +20,7 @@ end
 disp(min(fitt(params(:,end) > 0.5)));
 disp(min(fitt(params(:,end) < 0.5)));
 
-cutoff = min(fitt)+6;
+cutoff = min(fitt)+3;
 
 params(fitt > cutoff,:) = [];
 fitt(fitt > cutoff) = [];

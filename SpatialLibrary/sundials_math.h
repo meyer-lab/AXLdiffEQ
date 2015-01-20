@@ -12,7 +12,7 @@
  * For details, see the LICENSE file.
  * -----------------------------------------------------------------
  * This is the header file for a simple C-language math library. The
- * routines listed here work with the type realtype as defined in
+ * routines listed here work with the type double as defined in
  * the header file sundials_types.h.
  * -----------------------------------------------------------------
  */
@@ -24,6 +24,7 @@
 extern "C" {
 #endif
 
+#include <math.h>
 #include "sundials_types.h"
 
 /*
@@ -63,36 +64,36 @@ extern "C" {
  * Function : RPowerI
  * -----------------------------------------------------------------
  * Usage : int exponent;
- *         realtype base, ans;
+ *         double base, ans;
  *         ans = RPowerI(base,exponent);
  * -----------------------------------------------------------------
  * RPowerI returns the value of base^exponent, where base is of type
- * realtype and exponent is of type int.
+ * double and exponent is of type int.
  * -----------------------------------------------------------------
  */
 
-realtype RPowerI(realtype base, int exponent);
+double RPowerI(double base, int exponent);
 
 /*
  * -----------------------------------------------------------------
  * Function : RPowerR
  * -----------------------------------------------------------------
- * Usage : realtype base, exponent, ans;
+ * Usage : double base, exponent, ans;
  *         ans = RPowerR(base,exponent);
  * -----------------------------------------------------------------
  * RPowerR returns the value of base^exponent, where both base and
- * exponent are of type realtype. If base < ZERO, then RPowerR
+ * exponent are of type double. If base < ZERO, then RPowerR
  * returns ZERO.
  * -----------------------------------------------------------------
  */
 
-realtype RPowerR(realtype base, realtype exponent);
+double RPowerR(double base, double exponent);
 
 /*
  * -----------------------------------------------------------------
  * Function : RSqrt
  * -----------------------------------------------------------------
- * Usage : realtype sqrt_x;
+ * Usage : double sqrt_x;
  *         sqrt_x = RSqrt(x);
  * -----------------------------------------------------------------
  * RSqrt(x) returns the square root of x. If x < ZERO, then RSqrt
@@ -100,20 +101,20 @@ realtype RPowerR(realtype base, realtype exponent);
  * -----------------------------------------------------------------
  */
 
-realtype RSqrt(realtype x);
+double RSqrt(double x);
 
 /*
  * -----------------------------------------------------------------
  * Function : RExp (a.k.a. EXP)
  * -----------------------------------------------------------------
- * Usage : realtype exp_x;
+ * Usage : double exp_x;
  *         exp_x = RExp(x);
  * -----------------------------------------------------------------
  * RExp(x) returns e^x (base-e exponential function).
  * -----------------------------------------------------------------
  */
 
-realtype RExp(realtype x);
+double RExp(double x);
 
 #ifdef __cplusplus
 }

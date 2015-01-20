@@ -15,9 +15,9 @@
  *
  * There are two sets of dense solver routines listed in
  * this file: one set uses type DlsMat defined below and the
- * other set uses the type realtype ** for dense matrix arguments.
+ * other set uses the type double ** for dense matrix arguments.
  * Routines that work with the type DlsMat begin with "Dense".
- * Routines that work with realtype** begin with "dense". 
+ * Routines that work with double** begin with "dense". 
  * -----------------------------------------------------------------
  */
 
@@ -74,10 +74,10 @@ extern "C" {
  */
 
 SUNDIALS_EXPORT long int DenseGETRF(DlsMat A, long int *p);
-SUNDIALS_EXPORT void DenseGETRS(DlsMat A, long int *p, realtype *b);
+SUNDIALS_EXPORT void DenseGETRS(DlsMat A, long int *p, double *b);
 
-SUNDIALS_EXPORT long int denseGETRF(realtype **a, long int m, long int n, long int *p);
-SUNDIALS_EXPORT void denseGETRS(realtype **a, long int n, long int *p, realtype *b);
+SUNDIALS_EXPORT long int denseGETRF(double **a, long int m, long int n, long int *p);
+SUNDIALS_EXPORT void denseGETRS(double **a, long int n, long int *p, double *b);
 
 /*
  * -----------------------------------------------------------------
@@ -98,10 +98,10 @@ SUNDIALS_EXPORT void denseGETRS(realtype **a, long int n, long int *p, realtype 
  */
 
 SUNDIALS_EXPORT long int DensePOTRF(DlsMat A);
-SUNDIALS_EXPORT void DensePOTRS(DlsMat A, realtype *b);
+SUNDIALS_EXPORT void DensePOTRS(DlsMat A, double *b);
 
-SUNDIALS_EXPORT long int densePOTRF(realtype **a, long int m);
-SUNDIALS_EXPORT void densePOTRS(realtype **a, long int m, realtype *b);
+SUNDIALS_EXPORT long int densePOTRF(double **a, long int m);
+SUNDIALS_EXPORT void densePOTRS(double **a, long int m, double *b);
 
 /*
  * -----------------------------------------------------------------
@@ -129,13 +129,13 @@ SUNDIALS_EXPORT void densePOTRS(realtype **a, long int m, realtype *b);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int DenseGEQRF(DlsMat A, realtype *beta, realtype *wrk);
-SUNDIALS_EXPORT int DenseORMQR(DlsMat A, realtype *beta, realtype *vn, realtype *vm, 
-			       realtype *wrk);
+SUNDIALS_EXPORT int DenseGEQRF(DlsMat A, double *beta, double *wrk);
+SUNDIALS_EXPORT int DenseORMQR(DlsMat A, double *beta, double *vn, double *vm, 
+			       double *wrk);
 
-SUNDIALS_EXPORT int denseGEQRF(realtype **a, long int m, long int n, realtype *beta, realtype *v);
-SUNDIALS_EXPORT int denseORMQR(realtype **a, long int m, long int n, realtype *beta,
-			       realtype *v, realtype *w, realtype *wrk);
+SUNDIALS_EXPORT int denseGEQRF(double **a, long int m, long int n, double *beta, double *v);
+SUNDIALS_EXPORT int denseORMQR(double **a, long int m, long int n, double *beta,
+			       double *v, double *w, double *wrk);
 
 /*
  * -----------------------------------------------------------------
@@ -150,7 +150,7 @@ SUNDIALS_EXPORT int denseORMQR(realtype **a, long int m, long int n, realtype *b
  */
 
 SUNDIALS_EXPORT void DenseCopy(DlsMat A, DlsMat B);
-SUNDIALS_EXPORT void denseCopy(realtype **a, realtype **b, long int m, long int n);
+SUNDIALS_EXPORT void denseCopy(double **a, double **b, long int m, long int n);
 
 /*
  * -----------------------------------------------------------------
@@ -165,8 +165,8 @@ SUNDIALS_EXPORT void denseCopy(realtype **a, realtype **b, long int m, long int 
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void DenseScale(realtype c, DlsMat A);
-SUNDIALS_EXPORT void denseScale(realtype c, realtype **a, long int m, long int n);
+SUNDIALS_EXPORT void DenseScale(double c, DlsMat A);
+SUNDIALS_EXPORT void denseScale(double c, double **a, long int m, long int n);
 
 
 /*
@@ -174,11 +174,11 @@ SUNDIALS_EXPORT void denseScale(realtype c, realtype **a, long int m, long int n
  * Function: denseAddIdentity
  * -----------------------------------------------------------------
  * denseAddIdentity adds the identity matrix to the n-by-n matrix
- * stored in the realtype** arrays.
+ * stored in the double** arrays.
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void denseAddIdentity(realtype **a, long int n);
+SUNDIALS_EXPORT void denseAddIdentity(double **a, long int n);
 
 #ifdef __cplusplus
 }

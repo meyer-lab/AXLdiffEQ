@@ -248,7 +248,7 @@ int CVodeSetStabLimDet(void *cvode_mem, booleantype sldet)
  * Specifies the initial step size
  */
 
-int CVodeSetInitStep(void *cvode_mem, realtype hin)
+int CVodeSetInitStep(void *cvode_mem, double hin)
 {
   CVodeMem cv_mem;
 
@@ -270,7 +270,7 @@ int CVodeSetInitStep(void *cvode_mem, realtype hin)
  * Specifies the minimum step size
  */
 
-int CVodeSetMinStep(void *cvode_mem, realtype hmin)
+int CVodeSetMinStep(void *cvode_mem, double hmin)
 {
   CVodeMem cv_mem;
 
@@ -308,9 +308,9 @@ int CVodeSetMinStep(void *cvode_mem, realtype hmin)
  * Specifies the maximum step size
  */
 
-int CVodeSetMaxStep(void *cvode_mem, realtype hmax)
+int CVodeSetMaxStep(void *cvode_mem, double hmax)
 {
-  realtype hmax_inv;
+  double hmax_inv;
   CVodeMem cv_mem;
 
   if (cvode_mem==NULL) {
@@ -348,7 +348,7 @@ int CVodeSetMaxStep(void *cvode_mem, realtype hmax)
  * Specifies the time beyond which the integration is not to proceed.
  */
 
-int CVodeSetStopTime(void *cvode_mem, realtype tstop)
+int CVodeSetStopTime(void *cvode_mem, double tstop)
 {
   CVodeMem cv_mem;
 
@@ -453,7 +453,7 @@ int CVodeSetMaxNonlinIters(void *cvode_mem, int maxcor)
  * test
  */
 
-int CVodeSetNonlinConvCoef(void *cvode_mem, realtype nlscoef)
+int CVodeSetNonlinConvCoef(void *cvode_mem, double nlscoef)
 {
   CVodeMem cv_mem;
 
@@ -720,7 +720,7 @@ int CVodeGetNumStabLimOrderReds(void *cvode_mem, long int *nslred)
  * Returns the step size used on the first step
  */
 
-int CVodeGetActualInitStep(void *cvode_mem, realtype *hinused)
+int CVodeGetActualInitStep(void *cvode_mem, double *hinused)
 {
   CVodeMem cv_mem;
 
@@ -742,7 +742,7 @@ int CVodeGetActualInitStep(void *cvode_mem, realtype *hinused)
  * Returns the step size used on the last successful step
  */
 
-int CVodeGetLastStep(void *cvode_mem, realtype *hlast)
+int CVodeGetLastStep(void *cvode_mem, double *hlast)
 {
   CVodeMem cv_mem;
 
@@ -764,7 +764,7 @@ int CVodeGetLastStep(void *cvode_mem, realtype *hlast)
  * Returns the step size to be attempted on the next step
  */
 
-int CVodeGetCurrentStep(void *cvode_mem, realtype *hcur)
+int CVodeGetCurrentStep(void *cvode_mem, double *hcur)
 {
   CVodeMem cv_mem;
 
@@ -786,7 +786,7 @@ int CVodeGetCurrentStep(void *cvode_mem, realtype *hcur)
  * Returns the current value of the independent variable
  */
 
-int CVodeGetCurrentTime(void *cvode_mem, realtype *tcur)
+int CVodeGetCurrentTime(void *cvode_mem, double *tcur)
 {
   CVodeMem cv_mem;
 
@@ -808,7 +808,7 @@ int CVodeGetCurrentTime(void *cvode_mem, realtype *tcur)
  * Returns a suggested factor for scaling tolerances
  */
 
-int CVodeGetTolScaleFactor(void *cvode_mem, realtype *tolsfact)
+int CVodeGetTolScaleFactor(void *cvode_mem, double *tolsfact)
 {
   CVodeMem cv_mem;
 
@@ -899,8 +899,8 @@ int CVodeGetWorkSpace(void *cvode_mem, long int *lenrw, long int *leniw)
 
 int CVodeGetIntegratorStats(void *cvode_mem, long int *nsteps, long int *nfevals, 
                             long int *nlinsetups, long int *netfails, int *qlast, 
-                            int *qcur, realtype *hinused, realtype *hlast, 
-                            realtype *hcur, realtype *tcur)
+                            int *qcur, double *hinused, double *hlast, 
+                            double *hcur, double *tcur)
 {
   CVodeMem cv_mem;
 

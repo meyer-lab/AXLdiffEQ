@@ -30,10 +30,6 @@ extern "C" void pyEntryVec(double *pIn, double *pOut, int n) {
     }
 }
 
-extern "C" double pyEntryFull(double *pIn) {
-    return calcErrorFull(Param(pIn));
-}
-
 extern "C" int calcProfileMatlab(double *dataPtr, double *params, double *tps, int nTps, double GasStim, int frac) {
     struct rates pInS = Param(params);
     

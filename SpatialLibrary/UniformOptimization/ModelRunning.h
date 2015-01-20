@@ -115,24 +115,10 @@ static const double surfError[6][2] = {
     {0.030, 0.023}}; // A549
 
 
-static const double timesFull[] = {240}; ///< Times of kinetic measurements.
-static const double GassDoseFull[] = {2.50, 1.25, 0.625, 0.3125, 0.15625, 0.078125, 0.00};
-
-static const double DoseTotFull[7] = {1734, 1960, 1687, 1429, 2432, 2181, 2672}; // A549
-static const double DoseTotFullErr[7] = {224, 242, 98, 186, 198, 113, 78}; // A549
-
-static const double pYdoseFull[7] = {0.03470, 0.03136, 0.02556, 0.02071, 0.013218411, 0.011107913, 0.012675294}; // A549
-static const double pYdoseFullError[7] = {0.003295993, 0.003288019, 0.00346509,  0.003814638, 0.002328042, 0.002823496, 0.001398771}; // A549
-
-static const double surfDoseFullError[7] = {0.005030684, 0.030522852, 0.021637369, 0.000667265, 0.002572132, 0.004779955, 0.006611277};
-static const double surfDoseFull[7] = {0.065354474, 0.094518425, 0.107833781, 0.072157625, 0.076956945, 0.080170467, 0.069035735};
-
-
 double calcError (struct rates);
 void*initState(N_Vector, struct rates *);
 void calcProfile (N_Vector, N_Vector, N_Vector, N_Vector, N_Vector, struct rates *, double, double);
 void calcProfileSet (double *outData, double *tps, struct rates *params, int nTps, double GasStim, int frac);
-double calcErrorFull (struct rates);
 int AXL_react(double, N_Vector, N_Vector, void *);
 struct rates Param(double*);
 int AXL_jac (long int N, double t, N_Vector y, N_Vector fy, DlsMat Jac, void *user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);

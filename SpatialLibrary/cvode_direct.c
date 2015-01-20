@@ -312,13 +312,13 @@ int CVDlsGetLastFlag(void *cvode_mem, long int *flag)
  * -----------------------------------------------------------------
  */ 
 
-int cvDlsDenseDQJac(long int N, realtype t,
+int cvDlsDenseDQJac(long int N, double t,
                     N_Vector y, N_Vector fy, 
                     DlsMat Jac, void *data,
-                    N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
+                    N_Vector tmp1, N_Vector tmp2, __attribute__((unused)) N_Vector tmp3)
 {
-  realtype fnorm, minInc, inc, inc_inv, yjsaved, srur;
-  realtype *tmp2_data, *y_data, *ewt_data;
+  double fnorm, minInc, inc, inc_inv, yjsaved, srur;
+  double *tmp2_data, *y_data, *ewt_data;
   N_Vector ftemp, jthCol;
   long int j;
   int retval = 0;
@@ -389,13 +389,12 @@ int cvDlsDenseDQJac(long int N, realtype t,
  */
 
 int cvDlsBandDQJac(long int N, long int mupper, long int mlower,
-                   realtype t, N_Vector y, N_Vector fy,
+                   __attribute__((unused)) double t, N_Vector y, N_Vector fy,
                    DlsMat Jac, void *data,
-                   N_Vector tmp1, N_Vector tmp2, N_Vector tmp3)
-{
+                   N_Vector tmp1, N_Vector tmp2, __attribute__((unused)) N_Vector tmp3) {
   N_Vector ftemp, ytemp;
-  realtype fnorm, minInc, inc, inc_inv, srur;
-  realtype *col_j, *ewt_data, *fy_data, *ftemp_data, *y_data, *ytemp_data;
+  double fnorm, minInc, inc, inc_inv, srur;
+  double *col_j, *ewt_data, *fy_data, *ftemp_data, *y_data, *ytemp_data;
   long int group, i, j, width, ngroups, i1, i2;
   int retval = 0;
 

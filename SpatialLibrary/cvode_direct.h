@@ -119,7 +119,7 @@ extern "C" {
  */
   
   
-typedef int (*CVDlsDenseJacFn)(long int N, realtype t,
+typedef int (*CVDlsDenseJacFn)(long int N, double t,
 			       N_Vector y, N_Vector fy, 
 			       DlsMat Jac, void *user_data,
 			       N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
@@ -207,7 +207,7 @@ typedef int (*CVDlsDenseJacFn)(long int N, realtype t,
  */
 
 typedef int (*CVDlsBandJacFn)(long int N, long int mupper, long int mlower,
-			      realtype t, N_Vector y, N_Vector fy, 
+			      double t, N_Vector y, N_Vector fy, 
 			      DlsMat Jac, void *user_data,
 			      N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 

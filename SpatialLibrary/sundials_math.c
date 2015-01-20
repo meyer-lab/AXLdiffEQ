@@ -25,10 +25,10 @@
 #define ZERO RCONST(0.0)
 #define ONE  RCONST(1.0)
 
-realtype RPowerI(realtype base, int exponent)
+double RPowerI(double base, int exponent)
 {
   int i, expt;
-  realtype prod;
+  double prod;
 
   prod = ONE;
   expt = abs(exponent);
@@ -37,18 +37,18 @@ realtype RPowerI(realtype base, int exponent)
   return(prod);
 }
 
-realtype RPowerR(realtype base, realtype exponent) {
+double RPowerR(double base, double exponent) {
   if (base <= ZERO) return(ZERO);
 
   return(pow(base, exponent));
 }
 
-realtype RSqrt(realtype x) {
+double RSqrt(double x) {
   if (x <= ZERO) return(ZERO);
   return(sqrt(x));
 }
 
-realtype RExp(realtype x)
+double RExp(double x)
 {
   return(exp(x));
 }

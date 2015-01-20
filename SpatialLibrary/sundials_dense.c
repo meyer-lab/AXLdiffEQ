@@ -37,7 +37,7 @@ long int DenseGETRF(DlsMat A, long int *p)
   return(denseGETRF(A->cols, A->M, A->N, p));
 }
 
-void DenseGETRS(DlsMat A, long int *p, realtype *b)
+void DenseGETRS(DlsMat A, long int *p, double *b)
 {
   denseGETRS(A->cols, A->N, p, b);
 }
@@ -47,17 +47,17 @@ long int DensePOTRF(DlsMat A)
   return(densePOTRF(A->cols, A->M));
 }
 
-void DensePOTRS(DlsMat A, realtype *b)
+void DensePOTRS(DlsMat A, double *b)
 {
   densePOTRS(A->cols, A->M, b);
 }
 
-int DenseGEQRF(DlsMat A, realtype *beta, realtype *wrk)
+int DenseGEQRF(DlsMat A, double *beta, double *wrk)
 {
   return(denseGEQRF(A->cols, A->M, A->N, beta, wrk));
 }
 
-int DenseORMQR(DlsMat A, realtype *beta, realtype *vn, realtype *vm, realtype *wrk)
+int DenseORMQR(DlsMat A, double *beta, double *vn, double *vm, double *wrk)
 {
   return(denseORMQR(A->cols, A->M, A->N, beta, vn, vm, wrk));
 }
@@ -67,16 +67,16 @@ void DenseCopy(DlsMat A, DlsMat B)
   denseCopy(A->cols, B->cols, A->M, A->N);
 }
 
-void DenseScale(realtype c, DlsMat A)
+void DenseScale(double c, DlsMat A)
 {
   denseScale(c, A->cols, A->M, A->N);
 }
 
-long int denseGETRF(realtype **a, long int m, long int n, long int *p)
+long int denseGETRF(double **a, long int m, long int n, long int *p)
 {
   long int i, j, k, l;
-  realtype *col_j, *col_k;
-  realtype temp, mult, a_kj;
+  double *col_j, *col_k;
+  double temp, mult, a_kj;
 
   /* k-th elimination step number */
   for (k=0; k < n; k++) {
@@ -135,10 +135,10 @@ long int denseGETRF(realtype **a, long int m, long int n, long int *p)
   return(0);
 }
 
-void denseGETRS(realtype **a, long int n, long int *p, realtype *b)
+void denseGETRS(double **a, long int n, long int *p, double *b)
 {
   long int i, k, pk;
-  realtype *col_k, tmp;
+  double *col_k, tmp;
 
   /* Permute b, based on pivot information in p */
   for (k=0; k<n; k++) {
@@ -172,10 +172,10 @@ void denseGETRS(realtype **a, long int n, long int *p, realtype *b)
  * Only the lower triangle of A is accessed and it is overwritten with
  * the lower triangle of C.
  */
-long int densePOTRF(realtype **a, long int m)
+long int densePOTRF(double **a, long int m)
 {
-  realtype *a_col_j, *a_col_k;
-  realtype a_diag;
+  double *a_col_j, *a_col_k;
+  double a_diag;
   long int i, j, k;
 
   for (j=0; j<m; j++) {
@@ -207,9 +207,9 @@ long int densePOTRF(realtype **a, long int m)
  * obtained with denPOTRF.; A = C*C^T, C lower triangular
  *
  */
-void densePOTRS(realtype **a, long int m, realtype *b)
+void densePOTRS(double **a, long int m, double *b)
 {
-  realtype *col_j, *col_i;
+  double *col_j, *col_i;
   long int i, j;
 
   /* Solve C y = b, forward substitution - column version.
@@ -248,10 +248,10 @@ void densePOTRS(realtype **a, long int m, realtype *b)
  *
  */
 
-int denseGEQRF(realtype **a, long int m, long int n, realtype *beta, realtype *v)
+int denseGEQRF(double **a, long int m, long int n, double *beta, double *v)
 {
-  realtype ajj, s, mu, v1, v1_2;
-  realtype *col_j, *col_k;
+  double ajj, s, mu, v1, v1_2;
+  double *col_j, *col_k;
   long int i, j, k;
 
   /* For each column...*/
@@ -309,10 +309,10 @@ int denseGEQRF(realtype **a, long int m, long int n, realtype *beta, realtype *v
  *
  * v (of length m) must be provided as workspace.
  */
-int denseORMQR(realtype **a, long int m, long int n, realtype *beta,
-               realtype *vn, realtype *vm, realtype *v)
+int denseORMQR(double **a, long int m, long int n, double *beta,
+               double *vn, double *vm, double *v)
 {
-  realtype *col_j, s;
+  double *col_j, s;
   long int i, j;
 
   /* Initialize vm */
@@ -339,10 +339,10 @@ int denseORMQR(realtype **a, long int m, long int n, realtype *beta,
   return(0);
 }
 
-void denseCopy(realtype **a, realtype **b, long int m, long int n)
+void denseCopy(double **a, double **b, long int m, long int n)
 {
   long int i, j;
-  realtype *a_col_j, *b_col_j;
+  double *a_col_j, *b_col_j;
 
   for (j=0; j < n; j++) {
     a_col_j = a[j];
@@ -353,10 +353,10 @@ void denseCopy(realtype **a, realtype **b, long int m, long int n)
 
 }
 
-void denseScale(realtype c, realtype **a, long int m, long int n)
+void denseScale(double c, double **a, long int m, long int n)
 {
   long int i, j;
-  realtype *col_j;
+  double *col_j;
 
   for (j=0; j < n; j++) {
     col_j = a[j];
@@ -365,7 +365,7 @@ void denseScale(realtype c, realtype **a, long int m, long int n)
   }
 }
 
-void denseAddIdentity(realtype **a, long int n)
+void denseAddIdentity(double **a, long int n)
 {
   long int i;
   

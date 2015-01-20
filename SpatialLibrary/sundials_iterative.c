@@ -17,6 +17,7 @@
  * -----------------------------------------------------------------
  */
 
+
 #include <stdio.h>
 
 #include "sundials_iterative.h"
@@ -36,11 +37,11 @@
  * -----------------------------------------------------------------
  */
  
-int ModifiedGS(N_Vector *v, realtype **h, int k, int p, 
-               realtype *new_vk_norm)
+int ModifiedGS(N_Vector *v, double **h, int k, int p, 
+               double *new_vk_norm)
 {
   int  i, k_minus_1, i0;
-  realtype new_norm_2, new_product, vk_norm, temp;
+  double new_norm_2, new_product, vk_norm, temp;
   
   vk_norm = RSqrt(N_VDotProd(v[k],v[k]));
   k_minus_1 = k - 1;
@@ -94,11 +95,11 @@ int ModifiedGS(N_Vector *v, realtype **h, int k, int p,
  * -----------------------------------------------------------------
  */
 
-int ClassicalGS(N_Vector *v, realtype **h, int k, int p, 
-                realtype *new_vk_norm, N_Vector temp, realtype *s)
+int ClassicalGS(N_Vector *v, double **h, int k, int p, 
+                double *new_vk_norm, N_Vector temp, double *s)
 {
   int  i, k_minus_1, i0;
-  realtype vk_norm;
+  double vk_norm;
 
   k_minus_1 = k - 1;
   
@@ -152,9 +153,9 @@ int ClassicalGS(N_Vector *v, realtype **h, int k, int p,
  * -----------------------------------------------------------------
  */
 
-int QRfact(int n, realtype **h, realtype *q, int job)
+int QRfact(int n, double **h, double *q, int job)
 {
-  realtype c, s, temp1, temp2, temp3;
+  double c, s, temp1, temp2, temp3;
   int i, j, k, q_ptr, n_minus_1, code=0;
 
   switch (job) {
@@ -256,9 +257,9 @@ int QRfact(int n, realtype **h, realtype *q, int job)
  * -----------------------------------------------------------------
  */
 
-int QRsol(int n, realtype **h, realtype *q, realtype *b)
+int QRsol(int n, double **h, double *q, double *b)
 {
-  realtype c, s, temp1, temp2;
+  double c, s, temp1, temp2;
   int i, k, q_ptr, code=0;
 
   /* Compute Q*b */

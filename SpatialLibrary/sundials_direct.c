@@ -34,12 +34,12 @@ DlsMat NewDenseMat(size_t M, size_t N) {
   A = (DlsMat) malloc(sizeof *A);
   if (A==NULL) return (NULL);
   
-  A->data = (realtype *) malloc(M * N * sizeof(realtype));
+  A->data = (double *) malloc(M * N * sizeof(double));
   if (A->data == NULL) {
     free(A); A = NULL;
     return(NULL);
   }
-  A->cols = (realtype **) malloc(N * sizeof(realtype *));
+  A->cols = (double **) malloc(N * sizeof(double *));
   if (A->cols == NULL) {
     free(A->data); A->data = NULL;
     free(A); A = NULL;
@@ -58,19 +58,19 @@ DlsMat NewDenseMat(size_t M, size_t N) {
   return(A);
 }
 
-realtype **newDenseMat(size_t m, size_t n)
+double **newDenseMat(size_t m, size_t n)
 {
   long int j;
-  realtype **a;
+  double **a;
 
   if ( (n <= 0) || (m <= 0) ) return(NULL);
 
   a = NULL;
-  a = (realtype **) malloc(n * sizeof(realtype *));
+  a = (double **) malloc(n * sizeof(double *));
   if (a == NULL) return(NULL);
 
   a[0] = NULL;
-  a[0] = (realtype *) malloc(m * n * sizeof(realtype));
+  a[0] = (double *) malloc(m * n * sizeof(double));
   if (a[0] == NULL) {
     free(a); a = NULL;
     return(NULL);
@@ -95,14 +95,14 @@ DlsMat NewBandMat(long int N, long int mu, long int ml, long int smu)
 
   colSize = smu + ml + 1;
   A->data = NULL;
-  A->data = (realtype *) malloc((size_t) N * colSize * sizeof(realtype));
+  A->data = (double *) malloc((size_t) N * colSize * sizeof(double));
   if (A->data == NULL) {
     free(A); A = NULL;
     return(NULL);
   }
 
   A->cols = NULL;
-  A->cols = (realtype **) malloc((size_t) N * sizeof(realtype *));
+  A->cols = (double **) malloc((size_t) N * sizeof(double *));
   if (A->cols == NULL) {
     free(A->data);
     free(A); A = NULL;
@@ -124,20 +124,20 @@ DlsMat NewBandMat(long int N, long int mu, long int ml, long int smu)
   return(A);
 }
 
-realtype **newBandMat(long int n, long int smu, long int ml)
+double **newBandMat(long int n, long int smu, long int ml)
 {
-  realtype **a;
+  double **a;
   long int j, colSize;
 
   if (n <= 0) return(NULL);
 
   a = NULL;
-  a = (realtype **) malloc(n * sizeof(realtype *));
+  a = (double **) malloc(n * sizeof(double *));
   if (a == NULL) return(NULL);
 
   colSize = smu + ml + 1;
   a[0] = NULL;
-  a[0] = (realtype *) malloc(n * colSize * sizeof(realtype));
+  a[0] = (double *) malloc(n * colSize * sizeof(double));
   if (a[0] == NULL) {
     free(a); a = NULL;
     return(NULL);
@@ -155,7 +155,7 @@ void DestroyMat(DlsMat A)
   free(A); A = NULL;
 }
 
-void destroyMat(realtype **a)
+void destroyMat(double **a)
 {
   free(a[0]); a[0] = NULL;
   free(a); a = NULL;
@@ -209,26 +209,26 @@ long int *newLintArray(long int n)
   return(v);
 }
 
-realtype *NewRealArray(long int N)
+double *NewRealArray(long int N)
 {
-  realtype *vec;
+  double *vec;
 
   if (N <= 0) return(NULL);
 
   vec = NULL;
-  vec = (realtype *) malloc((size_t) N * sizeof(realtype));
+  vec = (double *) malloc((size_t) N * sizeof(double));
 
   return(vec);
 }
 
-realtype *newRealArray(long int m)
+double *newRealArray(long int m)
 {
-  realtype *v;
+  double *v;
 
   if (m <= 0) return(NULL);
 
   v = NULL;
-  v = (realtype *) malloc((size_t) m * sizeof(realtype));
+  v = (double *) malloc((size_t) m * sizeof(double));
 
   return(v);
 }
@@ -268,7 +268,7 @@ void AddIdentity(DlsMat A)
 void SetToZero(DlsMat A)
 {
   long int i, j, colSize;
-  realtype *col_j;
+  double *col_j;
 
   switch (A->type) {
 
@@ -301,7 +301,7 @@ void SetToZero(DlsMat A)
 void PrintMat(DlsMat A)
 {
   long int i, j, start, finish;
-  realtype **a;
+  double **a;
 
   switch (A->type) {
 

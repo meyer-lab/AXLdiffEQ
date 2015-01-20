@@ -117,7 +117,7 @@ int CVDense(void *cvode_mem, long int N)
     CVProcessError(cv_mem, CVDLS_ILL_INPUT, "CVDENSE", "CVDense", MSGD_BAD_NVECTOR);
     return(CVDLS_ILL_INPUT);
   }
-
+    
   if (lfree !=NULL) lfree(cv_mem);
 
   /* Set four main function fields in cv_mem */
@@ -231,7 +231,7 @@ static int cvDenseSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
                         N_Vector vtemp1, N_Vector vtemp2, N_Vector vtemp3)
 {
   booleantype jbad, jok;
-  realtype dgamma;
+  double dgamma;
   long int ier;
   CVDlsMem cvdls_mem;
   int retval;
@@ -247,7 +247,6 @@ static int cvDenseSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
   jok = !jbad;
  
   if (jok) {
-
     /* If jok = TRUE, use saved copy of J */
     *jcurPtr = FALSE;
     DenseCopy(savedJ, M);
@@ -297,11 +296,10 @@ static int cvDenseSetup(CVodeMem cv_mem, int convfail, N_Vector ypred,
  * -----------------------------------------------------------------
  */
 
-static int cvDenseSolve(CVodeMem cv_mem, N_Vector b, N_Vector weight,
-                        N_Vector ycur, N_Vector fcur)
-{
+static int cvDenseSolve(CVodeMem cv_mem, N_Vector b, N_Vector __attribute__((unused)) weight,
+                        __attribute__((unused)) N_Vector ycur, __attribute__((unused)) N_Vector fcur) {
   CVDlsMem cvdls_mem;
-  realtype *bd;
+  double *bd;
 
   cvdls_mem = (CVDlsMem) lmem;
   

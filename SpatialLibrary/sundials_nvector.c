@@ -53,24 +53,24 @@ void N_VSpace(N_Vector v, long int *lrw, long int *liw)
   return;
 }
 
-realtype *N_VGetArrayPointer(N_Vector v)
+double *N_VGetArrayPointer(N_Vector v)
 {
-  return((realtype *) v->ops->nvgetarraypointer(v));
+  return((double *) v->ops->nvgetarraypointer(v));
 }
 
-void N_VSetArrayPointer(realtype *v_data, N_Vector v)
+void N_VSetArrayPointer(double *v_data, N_Vector v)
 {
   v->ops->nvsetarraypointer(v_data, v);
   return;
 }
 
-void N_VLinearSum(realtype a, N_Vector x, realtype b, N_Vector y, N_Vector z)
+void N_VLinearSum(double a, N_Vector x, double b, N_Vector y, N_Vector z)
 {
   z->ops->nvlinearsum(a, x, b, y, z);
   return;
 }
 
-void N_VConst(realtype c, N_Vector z)
+void N_VConst(double c, N_Vector z)
 {
   z->ops->nvconst(c, z);
   return;
@@ -88,7 +88,7 @@ void N_VDiv(N_Vector x, N_Vector y, N_Vector z)
   return;
 }
 
-void N_VScale(realtype c, N_Vector x, N_Vector z) 
+void N_VScale(double c, N_Vector x, N_Vector z) 
 {
   z->ops->nvscale(c, x, z);
   return;
@@ -106,48 +106,48 @@ void N_VInv(N_Vector x, N_Vector z)
   return;
 }
 
-void N_VAddConst(N_Vector x, realtype b, N_Vector z)
+void N_VAddConst(N_Vector x, double b, N_Vector z)
 {
   z->ops->nvaddconst(x, b, z);
   return;
 }
 
-realtype N_VDotProd(N_Vector x, N_Vector y)
+double N_VDotProd(N_Vector x, N_Vector y)
 {
-  return((realtype) y->ops->nvdotprod(x, y));
+  return((double) y->ops->nvdotprod(x, y));
 }
 
-realtype N_VMaxNorm(N_Vector x)
+double N_VMaxNorm(N_Vector x)
 {
-  return((realtype) x->ops->nvmaxnorm(x));
+  return((double) x->ops->nvmaxnorm(x));
 }
 
-realtype N_VWrmsNorm(N_Vector x, N_Vector w)
+double N_VWrmsNorm(N_Vector x, N_Vector w)
 {
-  return((realtype) x->ops->nvwrmsnorm(x, w));
+  return((double) x->ops->nvwrmsnorm(x, w));
 }
 
-realtype N_VWrmsNormMask(N_Vector x, N_Vector w, N_Vector id)
+double N_VWrmsNormMask(N_Vector x, N_Vector w, N_Vector id)
 {
-  return((realtype) x->ops->nvwrmsnormmask(x, w, id));
+  return((double) x->ops->nvwrmsnormmask(x, w, id));
 }
 
-realtype N_VMin(N_Vector x)
+double N_VMin(N_Vector x)
 {
-  return((realtype) x->ops->nvmin(x));
+  return((double) x->ops->nvmin(x));
 }
 
-realtype N_VWL2Norm(N_Vector x, N_Vector w)
+double N_VWL2Norm(N_Vector x, N_Vector w)
 {
-  return((realtype) x->ops->nvwl2norm(x, w));
+  return((double) x->ops->nvwl2norm(x, w));
 }
 
-realtype N_VL1Norm(N_Vector x)
+double N_VL1Norm(N_Vector x)
 {
-  return((realtype) x->ops->nvl1norm(x));
+  return((double) x->ops->nvl1norm(x));
 }
 
-void N_VCompare(realtype c, N_Vector x, N_Vector z)
+void N_VCompare(double c, N_Vector x, N_Vector z)
 {
   z->ops->nvcompare(c, x, z);
   return;
@@ -163,9 +163,9 @@ booleantype N_VConstrMask(N_Vector c, N_Vector x, N_Vector m)
   return((booleantype) x->ops->nvconstrmask(c, x, m));
 }
 
-realtype N_VMinQuotient(N_Vector num, N_Vector denom)
+double N_VMinQuotient(N_Vector num, N_Vector denom)
 {
-  return((realtype) num->ops->nvminquotient(num, denom));
+  return((double) num->ops->nvminquotient(num, denom));
 }
 
 /*
