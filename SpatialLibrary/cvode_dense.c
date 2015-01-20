@@ -22,8 +22,6 @@
 #include "cvode_direct_impl.h"
 #include "cvode_impl.h"
 
-#include "sundials_math.h"
-
 /* Constants */
 
 #define ZERO         RCONST(0.0)
@@ -56,7 +54,7 @@ static void cvDenseFree(CVodeMem cv_mem);
 #define ewt       (cv_mem->cv_ewt)
 #define linit     (cv_mem->cv_linit)
 #define lsetup    (cv_mem->cv_lsetup)
-#define lsolve    (cv_mem->cv_lsolve)
+//#define lsolve    (cv_mem->cv_lsolve)
 #define lfree     (cv_mem->cv_lfree)
 #define lmem      (cv_mem->cv_lmem)
 #define vec_tmpl     (cv_mem->cv_tempv)
@@ -123,7 +121,7 @@ int CVDense(void *cvode_mem, long int N)
   /* Set four main function fields in cv_mem */
   linit  = cvDenseInit;
   lsetup = cvDenseSetup;
-  lsolve = cvDenseSolve;
+  cv_mem->cv_lsolve = cvDenseSolve;
   lfree  = cvDenseFree;
 
   /* Get memory for CVDlsMemRec */

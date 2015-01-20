@@ -20,11 +20,43 @@
 
 #include "sundials_nvector.h"
 
+#define ZERO RCONST(0.0)
+#define ONE  RCONST(1.0)
+
 /*
  * -----------------------------------------------------------------
  * Functions in the 'ops' structure
  * -----------------------------------------------------------------
  */
+
+double RPowerI(double base, int exponent)
+{
+    int i, expt;
+    double prod;
+    
+    prod = ONE;
+    expt = abs(exponent);
+    for(i = 1; i <= expt; i++) prod *= base;
+    if (exponent < 0) prod = ONE/prod;
+    return(prod);
+}
+
+double RPowerR(double base, double exponent) {
+    if (base <= ZERO) return(ZERO);
+    
+    return(pow(base, exponent));
+}
+
+double RSqrt(double x) {
+    if (x <= ZERO) return(ZERO);
+    return(sqrt(x));
+}
+
+double RExp(double x)
+{
+    return(exp(x));
+}
+
 
 N_Vector N_VClone(N_Vector w)
 {

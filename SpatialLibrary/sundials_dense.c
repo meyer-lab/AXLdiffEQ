@@ -20,7 +20,7 @@
 #include <stdlib.h>
 
 #include "sundials_dense.h"
-#include "sundials_math.h"
+#include "sundials_nvector.h"
 
 #define ZERO RCONST(0.0)
 #define ONE  RCONST(1.0)
@@ -72,7 +72,7 @@ void DenseScale(double c, DlsMat A)
   denseScale(c, A->cols, A->M, A->N);
 }
 
-long int denseGETRF(double **a, long int m, long int n, long int *p)
+long int denseGETRF(double **a, size_t m, size_t n, long int *p)
 {
   long int i, j, k, l;
   double *col_j, *col_k;

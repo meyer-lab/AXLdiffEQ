@@ -26,7 +26,6 @@
 #include <string.h>
 
 #include "cvode_impl.h"
-#include "sundials_math.h"
 #include "sundials_types.h"
 
 /*=================================================================*/
@@ -92,7 +91,7 @@
  *    CV_SUCCESS, 
  *    CV_LSOLVE_FAIL, CV_RHSFUNC_FAIL
  *    CONV_FAIL, RHSFUNC_RECVR,
- *    TRY_AGAIN
+ *    TRY_AGAN
  * 
  */
 
@@ -100,7 +99,7 @@
 #define PREDICT_AGAIN    +3
 
 #define CONV_FAIL        +4 
-#define TRY_AGAIN        +5
+#define TRY_AGAN        +5
 
 #define FIRST_CALL       +6
 #define PREV_CONV_FAIL   +7
@@ -1020,7 +1019,6 @@ int CVodeRootInit(void *cvode_mem, int nrtfn, CVRootFn g)
 #define nhnil          (cv_mem->cv_nhnil)
 #define linit          (cv_mem->cv_linit)
 #define lsetup         (cv_mem->cv_lsetup)
-#define lsolve         (cv_mem->cv_lsolve) 
 #define lfree          (cv_mem->cv_lfree) 
 #define lmem           (cv_mem->cv_lmem) 
 #define qu             (cv_mem->cv_qu)          
@@ -1741,7 +1739,7 @@ static int CVInitialSetup(CVodeMem cv_mem)
   
   /* Check if lsolve function exists (if needed) and call linit function (if it exists) */
   if (iter == CV_NEWTON) {
-    if (lsolve == NULL) {
+    if (cv_mem->cv_lsolve == NULL) {
       CVProcessError(cv_mem, CV_ILL_INPUT, "CVODE", "CVInitialSetup", MSGCV_LSOLVE_NULL);
       return(CV_ILL_INPUT);
     }
@@ -1802,6 +1800,8 @@ static int CVHin(CVodeMem cv_mem, double tout)
   int retval, sign, count1, count2;
   double tdiff, tdist, tround, hlb, hub;
   double hg, hgs, hs, hnew, hrat, h0, yddnrm;
+  hnew = 0;
+    yddnrm = 0;
   booleantype hgOK, hnewOK;
 
   /* If tout is too close to tn, give up */
@@ -2021,7 +2021,7 @@ static int CVStep(CVodeMem cv_mem)
     eflag = CVDoErrorTest(cv_mem, &nflag, saved_t, &nef, &dsm);
 
     /* Go back in loop if we need to predict again (nflag=PREV_ERR_FAIL) */
-    if (eflag == TRY_AGAIN)  continue;
+    if (eflag == TRY_AGAN)  continue;
 
     /* Return if error test failed and recovery not possible. */
     if (eflag != CV_SUCCESS) return(eflag);
@@ -2576,7 +2576,7 @@ static int CVNlsFunctional(CVodeMem cv_mem)
   N_VConst(ZERO, acor);
 
   /* Initialize delp to avoid compiler warning message */
-  del = delp = ZERO;
+  delp = ZERO;
 
   /* Loop until convergence; accumulate corrections in acor */
 
@@ -2675,7 +2675,6 @@ static int CVNlsNewton(CVodeMem cv_mem, int nflag)
       ier = lsetup(cv_mem, convfail, zn[0], ftemp, &jcur, 
                    vtemp1, vtemp2, vtemp3);
       nsetups++;
-      callSetup = FALSE;
       gamrat = crate = ONE; 
       gammap = gamma;
       nstlp = nst;
@@ -2694,7 +2693,7 @@ static int CVNlsNewton(CVodeMem cv_mem, int nflag)
     /* If there is a convergence failure and the Jacobian-related 
        data appears not to be current, loop again with a call to lsetup
        in which convfail=CV_FAIL_BAD_J.  Otherwise return.                 */
-    if (ier != TRY_AGAIN) return(ier);
+    if (ier != TRY_AGAN) return(ier);
     
     callSetup = TRUE;
     convfail = CV_FAIL_BAD_J;
@@ -2707,7 +2706,7 @@ static int CVNlsNewton(CVodeMem cv_mem, int nflag)
  * This routine performs the Newton iteration. If the iteration succeeds,
  * it returns the value CV_SUCCESS. If not, it may signal the CVNlsNewton 
  * routine to call lsetup again and reattempt the iteration, by
- * returning the value TRY_AGAIN. (In this case, CVNlsNewton must set 
+ * returning the value TRY_AGAN. (In this case, CVNlsNewton must set 
  * convfail to CV_FAIL_BAD_J before calling setup again). 
  * Otherwise, this routine returns one of the appropriate values 
  * CV_LSOLVE_FAIL, CV_RHSFUNC_FAIL, CONV_FAIL, or RHSFUNC_RECVR back 
@@ -2723,7 +2722,7 @@ static int CVNewtonIteration(CVodeMem cv_mem)
   mnewt = m = 0;
 
   /* Initialize delp to avoid compiler warning message */
-  del = delp = ZERO;
+  delp = ZERO;
 
   /* Looping point for Newton iteration */
   loop {
@@ -2734,7 +2733,7 @@ static int CVNewtonIteration(CVodeMem cv_mem)
 
     /* Call the lsolve function */
     b = tempv;
-    retval = lsolve(cv_mem, b, ewt, y, ftemp); 
+    retval = cv_mem->cv_lsolve(cv_mem, b, ewt, y, ftemp); 
     nni++;
     
     if (retval < 0) return(CV_LSOLVE_FAIL);
@@ -2742,7 +2741,7 @@ static int CVNewtonIteration(CVodeMem cv_mem)
     /* If lsolve had a recoverable failure and Jacobian data is
        not current, signal to try the solution again            */
     if (retval > 0) { 
-      if ((!jcur) && (setupNonNull)) return(TRY_AGAIN);
+      if ((!jcur) && (setupNonNull)) return(TRY_AGAN);
       else                           return(CONV_FAIL);
     }
 
@@ -2770,7 +2769,7 @@ static int CVNewtonIteration(CVodeMem cv_mem)
        If still not converged and Jacobian data is not current, 
        signal to try the solution again                            */
     if ((m == maxcor) || ((m >= 2) && (del > RDIV*delp))) {
-      if ((!jcur) && (setupNonNull)) return(TRY_AGAIN);
+      if ((!jcur) && (setupNonNull)) return(TRY_AGAN);
       else                           return(CONV_FAIL);
     }
     
@@ -2780,7 +2779,7 @@ static int CVNewtonIteration(CVodeMem cv_mem)
     nfe++;
     if (retval < 0) return(CV_RHSFUNC_FAIL);
     if (retval > 0) {
-      if ((!jcur) && (setupNonNull)) return(TRY_AGAIN);
+      if ((!jcur) && (setupNonNull)) return(TRY_AGAN);
       else                           return(RHSFUNC_RECVR);
     }
 
@@ -2896,7 +2895,7 @@ static void CVRestore(CVodeMem cv_mem, double saved_t)
  *     zn from scratch. If f() fails we return either CV_RHSFUNC_FAIL
  *     or CV_UNREC_RHSFUNC_ERR (no recovery is possible at this stage).
  *
- *   - otherwise, set *nflagPtr to PREV_ERR_FAIL, and return TRY_AGAIN. 
+ *   - otherwise, set *nflagPtr to PREV_ERR_FAIL, and return TRY_AGAN. 
  *
  */
 
@@ -2930,7 +2929,7 @@ static booleantype CVDoErrorTest(CVodeMem cv_mem, int *nflagPtr,
     eta = MAX(ETAMIN, MAX(eta, hmin / fabs(h)));
     if (*nefPtr >= SMALL_NEF) eta = MIN(eta, ETAMXF);
     CVRescale(cv_mem);
-    return(TRY_AGAIN);
+    return(TRY_AGAN);
   }
   
   /* After MXNEF1 failures, force an order reduction and retry step */
@@ -2941,7 +2940,7 @@ static booleantype CVDoErrorTest(CVodeMem cv_mem, int *nflagPtr,
     q--;
     qwait = L;
     CVRescale(cv_mem);
-    return(TRY_AGAIN);
+    return(TRY_AGAN);
   }
 
   /* If already at order 1, restart: reload zn from scratch */
@@ -2960,7 +2959,7 @@ static booleantype CVDoErrorTest(CVodeMem cv_mem, int *nflagPtr,
 
   N_VScale(h, tempv, zn[1]);
 
-  return(TRY_AGAIN);
+  return(TRY_AGAN);
 }
 
 /* 
@@ -3335,6 +3334,7 @@ static int CVsldet(CVodeMem cv_mem)
   double rsa, rsb, rsc, rsd, rd1a, rd1b, rd1c;
   double rd2a, rd2b, rd3a, cest1, corr1; 
   double ratp, ratm, qfac1, qfac2, bb, rrb;
+    sqmin = 0;
 
   /* The following are cutoffs and tolerances used by this routine */
 
@@ -3343,8 +3343,6 @@ static int CVsldet(CVodeMem cv_mem)
   vrrt2  = RCONST(5.0e-4);
   sqtol  = RCONST(1.0e-3);
   rrtol  = RCONST(1.0e-2);
-  
-  rr = ZERO;
   
   /*  Index k corresponds to the degree of the interpolating polynomial. */
   /*      k = 1 -> q-1          */
@@ -3412,9 +3410,6 @@ static int CVsldet(CVodeMem cv_mem)
       for(k = 1;k<=3;k++) {
         adrr = fabs(rav[k] - rr);
         drrmax = MAX(drrmax, adrr);
-      }
-      if (drrmax > vrrt2) {
-        kflag = -3;    
       }
       
       kflag = 1;
@@ -4136,7 +4131,7 @@ void CVProcessError(CVodeMem cv_mem,
 
 #ifndef NO_FPRINTF_OUTPUT
     fprintf(stderr, "\n[%s ERROR]  %s\n  ", module, fname);
-    fprintf(stderr, msgfmt);
+    fprintf(stderr, "%s", msgfmt);
     fprintf(stderr, "\n\n");
 #endif
 

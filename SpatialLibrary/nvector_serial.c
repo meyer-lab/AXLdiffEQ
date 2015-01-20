@@ -20,7 +20,6 @@
 #include <stdlib.h>
 
 #include "nvector_serial.h"
-#include "sundials_math.h"
 
 #define ZERO   RCONST(0.0)
 #define HALF   RCONST(0.5)

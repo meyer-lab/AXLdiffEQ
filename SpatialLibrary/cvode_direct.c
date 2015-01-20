@@ -25,7 +25,6 @@
 
 #include "cvode_impl.h"
 #include "cvode_direct_impl.h"
-#include "sundials_math.h"
 
 /* 
  * =================================================================

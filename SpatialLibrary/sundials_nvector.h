@@ -363,6 +363,37 @@ SUNDIALS_EXPORT double N_VMinQuotient(N_Vector num, N_Vector denom);
  * module and by the CVODES and IDAS solvers.
  * -----------------------------------------------------------------
  */
+#include <math.h>
+#include "sundials_types.h"
+
+    
+#ifndef MIN
+#define MIN(A, B) ((A) < (B) ? (A) : (B))
+#endif
+    
+#ifndef MAX
+#define MAX(A, B) ((A) > (B) ? (A) : (B))
+#endif
+    
+#ifndef SQR
+#define SQR(A) ((A)*(A))
+#endif
+    
+#ifndef SQRT
+#define SQRT RSqrt
+#endif
+    
+#ifndef EXP
+#define EXP RExp
+#endif
+    
+    double RPowerI(double base, int exponent);
+    
+    double RPowerR(double base, double exponent);
+    double RSqrt(double x);
+    double RExp(double x);
+    
+    
 
 SUNDIALS_EXPORT N_Vector *N_VCloneEmptyVectorArray(int count, N_Vector w);
 SUNDIALS_EXPORT N_Vector *N_VCloneVectorArray(int count, N_Vector w);

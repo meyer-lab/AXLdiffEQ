@@ -40,14 +40,6 @@
 		728F58001A6D5CB700311731 /* sundials_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C11A6D5CB700311731 /* sundials_direct.c */; };
 		728F58011A6D5CB700311731 /* sundials_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C11A6D5CB700311731 /* sundials_direct.c */; };
 		728F58021A6D5CB700311731 /* sundials_direct.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57C21A6D5CB700311731 /* sundials_direct.h */; };
-		728F58031A6D5CB700311731 /* sundials_iterative.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C31A6D5CB700311731 /* sundials_iterative.c */; };
-		728F58041A6D5CB700311731 /* sundials_iterative.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C31A6D5CB700311731 /* sundials_iterative.c */; };
-		728F58051A6D5CB700311731 /* sundials_iterative.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C31A6D5CB700311731 /* sundials_iterative.c */; };
-		728F58061A6D5CB700311731 /* sundials_iterative.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57C41A6D5CB700311731 /* sundials_iterative.h */; };
-		728F58071A6D5CB700311731 /* sundials_math.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C51A6D5CB700311731 /* sundials_math.c */; };
-		728F58081A6D5CB700311731 /* sundials_math.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C51A6D5CB700311731 /* sundials_math.c */; };
-		728F58091A6D5CB700311731 /* sundials_math.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C51A6D5CB700311731 /* sundials_math.c */; };
-		728F580A1A6D5CB700311731 /* sundials_math.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57C61A6D5CB700311731 /* sundials_math.h */; };
 		728F580B1A6D5CB700311731 /* sundials_nvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C71A6D5CB700311731 /* sundials_nvector.c */; };
 		728F580C1A6D5CB700311731 /* sundials_nvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C71A6D5CB700311731 /* sundials_nvector.c */; };
 		728F580D1A6D5CB700311731 /* sundials_nvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C71A6D5CB700311731 /* sundials_nvector.c */; };
@@ -118,10 +110,6 @@
 		728F57C01A6D5CB700311731 /* sundials_dense.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_dense.h; sourceTree = "<group>"; };
 		728F57C11A6D5CB700311731 /* sundials_direct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sundials_direct.c; sourceTree = "<group>"; };
 		728F57C21A6D5CB700311731 /* sundials_direct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_direct.h; sourceTree = "<group>"; };
-		728F57C31A6D5CB700311731 /* sundials_iterative.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sundials_iterative.c; sourceTree = "<group>"; };
-		728F57C41A6D5CB700311731 /* sundials_iterative.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_iterative.h; sourceTree = "<group>"; };
-		728F57C51A6D5CB700311731 /* sundials_math.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sundials_math.c; sourceTree = "<group>"; };
-		728F57C61A6D5CB700311731 /* sundials_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_math.h; sourceTree = "<group>"; };
 		728F57C71A6D5CB700311731 /* sundials_nvector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sundials_nvector.c; sourceTree = "<group>"; };
 		728F57C81A6D5CB700311731 /* sundials_nvector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_nvector.h; sourceTree = "<group>"; };
 		728F57CF1A6D5CB700311731 /* sundials_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sundials_types.h; sourceTree = "<group>"; };
@@ -185,10 +173,6 @@
 				728F57C01A6D5CB700311731 /* sundials_dense.h */,
 				728F57C11A6D5CB700311731 /* sundials_direct.c */,
 				728F57C21A6D5CB700311731 /* sundials_direct.h */,
-				728F57C31A6D5CB700311731 /* sundials_iterative.c */,
-				728F57C41A6D5CB700311731 /* sundials_iterative.h */,
-				728F57C51A6D5CB700311731 /* sundials_math.c */,
-				728F57C61A6D5CB700311731 /* sundials_math.h */,
 				728F57C71A6D5CB700311731 /* sundials_nvector.c */,
 				728F57C81A6D5CB700311731 /* sundials_nvector.h */,
 				728F57CF1A6D5CB700311731 /* sundials_types.h */,
@@ -235,7 +219,6 @@
 				728F58021A6D5CB700311731 /* sundials_direct.h in Headers */,
 				728F57D91A6D5CB700311731 /* cvode_direct_impl.h in Headers */,
 				728F57D81A6D5CB700311731 /* cvode_dense.h in Headers */,
-				728F580A1A6D5CB700311731 /* sundials_math.h in Headers */,
 				728F580E1A6D5CB700311731 /* sundials_nvector.h in Headers */,
 				728F57DE1A6D5CB700311731 /* cvode_impl.h in Headers */,
 				728F57FA1A6D5CB700311731 /* nvector_serial.h in Headers */,
@@ -244,7 +227,6 @@
 				728F57FE1A6D5CB700311731 /* sundials_dense.h in Headers */,
 				9385E03818CF36C100FEB938 /* CVodeHelpers.h in Headers */,
 				728F57F61A6D5CB700311731 /* cvode.h in Headers */,
-				728F58061A6D5CB700311731 /* sundials_iterative.h in Headers */,
 				935C638718D1E4A50069EF58 /* ModelRunning.h in Headers */,
 				728F57DD1A6D5CB700311731 /* cvode_direct.h in Headers */,
 			);
@@ -359,7 +341,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				728F58091A6D5CB700311731 /* sundials_math.c in Sources */,
 				728F57E11A6D5CB700311731 /* cvode_io.c in Sources */,
 				728F57FD1A6D5CB700311731 /* sundials_dense.c in Sources */,
 				72512EBA1A6C754900C9764F /* CVodeHelpers.cpp in Sources */,
@@ -373,7 +354,6 @@
 				728F57F51A6D5CB700311731 /* cvode.c in Sources */,
 				728F57F91A6D5CB700311731 /* nvector_serial.c in Sources */,
 				729ADC2A1A66B3CA00BEB0F7 /* main.cpp in Sources */,
-				728F58051A6D5CB700311731 /* sundials_iterative.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,9 +370,7 @@
 				728F58001A6D5CB700311731 /* sundials_direct.c in Sources */,
 				72D53AE819BE025D001E0AC6 /* cobyla.c in Sources */,
 				728F57F81A6D5CB700311731 /* nvector_serial.c in Sources */,
-				728F58081A6D5CB700311731 /* sundials_math.c in Sources */,
 				728F57F41A6D5CB700311731 /* cvode.c in Sources */,
-				728F58041A6D5CB700311731 /* sundials_iterative.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,11 +386,9 @@
 				728F57FB1A6D5CB700311731 /* sundials_dense.c in Sources */,
 				728F57F71A6D5CB700311731 /* nvector_serial.c in Sources */,
 				728F57DF1A6D5CB700311731 /* cvode_io.c in Sources */,
-				728F58071A6D5CB700311731 /* sundials_math.c in Sources */,
 				728F57D51A6D5CB700311731 /* cvode_dense.c in Sources */,
 				935C638618D1E4A50069EF58 /* ModelRunning.cpp in Sources */,
 				72D53AE719BE025D001E0AC6 /* cobyla.c in Sources */,
-				728F58031A6D5CB700311731 /* sundials_iterative.c in Sources */,
 				728F57FF1A6D5CB700311731 /* sundials_direct.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -549,7 +525,7 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = avx2;
@@ -568,7 +544,7 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_SHADOW = YES;
-				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_SIGN_COMPARE = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
@@ -595,7 +571,7 @@
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
 				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = avx2;
@@ -613,7 +589,7 @@
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_SHADOW = YES;
-				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_SIGN_COMPARE = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
@@ -648,7 +624,7 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
@@ -704,7 +680,7 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;

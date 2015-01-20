@@ -76,7 +76,7 @@ extern "C" {
 SUNDIALS_EXPORT long int DenseGETRF(DlsMat A, long int *p);
 SUNDIALS_EXPORT void DenseGETRS(DlsMat A, long int *p, double *b);
 
-SUNDIALS_EXPORT long int denseGETRF(double **a, long int m, long int n, long int *p);
+SUNDIALS_EXPORT long int denseGETRF(double **a, size_t m, size_t n, long int *p);
 SUNDIALS_EXPORT void denseGETRS(double **a, long int n, long int *p, double *b);
 
 /*

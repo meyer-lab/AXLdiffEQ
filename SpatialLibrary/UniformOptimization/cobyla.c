@@ -536,6 +536,7 @@ static nlopt_result cobylb(int *n, int *m, int *mpp,
     int ivmd;
     int mp, np, iz, ibrnch;
     int nbest, ifull, iptem, jdrop;
+    ifull = 0;
     nlopt_result rc = NLOPT_SUCCESS;
     uint32_t seed = (uint32_t) (*n + *m); /* arbitrary deterministic LCG seed */
     int feasible;

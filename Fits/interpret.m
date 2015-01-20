@@ -1,6 +1,6 @@
 clc; clear;
 
-load noPYMq0;
+load allCKw;
 % fitStruct2 = fitStruct;
 % load widenoPYxLI;
 % fitStruct = [fitStruct, fitStruct2];

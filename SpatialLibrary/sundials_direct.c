@@ -19,14 +19,13 @@
 #include <stdlib.h>
 
 #include "sundials_direct.h"
-#include "sundials_math.h"
+#include "sundials_nvector.h"
 
 #define ZERO RCONST(0.0)
 #define ONE  RCONST(1.0)
 
 DlsMat NewDenseMat(size_t M, size_t N) {
   DlsMat A;
-  long int j;
 
   if ( (M <= 0) || (N <= 0) ) return(NULL);
 
@@ -46,106 +45,15 @@ DlsMat NewDenseMat(size_t M, size_t N) {
     return(NULL);
   }
 
-  for (j=0; j < N; j++) A->cols[j] = A->data + j * M;
+  for (size_t j=0; j < N; j++) A->cols[j] = A->data + j * M;
 
   A->M = M;
   A->N = N;
   A->ldim = M;
   A->ldata = M*N;
-
   A->type = SUNDIALS_DENSE;
 
   return(A);
-}
-
-double **newDenseMat(size_t m, size_t n)
-{
-  long int j;
-  double **a;
-
-  if ( (n <= 0) || (m <= 0) ) return(NULL);
-
-  a = NULL;
-  a = (double **) malloc(n * sizeof(double *));
-  if (a == NULL) return(NULL);
-
-  a[0] = NULL;
-  a[0] = (double *) malloc(m * n * sizeof(double));
-  if (a[0] == NULL) {
-    free(a); a = NULL;
-    return(NULL);
-  }
-
-  for (j=1; j < n; j++) a[j] = a[0] + j * m;
-
-  return(a);
-}
-
-
-DlsMat NewBandMat(long int N, long int mu, long int ml, long int smu)
-{
-  DlsMat A;
-  long int j, colSize;
-
-  if (N <= 0) return(NULL);
-  
-  A = NULL;
-  A = (DlsMat) malloc(sizeof *A);
-  if (A == NULL) return (NULL);
-
-  colSize = smu + ml + 1;
-  A->data = NULL;
-  A->data = (double *) malloc((size_t) N * colSize * sizeof(double));
-  if (A->data == NULL) {
-    free(A); A = NULL;
-    return(NULL);
-  }
-
-  A->cols = NULL;
-  A->cols = (double **) malloc((size_t) N * sizeof(double *));
-  if (A->cols == NULL) {
-    free(A->data);
-    free(A); A = NULL;
-    return(NULL);
-  }
-
-  for (j=0; j < N; j++) A->cols[j] = A->data + j * colSize;
-
-  A->M = N;
-  A->N = N;
-  A->mu = mu;
-  A->ml = ml;
-  A->s_mu = smu;
-  A->ldim =  colSize;
-  A->ldata = N * colSize;
-
-  A->type = SUNDIALS_BAND;
-
-  return(A);
-}
-
-double **newBandMat(long int n, long int smu, long int ml)
-{
-  double **a;
-  long int j, colSize;
-
-  if (n <= 0) return(NULL);
-
-  a = NULL;
-  a = (double **) malloc(n * sizeof(double *));
-  if (a == NULL) return(NULL);
-
-  colSize = smu + ml + 1;
-  a[0] = NULL;
-  a[0] = (double *) malloc(n * colSize * sizeof(double));
-  if (a[0] == NULL) {
-    free(a); a = NULL;
-    return(NULL);
-  }
-
-  for (j=1; j < n; j++) a[j] = a[0] + j * colSize;
-
-  return(a);
 }
 
 void DestroyMat(DlsMat A)
@@ -153,36 +61,6 @@ void DestroyMat(DlsMat A)
   free(A->data);  A->data = NULL;
   free(A->cols);
   free(A); A = NULL;
-}
-
-void destroyMat(double **a)
-{
-  free(a[0]); a[0] = NULL;
-  free(a); a = NULL;
-}
-
-int *NewIntArray(int N)
-{
-  int *vec;
-
-  if (N <= 0) return(NULL);
-
-  vec = NULL;
-  vec = (int *) malloc((size_t) N * sizeof(int));
-
-  return(vec);
-}
-
-int *newIntArray(int n)
-{
-  int *v;
-
-  if (n <= 0) return(NULL);
-
-  v = NULL;
-  v = (int *) malloc((size_t) n * sizeof(int));
-
-  return(v);
 }
 
 long int *NewLintArray(long int N)
@@ -209,42 +87,11 @@ long int *newLintArray(long int n)
   return(v);
 }
 
-double *NewRealArray(long int N)
-{
-  double *vec;
-
-  if (N <= 0) return(NULL);
-
-  vec = NULL;
-  vec = (double *) malloc((size_t) N * sizeof(double));
-
-  return(vec);
-}
-
-double *newRealArray(long int m)
-{
-  double *v;
-
-  if (m <= 0) return(NULL);
-
-  v = NULL;
-  v = (double *) malloc((size_t) m * sizeof(double));
-
-  return(v);
-}
-
 void DestroyArray(void *V)
 { 
   free(V); 
   V = NULL;
 }
-
-void destroyArray(void *v)
-{
-  free(v); 
-  v = NULL;
-}
-
 
 void AddIdentity(DlsMat A)
 {

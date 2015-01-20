@@ -44,7 +44,7 @@ for xxxx = 1:100
     fitStruct{xxxx}.paramOpt = paramOpt; %#ok<AGROW>
     fitStruct{xxxx}.fitIDXglobal = fitIDXglobal; %#ok<AGROW>
 
-    save(['noPY' fname]);
+    save(['all' fname]);
 end
 
 end
