@@ -1,18 +1,18 @@
 function A549SsensFullWider ()
 
-slices = 20;
+slices = 50;
 symbols = ['a':'z' 'A':'Z' '0':'9'];
 rng('shuffle');
 fname = symbols(randi(numel(symbols),[1 3]));
 
-minn = log10([0.6 ,1E-15,1E-5,  0.003,0.03,1E-3,1E-2,1E-2,100,1E-3, 1]);
-maxx = log10([6E3 ,1E2  , 600,    0.3,   1,   1,   1,   1,1E5, 0.1,10]);
-             %U2  ,xFwd ,xRev3,  int1,int2,kRec,kDeg,fElse,AXL,Gas
+minn = log10([0.6 ,1E-20, 1E-5,0.003,0.03,1E-3,1E-2, 1E-2,100,1E-3, 1]);
+maxx = log10([6E3 ,    1,  1E5, 0.3,    1,   1,   1,    1,1E5,   1,  10]);
+             %U2  ,xFwd ,xRev4,int1, int2,kRec,kDeg,fElse,AXL,Gas
              
-Dopts = psoptimset('TimeLimit',60*60,'Display','off','CompletePoll','on',...
+Dopts = psoptimset('TimeLimit',45*60,'Display','off','CompletePoll','on',...
     'CompleteSearch','on','Vectorized','on');
 
-parpool(12);
+parpool(11);
 
 for xxxx = 1:100
     parfor_progress(slices*length(maxx));
@@ -30,13 +30,15 @@ for xxxx = 1:100
         
         try
             [paramOpt(ii+1,:),fitIDXglobal(ii+1)] = ...
-                patternsearch(@cLibLoc,params,[],[],[],[],minn2,maxx2,[],Dopts);
+                patternsearch(@(x) cLibLoc(x, length(minn)),params,[],[],[],[],...
+                minn2,maxx2,[],Dopts);
         catch
             paramOpt(ii+1,:) = params;
             fitIDXglobal(ii+1) = 1E6;
         end
         
         parfor_progress;
+        
     end
     
     parfor_progress(0);
@@ -44,12 +46,12 @@ for xxxx = 1:100
     fitStruct{xxxx}.paramOpt = paramOpt; %#ok<AGROW>
     fitStruct{xxxx}.fitIDXglobal = fitIDXglobal; %#ok<AGROW>
 
-    save(['all' fname]);
+    save(['WithpYnewBalance_' fname]);
 end
 
 end
 
-function outter = cLibLoc (in)
+function outter = cLibLoc (in, N)
 
 in2 = 10.^in;
 in2(:,end) = in(:,end) > 0.5;
@@ -59,9 +61,9 @@ if ~libisloaded('libOptimize')
     loadlibrary('libOptimize.dylib','BlasHeader.h')
 end
 
-outP = libpointer('doublePtr',zeros(1,numel(in)/11));
+outP = libpointer('doublePtr',zeros(1,numel(in)/N));
 
-calllib('libOptimize','pyEntryVec',libpointer('doublePtr',in2'),outP,numel(in)/11);
+calllib('libOptimize','pyEntryVec',libpointer('doublePtr',in2'),outP,numel(in)/N);
 
 outter = outP.Value';
 

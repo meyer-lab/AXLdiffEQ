@@ -1,0 +1,67 @@
+%!TEX TS-program = xelatex
+%!TEX encoding = UTF-8 Unicode
+
+\documentclass[12pt]{article}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+
+\begin{document}
+
+\subsection*{Reactions 1 and 2:}
+
+$k_{fb1} k_{f1} k_{r2} k_{rb2} = k_{fb2} k_{f2} k_{r1} k_{rb1}$
+
+$K_{D2} k_{f1} k_{r2} = K_{D1} k_{f2} k_{r1}$
+
+$ k_{r2} = \frac{K_{D1} k_{f2} k_{r1}}{K_{D2} k_{f1}}$
+
+Assuming forward dimerization is constant:
+
+$ k_{r2} = \frac{K_{D1} k_{r1}}{K_{D2}}$
+
+
+\subsection*{Reactions 5 and 4:}
+
+$k_{fb1}^2 k_{f4} k_{r5} k_{rb2}^2 = k_{fb2}^2 k_{f5} k_{r4} k_{rb1}^2$
+
+$k_{f4} k_{r5} K_{D2}^2 = k_{f5} k_{r4} K_{D1}^2$
+
+$k_{r5}  = \frac{k_{f5} k_{r4} K_{D1}^2}{K_{D2}^2 k_{f4}}$
+
+Assuming forward dimerization is constant:
+
+$k_{r5}  = \frac{k_{r4} K_{D1}^2}{K_{D2}^2}$
+
+\subsection*{Reactions 3 and 4:}
+
+$k_{fb2} k_{rb1} k_{f3} k_{r4} = k_{f4} k_{r3} k_{rb2} k_{fb1}$
+
+$K_{D1} k_{f3} k_{r4} = k_{f4} k_{r3} K_{D2}$
+
+$\frac{K_{D1} k_{f3} k_{r4}}{ k_{f4}  K_{D2} } = k_{r3} $
+
+Assuming forward dimerization is constant:
+
+$\frac{K_{D1} k_{r4}}{ K_{D2} } = k_{r3} $
+
+\subsection*{Reactions 1 and 4:}
+
+$k_{f1} k_{f6} k_{r4} k_{rb1} = k_{fb1} k_{f4} k_{r6} k_{r1}$
+
+$k_{f1} k_{f6} k_{r4} K_{D1} = k_{f4} k_{r6} k_{r1}$
+
+$ k_{r4} = \frac{k_{f4} k_{r6} k_{r1}}{K_{D1} k_{f1} k_{f6}}$
+
+Assuming forward dimerization is constant:
+
+$ k_{r4} = \frac{k_{r6} k_{r1}}{K_{D1} k_{f6}}$
+
+$ k_{f6} = \frac{k_{r6} k_{r1}}{K_{D1} k_{r4}}$
+
+$ \frac{k_{f6} K_{D1} k_{r4}}{k_{r1}} = k_{r6}$
+
+\end{document}  

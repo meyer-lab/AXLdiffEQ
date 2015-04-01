@@ -21,6 +21,8 @@
 #define Nspecies 13
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
 
+#define Nparams 11
+
 //#define numParams 14
 
 struct rates {
@@ -54,16 +56,13 @@ struct rates {
     double gasCur;
 };
 
-
-
-
 static const double times[2] = {60, 240}; ///< Times of kinetic measurements.
 static const double Gass[6] = {64, 16, 4, 1, 0.25, 0}; ///< Kinetic Gas6 doses.
 static const double kTPS[5] = {0, 0.5, 1, 5, 10};
 
 
-static const double pYk[5] = {4.1, 4.0, 7.5, 11.8, 11.0};
-static const double pYkErr[5] = {1, 0.74, 1.13, 1.39, 1.39};
+static const double pYk[5] = {4.1, 3.6, 5.3, 11.3, 11.6};
+static const double pYkErr[5] = {1.0, 1.3, 1.1, 0.7, 0.4};
 
 // Wrapping is outermost cell line, then Gas, then time
 static const double pY[6][2] = { ///< pY measurements on short time scales.
@@ -120,8 +119,8 @@ void*initState(N_Vector, struct rates *);
 void calcProfile (N_Vector, N_Vector, N_Vector, N_Vector, N_Vector, struct rates *, double, double);
 void calcProfileSet (double *outData, double *tps, struct rates *params, int nTps, double GasStim, int frac);
 int AXL_react(double, N_Vector, N_Vector, void *);
-struct rates Param(double*);
+struct rates Param(const double *);
 int AXL_jac (long int N, double t, N_Vector y, N_Vector fy, DlsMat Jac, void *user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
-
+double calcErrorMer (struct rates inP);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

@@ -1,6 +1,6 @@
 clc; clear;
 
-load widenoPYIRQ;
+load WithpYnewBalance_3YD;
 
 names = {'U2','xFwd1','xRev3','AXLint1','AXLint2','kRec','kDeg','fElse','AXL','Gas'};
 
@@ -12,7 +12,7 @@ for ii = 1:length(fitStruct)
     params = [params; fitStruct{ii}.paramOpt];
 end
 
-cutoff = min(fitt)+8;
+cutoff = min(fitt)+6;
 
 params(fitt > cutoff,:) = [];
 fitt(fitt > cutoff) = [];
@@ -27,7 +27,7 @@ params(:,end) = params(:,end) > 0.05;
 
 % % % % % % % % % % % % % % %
 
-xxx = logspace(-2.0,2.0,10);
+xxx = logspace(-2.0,2.0,20);
 
 stimProfile = @(x, pp) cLib_profile (240, x, 10, 1);
 
@@ -39,11 +39,9 @@ for ii = 1:size(params,1)
     B = stimProfile(params(ii,:));
     
     for jj = 1:length(IDXX)
-        parfor xx = 1:length(xxx)
+        for xx = 1:length(xxx)
             params2 = params(ii,:);
             params2(IDXX(jj)) = params2(IDXX(jj))*xxx(xx);
-            %params2(IDXX(jj)+2) = params2(IDXX(jj)+2)*xxx(xx);
-            %params2(IDXX(jj)+4) = params2(IDXX(jj)+4)*xxx(xx);
             
             C = stimProfile(params2);
 
@@ -57,13 +55,12 @@ for ii = 1:size(params,1)
         
     end 
     
-    if 1%mod(ii,10) == 0
-        for jj = 1:length(IDXX)
-            subplot(3,4,jj);
-            loglog(xxx,squeeze(outter(:,jj,:))');
-            title(names(IDXX(jj)));
-            axis([min(xxx) max(xxx) 0.01 100]);
-        end
-        drawnow;
+    for jj = 1:length(IDXX)
+        subplot(3,4,jj);
+        loglog(xxx,squeeze(outter(ii,jj,:))','Color',ones(1,3)*(fitt(ii) - min(fitt))/(cutoff - min(fitt)));
+        hold on;
+        title(names(IDXX(jj)));
+        axis([min(xxx) max(xxx) 0.01 100]);
     end
+    drawnow;
 end

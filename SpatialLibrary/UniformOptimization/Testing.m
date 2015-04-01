@@ -47,7 +47,7 @@
     
     dP = pyEntry(params);
 
-    XCTAssertEqualWithAccuracy(dP, 2845.615, 0.01, @"Pass");
+    XCTAssertEqualWithAccuracy(dP, 2882.157, 0.01, @"Pass");
 }
 
 @end
