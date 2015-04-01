@@ -30,13 +30,13 @@ Returns     | Void
 
 Description | Fits parameter set to data, returning chi-squared of data fit. Single threaded but vectorized.
 ----------- | --------------------------------------------------------------------------
-Parameters  | Double*: 
-            | Double*: 
-            | Double*: 
-            | Int: 
+Parameters  | Double*: Output data array, length equal to the number of time points.
+            | Double*: Array of a parameter set.
+            | Double*: Array of time points to calculate. Should monotonically increase.
+            | Int: Number of time points (length of previous array).
             | Double: Gas6 stimulation concentration in nanomolar.
-            | Int: 
-Returns     | Int: 
+            | Int: Specifier for pY, total, or surface receptor.
+Returns     | Int: 0 for success. 1 for failure.
 
 
 
