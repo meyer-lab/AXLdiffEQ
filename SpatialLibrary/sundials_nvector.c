@@ -19,6 +19,7 @@
 #include <stdlib.h>
 
 #include "sundials_nvector.h"
+#include "nvector_serial.h"
 
 #define ZERO RCONST(0.0)
 #define ONE  RCONST(1.0)
@@ -61,143 +62,102 @@ double RExp(double x)
 N_Vector N_VClone(N_Vector w)
 {
   N_Vector v = NULL;
-  v = w->ops->nvclone(w);
+  v = N_VClone_Serial(w);
   return(v);
 }
 
 N_Vector N_VCloneEmpty(N_Vector w)
 {
   N_Vector v = NULL;
-  v = w->ops->nvcloneempty(w);
+  v = N_VCloneEmpty_Serial(w);
   return(v);
 }
 
 void N_VDestroy(N_Vector v)
 {
   if (v==NULL) return;
-  v->ops->nvdestroy(v);
+  N_VDestroy_Serial(v);
   return;
 }
 
 void N_VSpace(N_Vector v, long int *lrw, long int *liw)
 {
-  v->ops->nvspace(v, lrw, liw);
+  N_VSpace_Serial(v, lrw, liw);
   return;
 }
 
 double *N_VGetArrayPointer(N_Vector v)
 {
-  return((double *) v->ops->nvgetarraypointer(v));
+  return((double *) N_VGetArrayPointer_Serial(v));
 }
 
 void N_VSetArrayPointer(double *v_data, N_Vector v)
 {
-  v->ops->nvsetarraypointer(v_data, v);
+  N_VSetArrayPointer_Serial(v_data, v);
   return;
 }
 
 void N_VLinearSum(double a, N_Vector x, double b, N_Vector y, N_Vector z)
 {
-  z->ops->nvlinearsum(a, x, b, y, z);
+  N_VLinearSum_Serial(a, x, b, y, z);
   return;
 }
 
 void N_VConst(double c, N_Vector z)
 {
-  z->ops->nvconst(c, z);
+  N_VConst_Serial(c, z);
   return;
 }
 
 void N_VProd(N_Vector x, N_Vector y, N_Vector z)
 {
-  z->ops->nvprod(x, y, z);
+  N_VProd_Serial(x, y, z);
   return;
 }
 
 void N_VDiv(N_Vector x, N_Vector y, N_Vector z)
 {
-  z->ops->nvdiv(x, y, z);
+  N_VDiv_Serial(x, y, z);
   return;
 }
 
 void N_VScale(double c, N_Vector x, N_Vector z) 
 {
-  z->ops->nvscale(c, x, z);
+  N_VScale_Serial(c, x, z);
   return;
 }
 
 void N_VAbs(N_Vector x, N_Vector z)
 {
-  z->ops->nvabs(x, z);
+  N_VAbs_Serial(x, z);
   return;
 }
 
 void N_VInv(N_Vector x, N_Vector z)
 {
-  z->ops->nvinv(x, z);
+  N_VInv_Serial(x, z);
   return;
 }
 
 void N_VAddConst(N_Vector x, double b, N_Vector z)
 {
-  z->ops->nvaddconst(x, b, z);
+  N_VAddConst_Serial(x, b, z);
   return;
-}
-
-double N_VDotProd(N_Vector x, N_Vector y)
-{
-  return((double) y->ops->nvdotprod(x, y));
 }
 
 double N_VMaxNorm(N_Vector x)
 {
-  return((double) x->ops->nvmaxnorm(x));
+  return((double) N_VMaxNorm_Serial(x));
 }
 
 double N_VWrmsNorm(N_Vector x, N_Vector w)
 {
-  return((double) x->ops->nvwrmsnorm(x, w));
-}
-
-double N_VWrmsNormMask(N_Vector x, N_Vector w, N_Vector id)
-{
-  return((double) x->ops->nvwrmsnormmask(x, w, id));
+  return((double) N_VWrmsNorm_Serial(x, w));
 }
 
 double N_VMin(N_Vector x)
 {
-  return((double) x->ops->nvmin(x));
-}
-
-double N_VWL2Norm(N_Vector x, N_Vector w)
-{
-  return((double) x->ops->nvwl2norm(x, w));
-}
-
-double N_VL1Norm(N_Vector x)
-{
-  return((double) x->ops->nvl1norm(x));
-}
-
-void N_VCompare(double c, N_Vector x, N_Vector z)
-{
-  z->ops->nvcompare(c, x, z);
-  return;
-}
-
-booleantype N_VInvTest(N_Vector x, N_Vector z)
-{
-  return((booleantype) z->ops->nvinvtest(x, z));
-}
-
-booleantype N_VConstrMask(N_Vector c, N_Vector x, N_Vector m)
-{
-  return((booleantype) x->ops->nvconstrmask(c, x, m));
-}
-
-double N_VMinQuotient(N_Vector num, N_Vector denom)
-{
-  return((double) num->ops->nvminquotient(num, denom));
+  return((double) N_VMin_Serial(x));
 }
 
 /*

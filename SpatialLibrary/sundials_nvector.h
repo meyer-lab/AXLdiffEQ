@@ -64,35 +64,6 @@ typedef struct _generic_N_Vector *N_Vector;
 /* Define array of N_Vectors */
 typedef N_Vector *N_Vector_S;
 
-/* Structure containing function pointers to vector operations  */  
-struct _generic_N_Vector_Ops {
-  N_Vector    (*nvclone)(N_Vector);
-  N_Vector    (*nvcloneempty)(N_Vector);
-  void        (*nvdestroy)(N_Vector);
-  void        (*nvspace)(N_Vector, long int *, long int *);
-  double*   (*nvgetarraypointer)(N_Vector);
-  void        (*nvsetarraypointer)(double *, N_Vector);
-  void        (*nvlinearsum)(double, N_Vector, double, N_Vector, N_Vector); 
-  void        (*nvconst)(double, N_Vector);
-  void        (*nvprod)(N_Vector, N_Vector, N_Vector);
-  void        (*nvdiv)(N_Vector, N_Vector, N_Vector);
-  void        (*nvscale)(double, N_Vector, N_Vector);
-  void        (*nvabs)(N_Vector, N_Vector);
-  void        (*nvinv)(N_Vector, N_Vector);
-  void        (*nvaddconst)(N_Vector, double, N_Vector);
-  double    (*nvdotprod)(N_Vector, N_Vector);
-  double    (*nvmaxnorm)(N_Vector);
-  double    (*nvwrmsnorm)(N_Vector, N_Vector);
-  double    (*nvwrmsnormmask)(N_Vector, N_Vector, N_Vector);
-  double    (*nvmin)(N_Vector);
-  double    (*nvwl2norm)(N_Vector, N_Vector);
-  double    (*nvl1norm)(N_Vector);
-  void        (*nvcompare)(double, N_Vector, N_Vector);
-  booleantype (*nvinvtest)(N_Vector, N_Vector);
-  booleantype (*nvconstrmask)(N_Vector, N_Vector, N_Vector);
-  double    (*nvminquotient)(N_Vector, N_Vector);
-};
-
 /*
  * -----------------------------------------------------------------
  * A vector is a structure with an implementation-dependent
@@ -103,7 +74,6 @@ struct _generic_N_Vector_Ops {
 
 struct _generic_N_Vector {
   void *content;
-  struct _generic_N_Vector_Ops *ops;
 };
   
 /*
@@ -312,34 +282,32 @@ struct _generic_N_Vector {
  * N_VMinQuotient                           S               S         
  * -----------------------------------------------------------------
  */
-    
-#define SUNDIALS_EXPORT
   
-SUNDIALS_EXPORT N_Vector N_VClone(N_Vector w);
-SUNDIALS_EXPORT N_Vector N_VCloneEmpty(N_Vector w);
-SUNDIALS_EXPORT void N_VDestroy(N_Vector v);
-SUNDIALS_EXPORT void N_VSpace(N_Vector v, long int *lrw, long int *liw);
-SUNDIALS_EXPORT double *N_VGetArrayPointer(N_Vector v);
-SUNDIALS_EXPORT void N_VSetArrayPointer(double *v_data, N_Vector v);
-SUNDIALS_EXPORT void N_VLinearSum(double a, N_Vector x, double b, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VConst(double c, N_Vector z);
-SUNDIALS_EXPORT void N_VProd(N_Vector x, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VDiv(N_Vector x, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VScale(double c, N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VAbs(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VInv(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VAddConst(N_Vector x, double b, N_Vector z);
-SUNDIALS_EXPORT double N_VDotProd(N_Vector x, N_Vector y);
-SUNDIALS_EXPORT double N_VMaxNorm(N_Vector x);
-SUNDIALS_EXPORT double N_VWrmsNorm(N_Vector x, N_Vector w);
-SUNDIALS_EXPORT double N_VWrmsNormMask(N_Vector x, N_Vector w, N_Vector id);
-SUNDIALS_EXPORT double N_VMin(N_Vector x);
-SUNDIALS_EXPORT double N_VWL2Norm(N_Vector x, N_Vector w);
-SUNDIALS_EXPORT double N_VL1Norm(N_Vector x);
-SUNDIALS_EXPORT void N_VCompare(double c, N_Vector x, N_Vector z);
-SUNDIALS_EXPORT booleantype N_VInvTest(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT booleantype N_VConstrMask(N_Vector c, N_Vector x, N_Vector m);
-SUNDIALS_EXPORT double N_VMinQuotient(N_Vector num, N_Vector denom);
+N_Vector N_VClone(N_Vector w);
+N_Vector N_VCloneEmpty(N_Vector w);
+void N_VDestroy(N_Vector v);
+void N_VSpace(N_Vector v, long int *lrw, long int *liw);
+double *N_VGetArrayPointer(N_Vector v);
+void N_VSetArrayPointer(double *v_data, N_Vector v);
+void N_VLinearSum(double a, N_Vector x, double b, N_Vector y, N_Vector z);
+void N_VConst(double c, N_Vector z);
+void N_VProd(N_Vector x, N_Vector y, N_Vector z);
+void N_VDiv(N_Vector x, N_Vector y, N_Vector z);
+ void N_VScale(double c, N_Vector x, N_Vector z);
+ void N_VAbs(N_Vector x, N_Vector z);
+ void N_VInv(N_Vector x, N_Vector z);
+ void N_VAddConst(N_Vector x, double b, N_Vector z);
+ double N_VDotProd(N_Vector x, N_Vector y);
+ double N_VMaxNorm(N_Vector x);
+ double N_VWrmsNorm(N_Vector x, N_Vector w);
+ double N_VWrmsNormMask(N_Vector x, N_Vector w, N_Vector id);
+ double N_VMin(N_Vector x);
+ double N_VWL2Norm(N_Vector x, N_Vector w);
+ double N_VL1Norm(N_Vector x);
+ void N_VCompare(double c, N_Vector x, N_Vector z);
+ booleantype N_VInvTest(N_Vector x, N_Vector z);
+ booleantype N_VConstrMask(N_Vector c, N_Vector x, N_Vector m);
+ double N_VMinQuotient(N_Vector num, N_Vector denom);
 
 /*
  * -----------------------------------------------------------------
@@ -395,9 +363,9 @@ SUNDIALS_EXPORT double N_VMinQuotient(N_Vector num, N_Vector denom);
     
     
 
-SUNDIALS_EXPORT N_Vector *N_VCloneEmptyVectorArray(int count, N_Vector w);
-SUNDIALS_EXPORT N_Vector *N_VCloneVectorArray(int count, N_Vector w);
-SUNDIALS_EXPORT void N_VDestroyVectorArray(N_Vector *vs, int count);
+ N_Vector *N_VCloneEmptyVectorArray(int count, N_Vector w);
+ N_Vector *N_VCloneVectorArray(int count, N_Vector w);
+ void N_VDestroyVectorArray(N_Vector *vs, int count);
 
 #ifdef __cplusplus
 }

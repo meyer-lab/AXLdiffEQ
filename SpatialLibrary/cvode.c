@@ -466,12 +466,10 @@ int CVodeInit(void *cvode_mem, CVRhsFn f, double t0, N_Vector y0)
 
   /* Set space requirements for one N_Vector */
 
-  if (y0->ops->nvspace != NULL) {
+
     N_VSpace(y0, &lrw1, &liw1);
-  } else {
-    lrw1 = 0;
-    liw1 = 0;
-  }
+
+    
   cv_mem->cv_lrw1 = lrw1;
   cv_mem->cv_liw1 = liw1;
 
@@ -1593,19 +1591,7 @@ void CVodeFree(void **cvode_mem)
 
 static booleantype CVCheckNvector(N_Vector tmpl)
 {
-  if((tmpl->ops->nvclone     == NULL) ||
-     (tmpl->ops->nvdestroy   == NULL) ||
-     (tmpl->ops->nvlinearsum == NULL) ||
-     (tmpl->ops->nvconst     == NULL) ||
-     (tmpl->ops->nvprod      == NULL) ||
-     (tmpl->ops->nvdiv       == NULL) ||
-     (tmpl->ops->nvscale     == NULL) ||
-     (tmpl->ops->nvabs       == NULL) ||
-     (tmpl->ops->nvinv       == NULL) ||
-     (tmpl->ops->nvaddconst  == NULL) ||
-     (tmpl->ops->nvmaxnorm   == NULL) ||
-     (tmpl->ops->nvwrmsnorm  == NULL) ||
-     (tmpl->ops->nvmin       == NULL))
+  if(tmpl->content == NULL)
     return(FALSE);
   else
     return(TRUE);

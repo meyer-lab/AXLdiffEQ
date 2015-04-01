@@ -159,7 +159,7 @@ typedef struct _N_VectorContent_Serial *N_VectorContent_Serial;
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT N_Vector N_VNew_Serial(long int vec_length);
+ N_Vector N_VNew_Serial(long int vec_length);
 
 /*
  * -----------------------------------------------------------------
@@ -170,7 +170,7 @@ SUNDIALS_EXPORT N_Vector N_VNew_Serial(long int vec_length);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT N_Vector N_VNewEmpty_Serial(long int vec_length);
+ N_Vector N_VNewEmpty_Serial(long int vec_length);
 
 /*
  * -----------------------------------------------------------------
@@ -181,7 +181,7 @@ SUNDIALS_EXPORT N_Vector N_VNewEmpty_Serial(long int vec_length);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT N_Vector N_VMake_Serial(long int vec_length, double *v_data);
+ N_Vector N_VMake_Serial(long int vec_length, double *v_data);
 
 /*
  * -----------------------------------------------------------------
@@ -192,7 +192,7 @@ SUNDIALS_EXPORT N_Vector N_VMake_Serial(long int vec_length, double *v_data);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT N_Vector *N_VCloneVectorArray_Serial(int count, N_Vector w);
+ N_Vector *N_VCloneVectorArray_Serial(int count, N_Vector w);
 
 /*
  * -----------------------------------------------------------------
@@ -203,7 +203,7 @@ SUNDIALS_EXPORT N_Vector *N_VCloneVectorArray_Serial(int count, N_Vector w);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT N_Vector *N_VCloneVectorArrayEmpty_Serial(int count, N_Vector w);
+ N_Vector *N_VCloneVectorArrayEmpty_Serial(int count, N_Vector w);
 
 /*
  * -----------------------------------------------------------------
@@ -214,7 +214,7 @@ SUNDIALS_EXPORT N_Vector *N_VCloneVectorArrayEmpty_Serial(int count, N_Vector w)
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void N_VDestroyVectorArray_Serial(N_Vector *vs, int count);
+ void N_VDestroyVectorArray_Serial(N_Vector *vs, int count);
 
 /*
  * -----------------------------------------------------------------
@@ -224,7 +224,7 @@ SUNDIALS_EXPORT void N_VDestroyVectorArray_Serial(N_Vector *vs, int count);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void N_VPrint_Serial(N_Vector v);
+ void N_VPrint_Serial(N_Vector v);
 
 /*
  * -----------------------------------------------------------------
@@ -232,31 +232,31 @@ SUNDIALS_EXPORT void N_VPrint_Serial(N_Vector v);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT N_Vector N_VCloneEmpty_Serial(N_Vector w);
-SUNDIALS_EXPORT N_Vector N_VClone_Serial(N_Vector w);
-SUNDIALS_EXPORT void N_VDestroy_Serial(N_Vector v);
-SUNDIALS_EXPORT void N_VSpace_Serial(N_Vector v, long int *lrw, long int *liw);
-SUNDIALS_EXPORT double *N_VGetArrayPointer_Serial(N_Vector v);
-SUNDIALS_EXPORT void N_VSetArrayPointer_Serial(double *v_data, N_Vector v);
-SUNDIALS_EXPORT void N_VLinearSum_Serial(double a, N_Vector x, double b, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VConst_Serial(double c, N_Vector z);
-SUNDIALS_EXPORT void N_VProd_Serial(N_Vector x, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VDiv_Serial(N_Vector x, N_Vector y, N_Vector z);
-SUNDIALS_EXPORT void N_VScale_Serial(double c, N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VAbs_Serial(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VInv_Serial(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT void N_VAddConst_Serial(N_Vector x, double b, N_Vector z);
-SUNDIALS_EXPORT double N_VDotProd_Serial(N_Vector x, N_Vector y);
-SUNDIALS_EXPORT double N_VMaxNorm_Serial(N_Vector x);
-SUNDIALS_EXPORT double N_VWrmsNorm_Serial(N_Vector x, N_Vector w);
-SUNDIALS_EXPORT double N_VWrmsNormMask_Serial(N_Vector x, N_Vector w, N_Vector id);
-SUNDIALS_EXPORT double N_VMin_Serial(N_Vector x);
-SUNDIALS_EXPORT double N_VWL2Norm_Serial(N_Vector x, N_Vector w);
-SUNDIALS_EXPORT double N_VL1Norm_Serial(N_Vector x);
-SUNDIALS_EXPORT void N_VCompare_Serial(double c, N_Vector x, N_Vector z);
-SUNDIALS_EXPORT booleantype N_VInvTest_Serial(N_Vector x, N_Vector z);
-SUNDIALS_EXPORT booleantype N_VConstrMask_Serial(N_Vector c, N_Vector x, N_Vector m);
-SUNDIALS_EXPORT double N_VMinQuotient_Serial(N_Vector num, N_Vector denom);
+ N_Vector N_VCloneEmpty_Serial(N_Vector w);
+ N_Vector N_VClone_Serial(N_Vector w);
+ void N_VDestroy_Serial(N_Vector v);
+ void N_VSpace_Serial(N_Vector v, long int *lrw, long int *liw);
+ double *N_VGetArrayPointer_Serial(N_Vector v);
+ void N_VSetArrayPointer_Serial(double *v_data, N_Vector v);
+ void N_VLinearSum_Serial(double a, N_Vector x, double b, N_Vector y, N_Vector z);
+ void N_VConst_Serial(double c, N_Vector z);
+ void N_VProd_Serial(N_Vector x, N_Vector y, N_Vector z);
+ void N_VDiv_Serial(N_Vector x, N_Vector y, N_Vector z);
+ void N_VScale_Serial(double c, N_Vector x, N_Vector z);
+ void N_VAbs_Serial(N_Vector x, N_Vector z);
+ void N_VInv_Serial(N_Vector x, N_Vector z);
+ void N_VAddConst_Serial(N_Vector x, double b, N_Vector z);
+ double N_VDotProd_Serial(N_Vector x, N_Vector y);
+ double N_VMaxNorm_Serial(N_Vector x);
+ double N_VWrmsNorm_Serial(N_Vector x, N_Vector w);
+ double N_VWrmsNormMask_Serial(N_Vector x, N_Vector w, N_Vector id);
+ double N_VMin_Serial(N_Vector x);
+ double N_VWL2Norm_Serial(N_Vector x, N_Vector w);
+ double N_VL1Norm_Serial(N_Vector x);
+ void N_VCompare_Serial(double c, N_Vector x, N_Vector z);
+ booleantype N_VInvTest_Serial(N_Vector x, N_Vector z);
+ booleantype N_VConstrMask_Serial(N_Vector c, N_Vector x, N_Vector m);
+ double N_VMinQuotient_Serial(N_Vector num, N_Vector denom);
 
 #ifdef __cplusplus
 }

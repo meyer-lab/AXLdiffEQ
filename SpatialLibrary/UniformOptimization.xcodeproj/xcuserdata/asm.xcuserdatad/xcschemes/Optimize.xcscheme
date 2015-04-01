@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0610"
+   LastUpgradeVersion = "0620"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -17,20 +17,6 @@
                BlueprintIdentifier = "9370A68717E7534800791D49"
                BuildableName = "libOptimize.dylib"
                BlueprintName = "Optimize"
-               ReferencedContainer = "container:UniformOptimization.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "NO"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "939CB06919634F8100960F90"
-               BuildableName = "Test"
-               BlueprintName = "Test"
                ReferencedContainer = "container:UniformOptimization.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

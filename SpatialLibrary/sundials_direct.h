@@ -115,12 +115,12 @@ typedef struct _DlsMat {
   int type;
   size_t M;
   size_t N;
-  long int ldim;
+  size_t ldim;
   long int mu;
   long int ml;
   long int s_mu;
   double *data;
-  long int ldata;
+  size_t ldata;
   double **cols;
 } *DlsMat;
 
@@ -175,14 +175,6 @@ typedef struct _DlsMat {
 #define BAND_COL(A,j) (((A->cols)[j])+(A->s_mu))
 #define BAND_COL_ELEM(col_j,i,j) (col_j[(i)-(j)])
 #define BAND_ELEM(A,i,j) ((A->cols)[j][(i)-(j)+(A->s_mu)])
-
-/*
- * ==================================================================
- * Exported function prototypes (functions working on dlsMat)
- * ==================================================================
- */
-
-#define SUNDIALS_EXPORT
     
 /*
  * -----------------------------------------------------------------
@@ -196,29 +188,7 @@ typedef struct _DlsMat {
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT DlsMat NewDenseMat(size_t M, size_t N);
-
-/*
- * -----------------------------------------------------------------
- * Function: NewBandMat
- * -----------------------------------------------------------------
- * NewBandMat allocates memory for an M-by-N band matrix 
- * with upper bandwidth mu, lower bandwidth ml, and storage upper
- * bandwidth smu. Pass smu as follows depending on whether A will 
- * be LU factored:
- *
- * (1) Pass smu = mu if A will not be factored.
- *
- * (2) Pass smu = MIN(N-1,mu+ml) if A will be factored.
- *
- * NewBandMat returns the storage allocated (type DlsMat) or
- * NULL if the request for matrix storage cannot be satisfied.
- * See the documentation for the type DlsMat for matrix storage
- * details.
- * -----------------------------------------------------------------
- */
-
-SUNDIALS_EXPORT DlsMat NewBandMat(long int N, long int mu, long int ml, long int smu);
+ DlsMat NewDenseMat(size_t M, size_t N);
 
 /*
  * -----------------------------------------------------------------
@@ -228,7 +198,7 @@ SUNDIALS_EXPORT DlsMat NewBandMat(long int N, long int mu, long int ml, long int
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void DestroyMat(DlsMat A);
+ void DestroyMat(DlsMat A);
 
 /*
  * -----------------------------------------------------------------
@@ -240,7 +210,7 @@ SUNDIALS_EXPORT void DestroyMat(DlsMat A);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int *NewIntArray(int N);
+ int *NewIntArray(int N);
 
 /*
  * -----------------------------------------------------------------
@@ -252,7 +222,7 @@ SUNDIALS_EXPORT int *NewIntArray(int N);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT long int *NewLintArray(long int N);
+ long int *NewLintArray(long int N);
 
 /*
  * -----------------------------------------------------------------
@@ -264,7 +234,7 @@ SUNDIALS_EXPORT long int *NewLintArray(long int N);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT double *NewRealArray(long int N);
+ double *NewRealArray(long int N);
 
 /*
  * -----------------------------------------------------------------
@@ -275,7 +245,7 @@ SUNDIALS_EXPORT double *NewRealArray(long int N);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void DestroyArray(void *p);
+ void DestroyArray(void *p);
 
 /*
  * -----------------------------------------------------------------
@@ -289,7 +259,7 @@ SUNDIALS_EXPORT void DestroyArray(void *p);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void AddIdentity(DlsMat A);
+ void AddIdentity(DlsMat A);
 
 /*
  * -----------------------------------------------------------------
@@ -299,7 +269,7 @@ SUNDIALS_EXPORT void AddIdentity(DlsMat A);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void SetToZero(DlsMat A);
+ void SetToZero(DlsMat A);
 
 /*
  * -----------------------------------------------------------------
@@ -313,7 +283,7 @@ SUNDIALS_EXPORT void SetToZero(DlsMat A);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void PrintMat(DlsMat A);
+ void PrintMat(DlsMat A);
 
 
 /*
@@ -322,13 +292,13 @@ SUNDIALS_EXPORT void PrintMat(DlsMat A);
  * ==================================================================
  */
 
-SUNDIALS_EXPORT double **newDenseMat(size_t m, size_t n);
-SUNDIALS_EXPORT double **newBandMat(long int n, long int smu, long int ml);
-SUNDIALS_EXPORT void destroyMat(double **a);
-SUNDIALS_EXPORT int *newIntArray(int n);
-SUNDIALS_EXPORT long int *newLintArray(long int n);
-SUNDIALS_EXPORT double *newRealArray(long int m);
-SUNDIALS_EXPORT void destroyArray(void *v);
+ double **newDenseMat(size_t m, size_t n);
+ double **newBandMat(long int n, long int smu, long int ml);
+ void destroyMat(double **a);
+ int *newIntArray(int n);
+ long int *newLintArray(long int n);
+ double *newRealArray(long int m);
+ void destroyArray(void *v);
 
 
 #ifdef __cplusplus

@@ -250,7 +250,7 @@ typedef void (*CVErrHandlerFn)(int error_code,
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void *CVodeCreate(int lmm, int iter);
+ void *CVodeCreate(int lmm, int iter);
 
 /*
  * -----------------------------------------------------------------
@@ -362,26 +362,26 @@ SUNDIALS_EXPORT void *CVodeCreate(int lmm, int iter);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVodeSetErrHandlerFn(void *cvode_mem, CVErrHandlerFn ehfun, void *eh_data);
-SUNDIALS_EXPORT int CVodeSetErrFile(void *cvode_mem, FILE *errfp);
-SUNDIALS_EXPORT int CVodeSetUserData(void *cvode_mem, void *user_data);
-SUNDIALS_EXPORT int CVodeSetMaxOrd(void *cvode_mem, int maxord);
-SUNDIALS_EXPORT int CVodeSetMaxNumSteps(void *cvode_mem, long int mxsteps);
-SUNDIALS_EXPORT int CVodeSetMaxHnilWarns(void *cvode_mem, int mxhnil);
-SUNDIALS_EXPORT int CVodeSetStabLimDet(void *cvode_mem, booleantype stldet);
-SUNDIALS_EXPORT int CVodeSetInitStep(void *cvode_mem, double hin);
-SUNDIALS_EXPORT int CVodeSetMinStep(void *cvode_mem, double hmin);
-SUNDIALS_EXPORT int CVodeSetMaxStep(void *cvode_mem, double hmax);
-SUNDIALS_EXPORT int CVodeSetStopTime(void *cvode_mem, double tstop);
-SUNDIALS_EXPORT int CVodeSetMaxErrTestFails(void *cvode_mem, int maxnef);
-SUNDIALS_EXPORT int CVodeSetMaxNonlinIters(void *cvode_mem, int maxcor);
-SUNDIALS_EXPORT int CVodeSetMaxConvFails(void *cvode_mem, int maxncf);
-SUNDIALS_EXPORT int CVodeSetNonlinConvCoef(void *cvode_mem, double nlscoef);
+ int CVodeSetErrHandlerFn(void *cvode_mem, CVErrHandlerFn ehfun, void *eh_data);
+ int CVodeSetErrFile(void *cvode_mem, FILE *errfp);
+ int CVodeSetUserData(void *cvode_mem, void *user_data);
+ int CVodeSetMaxOrd(void *cvode_mem, int maxord);
+ int CVodeSetMaxNumSteps(void *cvode_mem, long int mxsteps);
+ int CVodeSetMaxHnilWarns(void *cvode_mem, int mxhnil);
+ int CVodeSetStabLimDet(void *cvode_mem, booleantype stldet);
+ int CVodeSetInitStep(void *cvode_mem, double hin);
+ int CVodeSetMinStep(void *cvode_mem, double hmin);
+ int CVodeSetMaxStep(void *cvode_mem, double hmax);
+ int CVodeSetStopTime(void *cvode_mem, double tstop);
+ int CVodeSetMaxErrTestFails(void *cvode_mem, int maxnef);
+ int CVodeSetMaxNonlinIters(void *cvode_mem, int maxcor);
+ int CVodeSetMaxConvFails(void *cvode_mem, int maxncf);
+ int CVodeSetNonlinConvCoef(void *cvode_mem, double nlscoef);
 
-SUNDIALS_EXPORT int CVodeSetIterType(void *cvode_mem, int iter);
+ int CVodeSetIterType(void *cvode_mem, int iter);
 
-SUNDIALS_EXPORT int CVodeSetRootDirection(void *cvode_mem, int *rootdir);
-SUNDIALS_EXPORT int CVodeSetNoInactiveRootWarn(void *cvode_mem);
+ int CVodeSetRootDirection(void *cvode_mem, int *rootdir);
+ int CVodeSetNoInactiveRootWarn(void *cvode_mem);
 
 /*
  * -----------------------------------------------------------------
@@ -407,7 +407,7 @@ SUNDIALS_EXPORT int CVodeSetNoInactiveRootWarn(void *cvode_mem);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVodeInit(void *cvode_mem, CVRhsFn f, double t0, N_Vector y0);
+ int CVodeInit(void *cvode_mem, CVRhsFn f, double t0, N_Vector y0);
 
 /*
  * -----------------------------------------------------------------
@@ -443,7 +443,7 @@ SUNDIALS_EXPORT int CVodeInit(void *cvode_mem, CVRhsFn f, double t0, N_Vector y0
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVodeReInit(void *cvode_mem, double t0, N_Vector y0);
+ int CVodeReInit(void *cvode_mem, double t0, N_Vector y0);
 
 /*
  * -----------------------------------------------------------------
@@ -484,9 +484,9 @@ SUNDIALS_EXPORT int CVodeReInit(void *cvode_mem, double t0, N_Vector y0);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVodeSStolerances(void *cvode_mem, double reltol, double abstol);
-SUNDIALS_EXPORT int CVodeSVtolerances(void *cvode_mem, double reltol, N_Vector abstol);
-SUNDIALS_EXPORT int CVodeWFtolerances(void *cvode_mem, CVEwtFn efun);
+ int CVodeSStolerances(void *cvode_mem, double reltol, double abstol);
+ int CVodeSVtolerances(void *cvode_mem, double reltol, N_Vector abstol);
+ int CVodeWFtolerances(void *cvode_mem, CVEwtFn efun);
 
 /*
  * -----------------------------------------------------------------
@@ -517,7 +517,7 @@ SUNDIALS_EXPORT int CVodeWFtolerances(void *cvode_mem, CVEwtFn efun);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVodeRootInit(void *cvode_mem, int nrtfn, CVRootFn g);
+ int CVodeRootInit(void *cvode_mem, int nrtfn, CVRootFn g);
 
 /*
  * -----------------------------------------------------------------
@@ -607,7 +607,7 @@ SUNDIALS_EXPORT int CVodeRootInit(void *cvode_mem, int nrtfn, CVRootFn g);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVode(void *cvode_mem, double tout, N_Vector yout,
+ int CVode(void *cvode_mem, double tout, N_Vector yout,
 			  double *tret, int itask);
 
 /*
@@ -648,7 +648,7 @@ SUNDIALS_EXPORT int CVode(void *cvode_mem, double tout, N_Vector yout,
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVodeGetDky(void *cvode_mem, double t, int k, N_Vector dky);
+ int CVodeGetDky(void *cvode_mem, double t, int k, N_Vector dky);
 
 /*
  * -----------------------------------------------------------------
@@ -704,23 +704,23 @@ SUNDIALS_EXPORT int CVodeGetDky(void *cvode_mem, double t, int k, N_Vector dky);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVodeGetWorkSpace(void *cvode_mem, long int *lenrw, long int *leniw);
-SUNDIALS_EXPORT int CVodeGetNumSteps(void *cvode_mem, long int *nsteps);
-SUNDIALS_EXPORT int CVodeGetNumRhsEvals(void *cvode_mem, long int *nfevals);
-SUNDIALS_EXPORT int CVodeGetNumLinSolvSetups(void *cvode_mem, long int *nlinsetups);
-SUNDIALS_EXPORT int CVodeGetNumErrTestFails(void *cvode_mem, long int *netfails);
-SUNDIALS_EXPORT int CVodeGetLastOrder(void *cvode_mem, int *qlast);
-SUNDIALS_EXPORT int CVodeGetCurrentOrder(void *cvode_mem, int *qcur);
-SUNDIALS_EXPORT int CVodeGetNumStabLimOrderReds(void *cvode_mem, long int *nslred);
-SUNDIALS_EXPORT int CVodeGetActualInitStep(void *cvode_mem, double *hinused);
-SUNDIALS_EXPORT int CVodeGetLastStep(void *cvode_mem, double *hlast);
-SUNDIALS_EXPORT int CVodeGetCurrentStep(void *cvode_mem, double *hcur);
-SUNDIALS_EXPORT int CVodeGetCurrentTime(void *cvode_mem, double *tcur);
-SUNDIALS_EXPORT int CVodeGetTolScaleFactor(void *cvode_mem, double *tolsfac);
-SUNDIALS_EXPORT int CVodeGetErrWeights(void *cvode_mem, N_Vector eweight);
-SUNDIALS_EXPORT int CVodeGetEstLocalErrors(void *cvode_mem, N_Vector ele);
-SUNDIALS_EXPORT int CVodeGetNumGEvals(void *cvode_mem, long int *ngevals);
-SUNDIALS_EXPORT int CVodeGetRootInfo(void *cvode_mem, int *rootsfound);
+ int CVodeGetWorkSpace(void *cvode_mem, long int *lenrw, long int *leniw);
+ int CVodeGetNumSteps(void *cvode_mem, long int *nsteps);
+ int CVodeGetNumRhsEvals(void *cvode_mem, long int *nfevals);
+ int CVodeGetNumLinSolvSetups(void *cvode_mem, long int *nlinsetups);
+ int CVodeGetNumErrTestFails(void *cvode_mem, long int *netfails);
+ int CVodeGetLastOrder(void *cvode_mem, int *qlast);
+ int CVodeGetCurrentOrder(void *cvode_mem, int *qcur);
+ int CVodeGetNumStabLimOrderReds(void *cvode_mem, long int *nslred);
+ int CVodeGetActualInitStep(void *cvode_mem, double *hinused);
+ int CVodeGetLastStep(void *cvode_mem, double *hlast);
+ int CVodeGetCurrentStep(void *cvode_mem, double *hcur);
+ int CVodeGetCurrentTime(void *cvode_mem, double *tcur);
+ int CVodeGetTolScaleFactor(void *cvode_mem, double *tolsfac);
+ int CVodeGetErrWeights(void *cvode_mem, N_Vector eweight);
+ int CVodeGetEstLocalErrors(void *cvode_mem, N_Vector ele);
+ int CVodeGetNumGEvals(void *cvode_mem, long int *ngevals);
+ int CVodeGetRootInfo(void *cvode_mem, int *rootsfound);
 
 /*
  * -----------------------------------------------------------------
@@ -729,7 +729,7 @@ SUNDIALS_EXPORT int CVodeGetRootInfo(void *cvode_mem, int *rootsfound);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVodeGetIntegratorStats(void *cvode_mem, long int *nsteps,
+ int CVodeGetIntegratorStats(void *cvode_mem, long int *nsteps,
 					    long int *nfevals, long int *nlinsetups,
 					    long int *netfails, int *qlast,
 					    int *qcur, double *hinused, double *hlast,
@@ -749,8 +749,8 @@ SUNDIALS_EXPORT int CVodeGetIntegratorStats(void *cvode_mem, long int *nsteps,
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVodeGetNumNonlinSolvIters(void *cvode_mem, long int *nniters);
-SUNDIALS_EXPORT int CVodeGetNumNonlinSolvConvFails(void *cvode_mem, long int *nncfails);
+ int CVodeGetNumNonlinSolvIters(void *cvode_mem, long int *nniters);
+ int CVodeGetNumNonlinSolvConvFails(void *cvode_mem, long int *nncfails);
 
 /*
  * -----------------------------------------------------------------
@@ -759,7 +759,7 @@ SUNDIALS_EXPORT int CVodeGetNumNonlinSolvConvFails(void *cvode_mem, long int *nn
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT int CVodeGetNonlinSolvStats(void *cvode_mem, long int *nniters,
+ int CVodeGetNonlinSolvStats(void *cvode_mem, long int *nniters,
 					    long int *nncfails);
 
 /*
@@ -769,7 +769,7 @@ SUNDIALS_EXPORT int CVodeGetNonlinSolvStats(void *cvode_mem, long int *nniters,
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT char *CVodeGetReturnFlagName(long int flag);
+ char *CVodeGetReturnFlagName(long int flag);
 
 /*
  * -----------------------------------------------------------------
@@ -781,7 +781,7 @@ SUNDIALS_EXPORT char *CVodeGetReturnFlagName(long int flag);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void CVodeFree(void **cvode_mem);
+ void CVodeFree(void **cvode_mem);
 
 #ifdef __cplusplus
 }

@@ -61,49 +61,17 @@ static void VScaleBy_Serial(double a, N_Vector x);
 N_Vector N_VNewEmpty_Serial(long int length)
 {
   N_Vector v;
-  N_Vector_Ops ops;
   N_VectorContent_Serial content;
 
   /* Create vector */
   v = NULL;
   v = (N_Vector) malloc(sizeof *v);
   if (v == NULL) return(NULL);
-  
-  /* Create vector operation structure */
-  ops = NULL;
-  ops = (N_Vector_Ops) malloc(sizeof(struct _generic_N_Vector_Ops));
-  if (ops == NULL) { free(v); return(NULL); }
-
-  ops->nvclone           = N_VClone_Serial;
-  ops->nvcloneempty      = N_VCloneEmpty_Serial;
-  ops->nvdestroy         = N_VDestroy_Serial;
-  ops->nvspace           = N_VSpace_Serial;
-  ops->nvgetarraypointer = N_VGetArrayPointer_Serial;
-  ops->nvsetarraypointer = N_VSetArrayPointer_Serial;
-  ops->nvlinearsum       = N_VLinearSum_Serial;
-  ops->nvconst           = N_VConst_Serial;
-  ops->nvprod            = N_VProd_Serial;
-  ops->nvdiv             = N_VDiv_Serial;
-  ops->nvscale           = N_VScale_Serial;
-  ops->nvabs             = N_VAbs_Serial;
-  ops->nvinv             = N_VInv_Serial;
-  ops->nvaddconst        = N_VAddConst_Serial;
-  ops->nvdotprod         = N_VDotProd_Serial;
-  ops->nvmaxnorm         = N_VMaxNorm_Serial;
-  ops->nvwrmsnormmask    = N_VWrmsNormMask_Serial;
-  ops->nvwrmsnorm        = N_VWrmsNorm_Serial;
-  ops->nvmin             = N_VMin_Serial;
-  ops->nvwl2norm         = N_VWL2Norm_Serial;
-  ops->nvl1norm          = N_VL1Norm_Serial;
-  ops->nvcompare         = N_VCompare_Serial;
-  ops->nvinvtest         = N_VInvTest_Serial;
-  ops->nvconstrmask      = N_VConstrMask_Serial;
-  ops->nvminquotient     = N_VMinQuotient_Serial;
 
   /* Create content */
   content = NULL;
   content = (N_VectorContent_Serial) malloc(sizeof(struct _N_VectorContent_Serial));
-  if (content == NULL) { free(ops); free(v); return(NULL); }
+  if (content == NULL) { free(v); return(NULL); }
 
   content->length   = length;
   content->own_data = FALSE;
@@ -111,7 +79,6 @@ N_Vector N_VNewEmpty_Serial(long int length)
 
   /* Attach content and ops */
   v->content = content;
-  v->ops     = ops;
 
   return(v);
 }
@@ -270,10 +237,12 @@ void N_VPrint_Serial(N_Vector x)
  * -----------------------------------------------------------------
  */
 
+
+
+
 N_Vector N_VCloneEmpty_Serial(N_Vector w)
 {
   N_Vector v;
-  N_Vector_Ops ops;
   N_VectorContent_Serial content;
 
   if (w == NULL) return(NULL);
@@ -283,41 +252,10 @@ N_Vector N_VCloneEmpty_Serial(N_Vector w)
   v = (N_Vector) malloc(sizeof *v);
   if (v == NULL) return(NULL);
 
-  /* Create vector operation structure */
-  ops = NULL;
-  ops = (N_Vector_Ops) malloc(sizeof(struct _generic_N_Vector_Ops));
-  if (ops == NULL) { free(v); return(NULL); }
-  
-  ops->nvclone           = w->ops->nvclone;
-  ops->nvcloneempty      = w->ops->nvcloneempty;
-  ops->nvdestroy         = w->ops->nvdestroy;
-  ops->nvspace           = w->ops->nvspace;
-  ops->nvgetarraypointer = w->ops->nvgetarraypointer;
-  ops->nvsetarraypointer = w->ops->nvsetarraypointer;
-  ops->nvlinearsum       = w->ops->nvlinearsum;
-  ops->nvconst           = w->ops->nvconst;  
-  ops->nvprod            = w->ops->nvprod;   
-  ops->nvdiv             = w->ops->nvdiv;
-  ops->nvscale           = w->ops->nvscale; 
-  ops->nvabs             = w->ops->nvabs;
-  ops->nvinv             = w->ops->nvinv;
-  ops->nvaddconst        = w->ops->nvaddconst;
-  ops->nvdotprod         = w->ops->nvdotprod;
-  ops->nvmaxnorm         = w->ops->nvmaxnorm;
-  ops->nvwrmsnormmask    = w->ops->nvwrmsnormmask;
-  ops->nvwrmsnorm        = w->ops->nvwrmsnorm;
-  ops->nvmin             = w->ops->nvmin;
-  ops->nvwl2norm         = w->ops->nvwl2norm;
-  ops->nvl1norm          = w->ops->nvl1norm;
-  ops->nvcompare         = w->ops->nvcompare;    
-  ops->nvinvtest         = w->ops->nvinvtest;
-  ops->nvconstrmask      = w->ops->nvconstrmask;
-  ops->nvminquotient     = w->ops->nvminquotient;
-
   /* Create content */
   content = NULL;
   content = (N_VectorContent_Serial) malloc(sizeof(struct _N_VectorContent_Serial));
-  if (content == NULL) { free(ops); free(v); return(NULL); }
+  if (content == NULL) { free(v); return(NULL); }
 
   content->length   = NV_LENGTH_S(w);
   content->own_data = FALSE;
@@ -325,7 +263,6 @@ N_Vector N_VCloneEmpty_Serial(N_Vector w)
 
   /* Attach content and ops */
   v->content = content;
-  v->ops     = ops;
 
   return(v);
 }
@@ -366,7 +303,6 @@ void N_VDestroy_Serial(N_Vector v)
     NV_DATA_S(v) = NULL;
   }
   free(v->content); v->content = NULL;
-  free(v->ops); v->ops = NULL;
   free(v); v = NULL;
 
   return;

@@ -97,29 +97,16 @@ void AddIdentity(DlsMat A)
 {
   long int i;
 
-  switch (A->type) {
-
-  case SUNDIALS_DENSE:
     for (i=0; i<A->N; i++) A->cols[i][i] += ONE;
-    break;
 
-  case SUNDIALS_BAND:
-    for (i=0; i<A->M; i++) A->cols[i][A->s_mu] += ONE;
-    break;
-
-  }
 
 }
 
 
 void SetToZero(DlsMat A)
 {
-  long int i, j, colSize;
+  long int i, j;
   double *col_j;
-
-  switch (A->type) {
-
-  case SUNDIALS_DENSE:
     
     for (j=0; j<A->N; j++) {
       col_j = A->cols[j];
@@ -127,74 +114,23 @@ void SetToZero(DlsMat A)
         col_j[i] = ZERO;
     }
 
-    break;
-
-  case SUNDIALS_BAND:
-
-    colSize = A->mu + A->ml + 1;
-    for (j=0; j<A->M; j++) {
-      col_j = A->cols[j] + A->s_mu - A->mu;
-      for (i=0; i<colSize; i++)
-        col_j[i] = ZERO;
-    }
-
-    break;
-
-  }
 
 }
 
 
 void PrintMat(DlsMat A)
 {
-  long int i, j, start, finish;
-  double **a;
-
-  switch (A->type) {
-
-  case SUNDIALS_DENSE:
+  long int i, j;
 
     printf("\n");
     for (i=0; i < A->M; i++) {
       for (j=0; j < A->N; j++) {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-        printf("%12Lg  ", DENSE_ELEM(A,i,j));
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
         printf("%12lg  ", DENSE_ELEM(A,i,j));
-#else
-        printf("%12g  ", DENSE_ELEM(A,i,j));
-#endif
       }
       printf("\n");
     }
     printf("\n");
-    
-    break;
 
-  case SUNDIALS_BAND:
-
-    a = A->cols;
-    printf("\n");
-    for (i=0; i < A->N; i++) {
-      start = MAX(0,i-A->ml);
-      finish = MIN(A->N-1,i+A->mu);
-      for (j=0; j < start; j++) printf("%12s  ","");
-      for (j=start; j <= finish; j++) {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-        printf("%12Lg  ", a[j][i-j+A->s_mu]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
-        printf("%12lg  ", a[j][i-j+A->s_mu]);
-#else
-        printf("%12g  ", a[j][i-j+A->s_mu]);
-#endif
-      }
-      printf("\n");
-    }
-    printf("\n");
-    
-    break;
-
-  }
 
 }
 

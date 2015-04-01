@@ -108,13 +108,6 @@ int CVDense(void *cvode_mem, long int N)
     return(CVDLS_MEM_NULL);
   }
   cv_mem = (CVodeMem) cvode_mem;
-
-  /* Test if the NVECTOR package is compatible with the DENSE solver */
-  if (vec_tmpl->ops->nvgetarraypointer == NULL ||
-      vec_tmpl->ops->nvsetarraypointer == NULL) {
-    CVProcessError(cv_mem, CVDLS_ILL_INPUT, "CVDENSE", "CVDense", MSGD_BAD_NVECTOR);
-    return(CVDLS_ILL_INPUT);
-  }
     
   if (lfree !=NULL) lfree(cv_mem);
 

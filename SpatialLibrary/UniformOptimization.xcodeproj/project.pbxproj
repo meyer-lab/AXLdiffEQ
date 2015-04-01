@@ -12,42 +12,33 @@
 		72512EBC1A6C754900C9764F /* BlasHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A2529E17E6101300FC8307 /* BlasHeader.cpp */; };
 		72512EBD1A6C754900C9764F /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 72D53AE519BE025D001E0AC6 /* cobyla.c */; };
 		728F57D51A6D5CB700311731 /* cvode_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57AB1A6D5CB700311731 /* cvode_dense.c */; };
-		728F57D61A6D5CB700311731 /* cvode_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57AB1A6D5CB700311731 /* cvode_dense.c */; };
 		728F57D71A6D5CB700311731 /* cvode_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57AB1A6D5CB700311731 /* cvode_dense.c */; };
 		728F57D81A6D5CB700311731 /* cvode_dense.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57AC1A6D5CB700311731 /* cvode_dense.h */; };
 		728F57D91A6D5CB700311731 /* cvode_direct_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57AD1A6D5CB700311731 /* cvode_direct_impl.h */; };
 		728F57DA1A6D5CB700311731 /* cvode_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57AE1A6D5CB700311731 /* cvode_direct.c */; };
-		728F57DB1A6D5CB700311731 /* cvode_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57AE1A6D5CB700311731 /* cvode_direct.c */; };
 		728F57DC1A6D5CB700311731 /* cvode_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57AE1A6D5CB700311731 /* cvode_direct.c */; };
 		728F57DD1A6D5CB700311731 /* cvode_direct.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57AF1A6D5CB700311731 /* cvode_direct.h */; };
 		728F57DE1A6D5CB700311731 /* cvode_impl.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57B01A6D5CB700311731 /* cvode_impl.h */; };
 		728F57DF1A6D5CB700311731 /* cvode_io.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57B11A6D5CB700311731 /* cvode_io.c */; };
-		728F57E01A6D5CB700311731 /* cvode_io.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57B11A6D5CB700311731 /* cvode_io.c */; };
 		728F57E11A6D5CB700311731 /* cvode_io.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57B11A6D5CB700311731 /* cvode_io.c */; };
 		728F57F31A6D5CB700311731 /* cvode.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57BB1A6D5CB700311731 /* cvode.c */; };
-		728F57F41A6D5CB700311731 /* cvode.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57BB1A6D5CB700311731 /* cvode.c */; };
 		728F57F51A6D5CB700311731 /* cvode.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57BB1A6D5CB700311731 /* cvode.c */; };
 		728F57F61A6D5CB700311731 /* cvode.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57BC1A6D5CB700311731 /* cvode.h */; };
 		728F57F71A6D5CB700311731 /* nvector_serial.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57BD1A6D5CB700311731 /* nvector_serial.c */; };
-		728F57F81A6D5CB700311731 /* nvector_serial.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57BD1A6D5CB700311731 /* nvector_serial.c */; };
 		728F57F91A6D5CB700311731 /* nvector_serial.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57BD1A6D5CB700311731 /* nvector_serial.c */; };
 		728F57FA1A6D5CB700311731 /* nvector_serial.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57BE1A6D5CB700311731 /* nvector_serial.h */; };
 		728F57FB1A6D5CB700311731 /* sundials_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57BF1A6D5CB700311731 /* sundials_dense.c */; };
-		728F57FC1A6D5CB700311731 /* sundials_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57BF1A6D5CB700311731 /* sundials_dense.c */; };
 		728F57FD1A6D5CB700311731 /* sundials_dense.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57BF1A6D5CB700311731 /* sundials_dense.c */; };
 		728F57FE1A6D5CB700311731 /* sundials_dense.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57C01A6D5CB700311731 /* sundials_dense.h */; };
 		728F57FF1A6D5CB700311731 /* sundials_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C11A6D5CB700311731 /* sundials_direct.c */; };
-		728F58001A6D5CB700311731 /* sundials_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C11A6D5CB700311731 /* sundials_direct.c */; };
 		728F58011A6D5CB700311731 /* sundials_direct.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C11A6D5CB700311731 /* sundials_direct.c */; };
 		728F58021A6D5CB700311731 /* sundials_direct.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57C21A6D5CB700311731 /* sundials_direct.h */; };
 		728F580B1A6D5CB700311731 /* sundials_nvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C71A6D5CB700311731 /* sundials_nvector.c */; };
-		728F580C1A6D5CB700311731 /* sundials_nvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C71A6D5CB700311731 /* sundials_nvector.c */; };
 		728F580D1A6D5CB700311731 /* sundials_nvector.c in Sources */ = {isa = PBXBuildFile; fileRef = 728F57C71A6D5CB700311731 /* sundials_nvector.c */; };
 		728F580E1A6D5CB700311731 /* sundials_nvector.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57C81A6D5CB700311731 /* sundials_nvector.h */; };
 		728F581B1A6D5CB700311731 /* sundials_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 728F57CF1A6D5CB700311731 /* sundials_types.h */; };
 		729ADC2A1A66B3CA00BEB0F7 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 729ADC291A66B3CA00BEB0F7 /* main.cpp */; };
 		72D53AE719BE025D001E0AC6 /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 72D53AE519BE025D001E0AC6 /* cobyla.c */; };
-		72D53AE819BE025D001E0AC6 /* cobyla.c in Sources */ = {isa = PBXBuildFile; fileRef = 72D53AE519BE025D001E0AC6 /* cobyla.c */; };
 		72D53AEA19BE025D001E0AC6 /* cobyla.h in Headers */ = {isa = PBXBuildFile; fileRef = 72D53AE619BE025D001E0AC6 /* cobyla.h */; };
 		9359E6A719476F44007DB3B6 /* libOptimize.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 9370A68817E7534800791D49 /* libOptimize.dylib */; };
 		9359E6B21947734B007DB3B6 /* Testing.m in Sources */ = {isa = PBXBuildFile; fileRef = 9359E6B11947734B007DB3B6 /* Testing.m */; };
@@ -295,7 +286,7 @@
 		93A2528A17E60FF800FC8307 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0620;
 				ORGANIZATIONNAME = "Aaron Meyer";
 				TargetAttributes = {
 					729ADC261A66B3C900BEB0F7 = {
@@ -361,16 +352,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				728F57DB1A6D5CB700311731 /* cvode_direct.c in Sources */,
 				9359E6B21947734B007DB3B6 /* Testing.m in Sources */,
-				728F57FC1A6D5CB700311731 /* sundials_dense.c in Sources */,
-				728F57D61A6D5CB700311731 /* cvode_dense.c in Sources */,
-				728F57E01A6D5CB700311731 /* cvode_io.c in Sources */,
-				728F580C1A6D5CB700311731 /* sundials_nvector.c in Sources */,
-				728F58001A6D5CB700311731 /* sundials_direct.c in Sources */,
-				72D53AE819BE025D001E0AC6 /* cobyla.c in Sources */,
-				728F57F81A6D5CB700311731 /* nvector_serial.c in Sources */,
-				728F57F41A6D5CB700311731 /* cvode.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,12 +505,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CLANG_X86_VECTOR_INSTRUCTIONS = avx2;
+				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
@@ -553,11 +537,7 @@
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = "";
-				OTHER_LDFLAGS = (
-					"-lsundials_cvode",
-					"-lsundials_nvecserial",
-					"-lsundials_cvodes",
-				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
@@ -569,12 +549,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_CXX0X_EXTENSIONS = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES;
-				CLANG_X86_VECTOR_INSTRUCTIONS = avx2;
+				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -599,11 +581,7 @@
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = (
-					"-lsundials_cvode",
-					"-lsundials_nvecserial",
-					"-lsundials_cvodes",
-				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = NO;
@@ -663,7 +641,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-v";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -714,7 +692,7 @@
 				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "-v";
-				SDKROOT = macosx10.10;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};

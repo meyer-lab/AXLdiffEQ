@@ -73,69 +73,11 @@ extern "C" {
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT long int DenseGETRF(DlsMat A, long int *p);
-SUNDIALS_EXPORT void DenseGETRS(DlsMat A, long int *p, double *b);
+ long int DenseGETRF(DlsMat A, long int *p);
+ void DenseGETRS(DlsMat A, long int *p, double *b);
 
-SUNDIALS_EXPORT long int denseGETRF(double **a, size_t m, size_t n, long int *p);
-SUNDIALS_EXPORT void denseGETRS(double **a, long int n, long int *p, double *b);
-
-/*
- * -----------------------------------------------------------------
- * Functions : DensePOTRF and DensePOTRS
- * -----------------------------------------------------------------
- * DensePOTRF computes the Cholesky factorization of a real symmetric
- * positive definite matrix A.
- * -----------------------------------------------------------------
- * DensePOTRS solves a system of linear equations A*X = B with a 
- * symmetric positive definite matrix A using the Cholesky factorization
- * A = L*L**T computed by DensePOTRF.
- *
- * -----------------------------------------------------------------
- * DensePOTRF and DensePOTRS are simply wrappers around densePOTRF
- * and densePOTRS, respectively, which perform all the work by
- * directly accessing the data in the DlsMat A (i.e. the field cols)
- * -----------------------------------------------------------------
- */
-
-SUNDIALS_EXPORT long int DensePOTRF(DlsMat A);
-SUNDIALS_EXPORT void DensePOTRS(DlsMat A, double *b);
-
-SUNDIALS_EXPORT long int densePOTRF(double **a, long int m);
-SUNDIALS_EXPORT void densePOTRS(double **a, long int m, double *b);
-
-/*
- * -----------------------------------------------------------------
- * Functions : DenseGEQRF and DenseORMQR
- * -----------------------------------------------------------------
- * DenseGEQRF computes a QR factorization of a real M-by-N matrix A:
- * A = Q * R (with M>= N).
- * 
- * DenseGEQRF requires a temporary work vector wrk of length M.
- * -----------------------------------------------------------------
- * DenseORMQR computes the product w = Q * v where Q is a real 
- * orthogonal matrix defined as the product of k elementary reflectors
- *
- *        Q = H(1) H(2) . . . H(k)
- *
- * as returned by DenseGEQRF. Q is an M-by-N matrix, v is a vector
- * of length N and w is a vector of length M (with M>=N).
- *
- * DenseORMQR requires a temporary work vector wrk of length M.
- *
- * -----------------------------------------------------------------
- * DenseGEQRF and DenseORMQR are simply wrappers around denseGEQRF
- * and denseORMQR, respectively, which perform all the work by
- * directly accessing the data in the DlsMat A (i.e. the field cols)
- * -----------------------------------------------------------------
- */
-
-SUNDIALS_EXPORT int DenseGEQRF(DlsMat A, double *beta, double *wrk);
-SUNDIALS_EXPORT int DenseORMQR(DlsMat A, double *beta, double *vn, double *vm, 
-			       double *wrk);
-
-SUNDIALS_EXPORT int denseGEQRF(double **a, long int m, long int n, double *beta, double *v);
-SUNDIALS_EXPORT int denseORMQR(double **a, long int m, long int n, double *beta,
-			       double *v, double *w, double *wrk);
+ long int denseGETRF(double **a, size_t m, size_t n, long int *p);
+ void denseGETRS(double **a, size_t n, long int *p, double *b);
 
 /*
  * -----------------------------------------------------------------
@@ -149,8 +91,7 @@ SUNDIALS_EXPORT int denseORMQR(double **a, long int m, long int n, double *beta,
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void DenseCopy(DlsMat A, DlsMat B);
-SUNDIALS_EXPORT void denseCopy(double **a, double **b, long int m, long int n);
+ void DenseCopy(DlsMat A, DlsMat B);
 
 /*
  * -----------------------------------------------------------------
@@ -165,8 +106,7 @@ SUNDIALS_EXPORT void denseCopy(double **a, double **b, long int m, long int n);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void DenseScale(double c, DlsMat A);
-SUNDIALS_EXPORT void denseScale(double c, double **a, long int m, long int n);
+ void DenseScale(double c, DlsMat A);
 
 
 /*
@@ -178,7 +118,7 @@ SUNDIALS_EXPORT void denseScale(double c, double **a, long int m, long int n);
  * -----------------------------------------------------------------
  */
 
-SUNDIALS_EXPORT void denseAddIdentity(double **a, long int n);
+ void denseAddIdentity(double **a, long int n);
 
 #ifdef __cplusplus
 }
