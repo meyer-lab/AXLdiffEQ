@@ -5,3 +5,6 @@
 *.o
 *.dia
 *.d
+*.log
+*.aux
+*.gz
