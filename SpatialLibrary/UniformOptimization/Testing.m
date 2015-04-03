@@ -50,4 +50,40 @@
     XCTAssertEqualWithAccuracy(dP, 2882.157, 0.01, @"Pass");
 }
 
+
+- (void)testDiffEntryVal {
+    
+    double params[] = {27.003, 5.0203e-06, 4.4569, 0.0018128, 4.467, 0.07214, 0.0010026, 0.0017783, 0.19216, 0.13615, 10190, 0.038456, 1};
+    double *pparams = &params[0];
+    
+    double GasIn[100];
+    double *pGasIn = &GasIn[0];
+    double tps[1] = {10};
+    double *ptps = &tps[0];
+    double dIn[20];
+    double *pdIn = &dIn[0];
+    
+    double dataPtr[1] = {0};
+    double *pDataPtr = &dataPtr[0];
+    
+    dIn[0] = 10;
+    for (size_t ii = 1; ii < 20; ii++) dIn[ii] = 0;
+    
+    for (size_t ii = 0; ii < 100; ii++) {
+        GasIn[ii] = 10 / ((double) ii + 1.0);
+    }
+    
+    
+    
+    [self measureBlock:^{
+        matlabDiffTPS_pYavg(pDataPtr, pGasIn, 100, pparams, ptps, 1, pdIn, 1);
+    }];
+}
+
+
+
+
+
+
+
 @end

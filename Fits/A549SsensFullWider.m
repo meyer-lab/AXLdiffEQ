@@ -18,7 +18,7 @@ for xxxx = 1:100
     parfor_progress(slices*length(maxx));
     
     parfor ii = 0:(slices*length(maxx) - 1)
-        IDX = mod(ii,length(maxx))+1;
+        IDX = 5;%mod(ii,length(maxx))+1;
         vv = linspace(minn(IDX),maxx(IDX),slices+1); %#ok<PFBNS>
 
         vIDX = floor(ii/length(maxx)) + 1;

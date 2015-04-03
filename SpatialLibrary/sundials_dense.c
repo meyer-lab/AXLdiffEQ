@@ -34,67 +34,53 @@
 
 
 
-long int denseGETRF(double **a, size_t m, size_t n, long int *p)
+long int denseGETRF(double **a, const size_t m, const size_t n, long int *p)
 {
-  long int i, j, k, l;
-  double *col_j, *col_k;
-  double temp, mult, a_kj;
-
-  /* k-th elimination step number */
-  for (k=0; k < n; k++) {
-
-    col_k  = a[k];
-
-    /* find l = pivot row number */
-    l=k;
-    for (i=k+1; i < m; i++)
-      if (fabs(col_k[i]) > fabs(col_k[l])) l=i;
-    p[k] = l;
-
-    /* check for zero pivot element */
-    if (col_k[l] == ZERO) return(k+1);
+    long int i, j;
+    long int l;
+    double *col_j, *col_k;
+    double temp, mult, a_kj;
     
-    /* swap a(k,1:n) and a(l,1:n) if necessary */    
-    if ( l!= k ) {
-      for (i=0; i<n; i++) {
-        temp = a[i][l];
-        a[i][l] = a[i][k];
-        a[i][k] = temp;
-      }
+    /* k-th elimination step number */
+    for (long int k=0; k < n; k++) {
+        col_k  = a[k];
+        
+        /* find l = pivot row number */
+        l=k;
+        for (i=k+1; i < m; i++)
+            if (fabs(col_k[i]) > fabs(col_k[l])) l=i;
+        p[k] = l;
+        
+        /* check for zero pivot element */
+        if (col_k[l] == 0.0) return(k+1);
+        
+        /* swap a(k,1:n) and a(l,1:n) if necessary */
+        if ( l!= k ) {
+            for (i=0; i<n; i++) {
+                temp = a[i][l];
+                a[i][l] = a[i][k];
+                a[i][k] = temp;
+            }
+        }
+        
+        mult = 1.0/col_k[k];
+        for(i=k+1; i < m; i++) col_k[i] *= mult;
+        
+        for (j=k+1; j < n; j++) {
+            
+            col_j = a[j];
+            a_kj = col_j[k];
+            
+            if (a_kj != 0.0) {
+                for (i=k+1; i < m; i++)
+                    col_j[i] -= a_kj * col_k[i];
+            }
+        }
     }
-
-    /* Scale the elements below the diagonal in
-     * column k by 1.0/a(k,k). After the above swap
-     * a(k,k) holds the pivot element. This scaling
-     * stores the pivot row multipliers a(i,k)/a(k,k)
-     * in a(i,k), i=k+1, ..., m-1.                      
-     */
-    mult = ONE/col_k[k];
-    for(i=k+1; i < m; i++) col_k[i] *= mult;
-
-    /* row_i = row_i - [a(i,k)/a(k,k)] row_k, i=k+1, ..., m-1 */
-    /* row k is the pivot row after swapping with row l.      */
-    /* The computation is done one column at a time,          */
-    /* column j=k+1, ..., n-1.                                */
-
-    for (j=k+1; j < n; j++) {
-
-      col_j = a[j];
-      a_kj = col_j[k];
-
-      /* a(i,j) = a(i,j) - [a(i,k)/a(k,k)]*a(k,j)  */
-      /* a_kj = a(k,j), col_k[i] = - a(i,k)/a(k,k) */
-
-      if (a_kj != ZERO) {
-	for (i=k+1; i < m; i++)
-	  col_j[i] -= a_kj * col_k[i];
-      }
-    }
-  }
-
-  /* return 0 to indicate success */
-
-  return(0);
+    
+    /* return 0 to indicate success */
+    
+    return(0);
 }
 
 void denseGETRS(double **a, size_t n, long int *p, double *b)

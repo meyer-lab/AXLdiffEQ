@@ -103,13 +103,15 @@ int AXL_react(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     return AXL_react(t, x_d, dxdt_d, user_data);
 }
 
+
+
 static double surfAXL (N_Vector state) {
     return Ith(state,0) + Ith(state,1) + Ith(state,2) + Ith(state,3) + 2*Ith(state,4) + 2*Ith(state,5);
 }
 
 
 // This takes the model state and calculates the amount of phosphorylated species
-static double pYcalc (N_Vector state, struct rates *p) {
+double pYcalc (N_Vector state, struct rates *p) {
     if (p->pD1 == 1) {
         return 2*Ith(state,5) + 2*Ith(state,4) + p->internalFrac*(2*Ith(state,11) + 2*Ith(state,10));
     } else {
@@ -117,13 +119,8 @@ static double pYcalc (N_Vector state, struct rates *p) {
     }
 }
 
-// This takes the model state and calculates the amount of phosphorylated species
-static double surfpY (N_Vector state, const struct rates * const p) {
-    return 2*Ith(state,5) + 2*Ith(state,4)*((double) p->pD1);
-}
-
 // This takes the model state and calculates the total amount of receptor in a cell
-static double totCalc (const N_Vector state, const struct rates * const p) {
+double totCalc (const N_Vector state, const struct rates * const p) {
     double total = 0;
     
     for (int ii = 0; ii < 6; ii++) total += Ith(state,ii);
@@ -193,6 +190,8 @@ struct rates Param(const double * const params) {
         
         return out;
 }
+
+
 
 /// END REACTION CODE
 
@@ -321,7 +320,7 @@ static double initialCondition (struct inData *dataS) {
     return fit / meas;
 }
 
-static double errorFuncOpt (const double *fitt, const double *pYmeas, const double *errorMeas, size_t inN) {
+static double errorFuncOpt (const double *fitt, const double *pYmeas, const double *errorMeas, size_t inN, double *xx) {
     struct inData dataS;
     dataS.fitt = fitt;
     dataS.pYmeas = pYmeas;
@@ -329,10 +328,10 @@ static double errorFuncOpt (const double *fitt, const double *pYmeas, const doub
     dataS.N = inN;
     
     double ff = 0;
-    double xx = initialCondition(&dataS);
-    const double lower = xx/2;
-    const double upper = xx*2;
-    double dx = 3*xx/8;
+    xx[0] = initialCondition(&dataS);
+    const double lower = xx[0]/2;
+    const double upper = xx[0]*2;
+    double dx = 3*xx[0]/8;
     double del = 1E-8;
     
     nlopt_stopping stop;
@@ -346,7 +345,7 @@ static double errorFuncOpt (const double *fitt, const double *pYmeas, const doub
     stop.maxeval = 1E9;
     stop.force_stop = 0;
     
-    int flag = cobyla_minimize(1, errorOpt, &dataS, 0, NULL, 0, NULL, &lower, &upper, &xx, &ff, &stop, &dx);
+    int flag = cobyla_minimize(1, errorOpt, &dataS, 0, NULL, 0, NULL, &lower, &upper, xx, &ff, &stop, &dx);
     
     if (flag < 0) throw runtime_error(string("Error during error optimization step."));
     
@@ -362,7 +361,7 @@ static double errorFuncFix (const double *fitt, const double *pYmeas, const doub
     return xx;
 }
 
-double calcError (struct rates inP) {
+double calcError (struct rates inP, double *fitParam) {
     double outData[NELEMS(Gass)*NELEMS(times)];
     double totData[NELEMS(Gass)*NELEMS(times)];
     double surfData[NELEMS(Gass)*NELEMS(times)];
@@ -373,10 +372,10 @@ double calcError (struct rates inP) {
     try {
         calcKinetic(outData, totData, surfData, earlyPY, &inP);
         
-        error += errorFuncOpt (outData, pY[0], pYerror[0], NELEMS(outData));
+        error += errorFuncOpt (outData, pY[0], pYerror[0], NELEMS(outData), &fitParam[0]);
         error += errorFuncFix (totData, tot[0], totError[0], NELEMS(totData));
-        error += errorFuncOpt (surfData, surf[0], surfError[0], NELEMS(surfData));
-        error += errorFuncOpt (earlyPY, pYk, pYkErr, NELEMS(earlyPY));
+        error += errorFuncOpt (surfData, surf[0], surfError[0], NELEMS(surfData), &fitParam[1]);
+        error += errorFuncOpt (earlyPY, pYk, pYkErr, NELEMS(earlyPY), &fitParam[2]);
         
     } catch (runtime_error &e) {
         errorLogger(&e);
@@ -410,7 +409,10 @@ void *initState( N_Vector init, struct rates *params) {
 
 
 /// Calculate phosphorylation at time points measured
-void calcProfileSet (double *outData, double *tps, struct rates *params, int nTps, double GasStim, int frac) {
+void calcProfileSet (double *pYData, double *totData, double *surfData, double *tps, struct rates *params, unsigned int nTps, double GasStim) {
+    double convFac[3];
+    calcError(*params, convFac);
+    
     N_Vector state = N_VNew_Serial(Nspecies);
     struct rates paramTwo = *params;
     
@@ -446,26 +448,14 @@ void calcProfileSet (double *outData, double *tps, struct rates *params, int nTp
     size_t ii = 0;
     
     if (tps[0] == 0) {
-        if (frac == 0) {
-            outData[ii] = pYcalc(state,params);
-        } else if (frac == 1) {
-            outData[ii] = pYcalc(state,params) / totCalc(state,params);
-        } else if (frac == 2) {
-            outData[ii] = totCalc(state,params);
-        } else if (frac == 3) {
-            outData[ii] = surfpY(state,params);
-        } else if (frac == 4) {
-            outData[ii] = surfAXL(state);
-        } else if (frac > 4 && frac < 17) {
-            outData[ii] = Ith(state, frac - 5);
-        } else {
-            throw runtime_error(string("Bad option."));
-        }
+        pYData[ii] = pYcalc(state,params)*convFac[0];
+        totData[ii] = totCalc(state,params);
+        surfData[ii] = surfAXL(state)*convFac[1];
         
         ii = 1;
     }
     
-    for (; ii < (size_t) abs(nTps); ii++) {
+    for (; ii < nTps; ii++) {
         flag = CVode(cvode_mem, tps[ii], state, &t, CV_NORMAL);
         if (flag < 0) {
             CVodeFree(&cvode_mem);
@@ -473,21 +463,9 @@ void calcProfileSet (double *outData, double *tps, struct rates *params, int nTp
             throw runtime_error(string("Error at CVode Time Course."));
         }
         
-        if (frac == 0) {
-            outData[ii] = pYcalc(state,params);
-        } else if (frac == 1) {
-            outData[ii] = pYcalc(state,params) / totCalc(state,params);
-        } else if (frac == 2) {
-            outData[ii] = totCalc(state,params);
-        } else if (frac == 3) {
-            outData[ii] = surfpY(state,params);
-        } else if (frac == 4) {
-            outData[ii] = surfAXL(state);
-        } else if (frac > 4 && frac < 17) {
-            outData[ii] = Ith(state, frac - 5);
-        } else {
-            throw runtime_error(string("Bad option."));
-        }
+        pYData[ii] = pYcalc(state,params)*convFac[0];
+        totData[ii] = totCalc(state,params);
+        surfData[ii] = surfAXL(state)*convFac[1];
     }
     
     /* Free integrator memory */
@@ -495,5 +473,125 @@ void calcProfileSet (double *outData, double *tps, struct rates *params, int nTp
     N_VDestroy_Serial(state);
 }
 
+
+
+
+
+
+static int AXL_react_diff(const double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
+    struct rates *pInD = (struct rates *) user_data;
+    double reactIn[Nspecies];
+    double reactOut[Nspecies];
+    
+    double* const xx_d = NV_DATA_S(xx);
+    double* const dxxdt_d = NV_DATA_S(dxxdt);
+    size_t pos, ii;
+    const size_t grid_size = (size_t) NV_LENGTH_S(xx)/Nspecies;
+    const double dRdRMaxRMaxR = maxR*maxR*(1.0/grid_size)*(1.0/grid_size);
+    
+    for (size_t spec = 0; spec < Nspecies; spec++) {
+        if (pInD->diffD[spec] == 0) {
+            for (ii = 1; ii < (grid_size-1); ii++) dxxdt_d[spec*grid_size + ii] = 0;
+            dxxdt_d[spec*grid_size] = 0;
+            dxxdt_d[(spec+1)*grid_size - 1] = 0;
+        } else {
+            for (ii = 1; ii < (grid_size-1); ii++) {
+                pos = spec*grid_size + ii;
+                dxxdt_d[pos] = (-4.0*xx_d[pos] + (2.0-1.0/ii)*xx_d[pos - 1] + (2.0+1.0/ii)*xx_d[pos + 1])/2/dRdRMaxRMaxR;
+            }
+            
+            // Take care of boundary conditions
+            dxxdt_d[spec*grid_size] = 4*(xx_d[spec*grid_size + 1] - xx_d[spec*grid_size])/dRdRMaxRMaxR;
+            dxxdt_d[(spec+1)*grid_size - 1] = -4*(xx_d[(spec+1)*grid_size - 1] - xx_d[(spec+1)*grid_size - 2])/dRdRMaxRMaxR;
+        }
+    }
+    
+    // Add in the reaction for each location
+    for (size_t jj = 0; jj < grid_size; jj++) {
+        for (ii = 0; ii < Nspecies; ii++) reactIn[ii] = xx_d[ii*grid_size + jj];
+        
+        pInD->gasCur = pInD->gasProfile[jj];
+        
+        AXL_react(t,reactIn,reactOut,user_data);
+        
+        // Convert by diffusion coefficient and add in reaction
+        for (ii = 0; ii < Nspecies; ii++) {
+            dxxdt_d[ii*grid_size + jj] = dxxdt_d[ii*grid_size + jj]*pInD->diffD[ii] + reactOut[ii];
+        }
+    }
+    
+    return 0;
+}
+
+
+
+void diffusionSolution(double *dataPtr, double *GasIn, unsigned int gridIn, double *params, double *tps, unsigned int nTps, double *dIn) {
+    // Common
+    double t = 0;
+    void *cvode_mem = NULL;
+    int flag;
+    
+    // Create the parameter structure
+    struct rates pInS = Param(params);
+    pInS.diffD = dIn;
+    pInS.gasProfile = GasIn;
+    
+    // Get initial state
+    N_Vector init_state = N_VNew_Serial(Nspecies);
+    
+    // Initialize state based on autocrine ligand
+    try {
+        cvode_mem = initState(init_state, &pInS);
+    } catch (exception &e) {
+        N_VDestroy_Serial(init_state);
+        throw;
+    }
+    
+    CVodeFree(&cvode_mem);
+    
+    
+    // Initialize full diffusion model
+    N_Vector state = N_VNew_Serial(Nspecies * gridIn);
+    
+    for (size_t ii = 0; ii < gridIn; ii++) {
+        for (size_t spec = 0; spec < Nspecies; spec++) Ith(state,spec*((size_t) gridIn) + ii) = Ith(init_state,spec);
+    }
+    
+    N_VDestroy_Serial(init_state);
+    
+    try {
+        cvode_mem = solver_setup (state, &pInS, AXL_react_diff);
+        
+        if (cvode_mem == NULL) throw runtime_error(string("Uncaught NULL return from solver_setup in diffusion setup."));
+    } catch (exception &e) {
+        N_VDestroy_Serial(state);
+        throw;
+    }
+    
+    size_t tIDX = 0;
+    
+    if (tps[0] == 0) {
+        for (size_t jj = 0; jj < (size_t) NV_LENGTH_S(state); jj++) dataPtr[jj] = Ith(state,jj);
+        tIDX = 1;
+    }
+    
+    for (; tIDX < nTps; tIDX++) {
+        flag = CVode(cvode_mem, tps[tIDX], state, &t, CV_NORMAL);
+        
+        if (flag < 0) {
+            N_VDestroy_Serial(state);
+            CVodeFree(&cvode_mem);
+            throw runtime_error(string("CVode error on diffusion solution."));
+        }
+        
+        for (size_t jj = 0; jj < (size_t) NV_LENGTH_S(state); jj++) {
+            dataPtr[tIDX*((size_t) NV_LENGTH_S(state)) + jj] = Ith(state,jj);
+        }
+    }
+    
+    /* Free vectors */
+    N_VDestroy_Serial(state);
+    CVodeFree(&cvode_mem);
+}
 
 

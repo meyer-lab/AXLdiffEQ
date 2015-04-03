@@ -209,22 +209,15 @@ void N_VDestroyVectorArray_Serial(N_Vector *vs, int count)
  
 void N_VPrint_Serial(N_Vector x)
 {
-  long int i, N;
+  long int i;
   double *xd;
 
   xd = NULL;
 
-  N  = NV_LENGTH_S(x);
   xd = NV_DATA_S(x);
 
-  for (i = 0; i < N; i++) {
-#if defined(SUNDIALS_EXTENDED_PRECISION)
-    printf("%11.8Lg\n", xd[i]);
-#elif defined(SUNDIALS_DOUBLE_PRECISION)
+  for (i = 0; i < NV_LENGTH_S(x); i++) {
     printf("%11.8lg\n", xd[i]);
-#else
-    printf("%11.8g\n", xd[i]);
-#endif
   }
   printf("\n");
 
@@ -236,9 +229,6 @@ void N_VPrint_Serial(N_Vector x)
  * implementation of vector operations
  * -----------------------------------------------------------------
  */
-
-
-
 
 N_Vector N_VCloneEmpty_Serial(N_Vector w)
 {
@@ -330,12 +320,8 @@ void N_VSetArrayPointer_Serial(double *v_data, N_Vector v)
 
 void N_VLinearSum_Serial(double a, N_Vector x, double b, N_Vector y, N_Vector z)
 {
-  long int i, N;
-  double c, *xd, *yd, *zd;
   N_Vector v1, v2;
   booleantype test;
-
-  xd = yd = zd = NULL;
 
   if ((b == ONE) && (z == y)) {    /* BLAS usage: axpy y <- ax+y */
     Vaxpy_Serial(a,x,y);
@@ -363,6 +349,8 @@ void N_VLinearSum_Serial(double a, N_Vector x, double b, N_Vector y, N_Vector z)
     return;
   }
 
+    double c;
+    
   /* Cases: (1) a == 1.0, b == other or 0.0, (2) a == other or 0.0, b == 1.0 */
   /* if a or b is 0.0, then user should have called N_VScale */
 
@@ -404,12 +392,12 @@ void N_VLinearSum_Serial(double a, N_Vector x, double b, N_Vector y, N_Vector z)
      (2) a == 0.0, b == other - user should have called N_VScale
      (3) a,b == other, a !=b, a != -b */
   
-  N  = NV_LENGTH_S(x);
-  xd = NV_DATA_S(x);
-  yd = NV_DATA_S(y);
-  zd = NV_DATA_S(z);
+  size_t N  = NV_LENGTH_S(x);
+  double *xd = NV_DATA_S(x);
+  double *yd = NV_DATA_S(y);
+  double *zd = NV_DATA_S(z);
 
-  for (i = 0; i < N; i++)
+  for (size_t i = 0; i < N; i++)
     zd[i] = (a*xd[i])+(b*yd[i]);
 
   return;

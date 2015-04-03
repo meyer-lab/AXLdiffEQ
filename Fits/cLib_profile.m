@@ -1,18 +1,24 @@
-function outter = cLib_profile (tps, params, GasStim, frac)
+function [pY, tot, surf] = cLib_profile (tps, params, GasStim)
 
 %unloadlibrary('libOptimize');
 if ~libisloaded('libOptimize')
     loadlibrary('libOptimize.dylib','BlasHeader.h')
 end
 
-out = libpointer('doublePtr',1:length(tps));
+out1 = libpointer('doublePtr',1:length(tps));
+out2 = libpointer('doublePtr',1:length(tps));
+out3 = libpointer('doublePtr',1:length(tps));
 tpsIn = libpointer('doublePtr',tps);
 paramsIn = libpointer('doublePtr',params);
 
-x = calllib('libOptimize','calcProfileMatlab',out,paramsIn,tpsIn,length(tps),GasStim, frac);
+x = calllib('libOptimize','calcProfileMatlab',out1,out2,out3,paramsIn,tpsIn,uint32(length(tps)),GasStim);
 
 if x == 0
-    outter = out.Value;
+    pY = out1.Value;
+    tot = out2.Value;
+    surf = out3.Value;
 else
-    outter = [];
+    pY = [];
+    tot = [];
+    surf = [];
 end

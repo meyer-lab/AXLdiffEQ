@@ -55,7 +55,6 @@ typedef struct CVDlsMemRec {
 
   booleantype d_jacDQ;    /* TRUE if using internal DQ Jacobian approx.   */
   CVDlsDenseJacFn d_djac; /* dense Jacobian routine to be called          */
-  CVDlsBandJacFn d_bjac;  /* band Jacobian routine to be called           */
   void *d_J_data;         /* user data is passed to djac or bjac          */
 
   DlsMat d_M;             /* M = I - gamma * df/dy                        */
@@ -84,11 +83,6 @@ int cvDlsDenseDQJac(long int N, double t,
 		    N_Vector y, N_Vector fy, 
 		    DlsMat Jac, void *data,
 		    N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
-  
-int cvDlsBandDQJac(long int N, long int mupper, long int mlower,
-		   double t, N_Vector y, N_Vector fy, 
-		   DlsMat Jac, void *data,
-		   N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
 
 
 /*

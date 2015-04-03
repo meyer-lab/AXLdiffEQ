@@ -20,7 +20,7 @@
 
 #define Nspecies 13
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
-
+#define maxR 1.0
 #define Nparams 11
 
 //#define numParams 14
@@ -54,6 +54,8 @@ struct rates {
     double internalV;
     double autocrine;
     double gasCur;
+    double *diffD;
+    double *gasProfile;
 };
 
 static const double times[2] = {60, 240}; ///< Times of kinetic measurements.
@@ -114,13 +116,14 @@ static const double surfError[6][2] = {
     {0.030, 0.023}}; // A549
 
 
-double calcError (struct rates);
+double calcError (struct rates, double *);
 void*initState(N_Vector, struct rates *);
 void calcProfile (N_Vector, N_Vector, N_Vector, N_Vector, N_Vector, struct rates *, double, double);
-void calcProfileSet (double *outData, double *tps, struct rates *params, int nTps, double GasStim, int frac);
+void calcProfileSet (double *pYData, double *totData, double *surfData, double *tps, struct rates *params, unsigned int nTps, double GasStim);
 int AXL_react(double, N_Vector, N_Vector, void *);
 struct rates Param(const double *);
-int AXL_jac (long int N, double t, N_Vector y, N_Vector fy, DlsMat Jac, void *user_data, N_Vector tmp1, N_Vector tmp2, N_Vector tmp3);
-double calcErrorMer (struct rates inP);
+double pYcalc (N_Vector state, struct rates *p);
+void diffusionSolution(double *dataPtr, double *GasIn, unsigned int gridIn, double *params, double *tps, unsigned int nTps, double *dIn);
+double totCalc (const N_Vector state, const struct rates * const p);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */
