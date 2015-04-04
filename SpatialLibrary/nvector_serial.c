@@ -392,7 +392,7 @@ void N_VLinearSum_Serial(double a, N_Vector x, double b, N_Vector y, N_Vector z)
      (2) a == 0.0, b == other - user should have called N_VScale
      (3) a,b == other, a !=b, a != -b */
   
-  size_t N  = NV_LENGTH_S(x);
+  size_t N  = (size_t) NV_LENGTH_S(x);
   double *xd = NV_DATA_S(x);
   double *yd = NV_DATA_S(y);
   double *zd = NV_DATA_S(z);

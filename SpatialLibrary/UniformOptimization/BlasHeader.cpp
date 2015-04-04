@@ -12,7 +12,6 @@
 #include "BlasHeader.h"
 #include "CVodeHelpers.h"
 
-
 using namespace std;
 
 extern "C" double pyEntry(double *pIn) {
@@ -29,11 +28,11 @@ extern "C" void pyEntryVec(double *pIn, double *pOut, int n) {
     }
 }
 
-extern "C" int calcProfileMatlab(double *pYData, double *totData, double *surfData, double *params, double *tps, unsigned int nTps, double GasStim) {
+extern "C" int calcProfileMatlab(double *pYData, double *totData, double *surfData, double *speciesData, double *params, double *tps, unsigned int nTps, double GasStim, double *convFac) {
     struct rates pInS = Param(params);
     
     try {
-        calcProfileSet (pYData, totData, surfData, tps, &pInS, nTps, GasStim);
+        calcProfileSet (pYData, totData, surfData, speciesData, tps, &pInS, nTps, GasStim, convFac);
     } catch (std::exception &e) {
         errorLogger(&e);
         return 1;
@@ -42,21 +41,7 @@ extern "C" int calcProfileMatlab(double *pYData, double *totData, double *surfDa
     return 0;
 }
 
-extern "C" int matlabDiffTPS(double *dataPtr, double *GasIn, unsigned int gridIn, double *params, double *tps, unsigned int nTps, double *dIn) {
-    
-    try {
-        diffusionSolution(dataPtr, GasIn, gridIn, params, tps, nTps, dIn);
-    } catch (std::exception &e) {
-        errorLogger(&e);
-        return 1;
-    }
-    
-    return 0;
-}
-
-extern "C" int matlabDiffTPS_pY(double *dataPtr, double *GasIn, unsigned int gridIn, double *params, double *tps, unsigned int nTps, double *dIn, int frac) {
-    
-    double dataPtrTemp[gridIn*nTps*Nspecies];
+extern "C" int diffCalc(double *dataPtrTemp, double *dataPtrpY, double *dataPtrTot, double *dataPtrSurf, double *GasIn, unsigned int gridIn, double *params, double *tps, unsigned int nTps, double *dIn) {
     
     try {
         diffusionSolution(dataPtrTemp, GasIn, gridIn, params, tps, nTps, dIn);
@@ -69,7 +54,6 @@ extern "C" int matlabDiffTPS_pY(double *dataPtr, double *GasIn, unsigned int gri
     struct rates pInS;
     pInS = Param(params);
     
-    
     N_Vector state = N_VNew_Serial(Nspecies);
     
     for (size_t time = 0; time < nTps; time++) {
@@ -78,40 +62,14 @@ extern "C" int matlabDiffTPS_pY(double *dataPtr, double *GasIn, unsigned int gri
                 Ith(state,spec) = dataPtrTemp[time*gridIn*Nspecies + spec*gridIn + gridP];
             }
             
-            if (frac == 0) {
-                dataPtr[time*gridIn + gridP] = pYcalc(state, &pInS);
-            } else if (frac == 1) {
-                dataPtr[time*gridIn + gridP] = pYcalc(state, &pInS) / totCalc(state, &pInS);
-            } else {
-                dataPtr[time*gridIn + gridP] = totCalc(state, &pInS);
-            }
+            dataPtrpY[time*gridIn + gridP] = pYcalc(state, &pInS);
+            dataPtrTot[time*gridIn + gridP] = totCalc(state, &pInS);
+            dataPtrSurf[time*gridIn + gridP] = surfCalc(state);
         }
     }
+    
     
     N_VDestroy_Serial(state);
-    return 0;
-}
-
-extern "C" int matlabDiffTPS_pYavg(double *dataPtr, double *GasIn, unsigned int gridIn, double *params, double *tps, unsigned int nTps, double *dIn, int frac) {
-    
-    double dataPtrTemp[gridIn*nTps];
-    
-    int flag = matlabDiffTPS_pY(dataPtrTemp, GasIn, gridIn, params, tps, nTps, dIn, frac);
-    if (flag == 1) return(1);
-    
-    double summ;
-    
-    for (size_t time = 0; time < nTps; time++) {
-        summ = 0;
-        
-        for (size_t gridP = 0; gridP < gridIn; gridP++) {
-            summ += dataPtrTemp[time*gridIn + gridP]*((double) gridP);
-        }
-        
-        
-        dataPtr[time] = 2*summ/gridIn/gridIn;
-    }
-    
     return 0;
 }
 

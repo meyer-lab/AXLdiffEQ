@@ -105,8 +105,8 @@ int AXL_react(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
 
 
 
-static double surfAXL (N_Vector state) {
-    return Ith(state,0) + Ith(state,1) + Ith(state,2) + Ith(state,3) + 2*Ith(state,4) + 2*Ith(state,5);
+double surfCalc (N_Vector state) {
+    return (Ith(state,0) + Ith(state,1) + Ith(state,2) + Ith(state,3) + 2*Ith(state,4) + 2*Ith(state,5))/fgMgConv;
 }
 
 
@@ -133,17 +133,6 @@ double totCalc (const N_Vector state, const struct rates * const p) {
     
     return total/fgMgConv;
 }
-
-/* 
- 0: Unbinding 2
- 1: Forward dimerization
- 2: xRev4
- 3: pYinternalize
- 4: fElse
- 5: expression
- 6: autocrine
- 7: pD1
-*/
 
 struct rates Param(const double * const params) {
     struct rates out;
@@ -251,7 +240,7 @@ static void calcKinetic (double *outData, double *totData, double *surfData, dou
             
             outData[stimuli*NELEMS(times) + ii] = pYcalc(state,params);
             totData[stimuli*NELEMS(times) + ii] = totCalc(state,params);
-            surfData[stimuli*NELEMS(times) + ii] = surfAXL(state);
+            surfData[stimuli*NELEMS(times) + ii] = surfCalc(state);
         }
     }
     
@@ -406,11 +395,8 @@ void *initState( N_Vector init, struct rates *params) {
     return cvode_mem;
 }
 
-
-
 /// Calculate phosphorylation at time points measured
-void calcProfileSet (double *pYData, double *totData, double *surfData, double *tps, struct rates *params, unsigned int nTps, double GasStim) {
-    double convFac[3];
+void calcProfileSet (double *pYData, double *totData, double *surfData, double *speciesData, double *tps, struct rates *params, unsigned int nTps, double GasStim, double *convFac) {
     calcError(*params, convFac);
     
     N_Vector state = N_VNew_Serial(Nspecies);
@@ -448,9 +434,14 @@ void calcProfileSet (double *pYData, double *totData, double *surfData, double *
     size_t ii = 0;
     
     if (tps[0] == 0) {
-        pYData[ii] = pYcalc(state,params)*convFac[0];
+        pYData[ii] = pYcalc(state,params);
         totData[ii] = totCalc(state,params);
-        surfData[ii] = surfAXL(state)*convFac[1];
+        surfData[ii] = surfCalc(state);
+        
+        for (size_t ss = 0; ss < Nspecies; ss++) {
+            speciesData[ii*Nspecies + ss] = Ith(state,ss);
+        }
+        
         
         ii = 1;
     }
@@ -463,9 +454,13 @@ void calcProfileSet (double *pYData, double *totData, double *surfData, double *
             throw runtime_error(string("Error at CVode Time Course."));
         }
         
-        pYData[ii] = pYcalc(state,params)*convFac[0];
+        pYData[ii] = pYcalc(state,params);
         totData[ii] = totCalc(state,params);
-        surfData[ii] = surfAXL(state)*convFac[1];
+        surfData[ii] = surfCalc(state);
+        
+        for (size_t ss = 0; ss < Nspecies; ss++) {
+            speciesData[ii*Nspecies + ss] = Ith(state,ss);
+        }
     }
     
     /* Free integrator memory */

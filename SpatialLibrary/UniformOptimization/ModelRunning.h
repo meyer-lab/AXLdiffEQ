@@ -23,8 +23,6 @@
 #define maxR 1.0
 #define Nparams 11
 
-//#define numParams 14
-
 struct rates {
     double Binding1;   ///< Forward binding rate for Ig1
     double Binding2;   ///< Forward binding rate for Ig2
@@ -119,11 +117,12 @@ static const double surfError[6][2] = {
 double calcError (struct rates, double *);
 void*initState(N_Vector, struct rates *);
 void calcProfile (N_Vector, N_Vector, N_Vector, N_Vector, N_Vector, struct rates *, double, double);
-void calcProfileSet (double *pYData, double *totData, double *surfData, double *tps, struct rates *params, unsigned int nTps, double GasStim);
+void calcProfileSet (double *, double *, double *, double *, double *, struct rates *, unsigned int, double, double *);
 int AXL_react(double, N_Vector, N_Vector, void *);
 struct rates Param(const double *);
 double pYcalc (N_Vector state, struct rates *p);
-void diffusionSolution(double *dataPtr, double *GasIn, unsigned int gridIn, double *params, double *tps, unsigned int nTps, double *dIn);
-double totCalc (const N_Vector state, const struct rates * const p);
+void diffusionSolution(double *, double *, unsigned int gridIn, double *params, double *, unsigned int, double *);
+double totCalc (const N_Vector, const struct rates * const p);
+double surfCalc (N_Vector state);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

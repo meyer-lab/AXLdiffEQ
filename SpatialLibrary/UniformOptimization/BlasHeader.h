@@ -14,12 +14,10 @@ extern "C" {
 #endif
 
     double pyEntry(double *pIn);
-    int calcProfileMatlab(double *, double *, double *, double *, double *, unsigned int, double);
+    int calcProfileMatlab(double *, double *, double *, double *, double *, double *, unsigned int, double, double *);
     void pyEntryVec(double *pIn, double *pOut, int n);
     
-    int matlabDiffTPS(double *, double *, unsigned int, double *, double *, unsigned int, double *);
-    int matlabDiffTPS_pY(double *, double *, unsigned int, double *, double *, unsigned int, double *, int);
-    int matlabDiffTPS_pYavg(double *, double *, unsigned int, double *, double *, unsigned int, double *, int);
+    extern "C" int diffCalc(double *, double *, double *, double *, double *, unsigned int, double *, double *, unsigned int, double *);
     
 #ifdef __cplusplus
 }

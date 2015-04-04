@@ -1,9 +1,9 @@
-clc; clear;
+function paperFigures() 
 
-params = 10.^[2.3626, -3.8869, 3.5788, -0.8938, -1.3400, -2.9947, ...
-    -0.1982, -1.9999,  4.1196, -0.9247,  0.7935];
+[~, ~, ~, params] = loadParam;
+clc;
 
-figIDX = 1;
+params = params(end,:);
 
 sshape = @(x,xx) cos(xx*pi/3).^x(1);
 GasConc = -1.204;
@@ -11,27 +11,22 @@ GassF = @(x,xx) 2*sshape(x,xx)/mean(sshape(x,xx).*xx)*(10^x(2));
 
 shapeParam = 60;
 
-names = {'B1','B2','U1','U2','xFwd1','xRev1','xFwd3','xRev3','AXLint1','AXLint2',...
-	'scaleA','kRec','kDeg','fElse','fD2','Gas1','AXL2'};
-
 D = zeros(1,14);
 D(1) = 1;
+D(7:end) = 1;
 
 DO_SPATIAL_PRED = 1;
 
-%% Real Gas6 local prediction
+% Real Gas6 local prediction
 
 % This script generated Figure 2B
 
 if DO_SPATIAL_PRED
-    figure(figIDX);
-    figIDX = figIDX + 1;
-    
-    xx = linspace(0,1,120);
-    A = logspace(-2,3,16);
+    xx = linspace(0,1,40);
+    A = logspace(-2,3,20);
 
     for ii = 1:length(A)
-        BB(:,ii) = GassF([A(ii) GasConc shapeParam],xx); %#ok<SAGROW>
+        BB(:,ii) = GassF([A(ii) GasConc shapeParam],xx);
     end
 
     subplot(2,2,1);
@@ -40,28 +35,28 @@ if DO_SPATIAL_PRED
     
     % Next
 
-    ffSpat = @(x,y) cLib_diff_profile_pY (30, params, GassF(x,xx), D*y, 0);
+    ffSpat = @(x,y) cLib_diff_profile (10, params, GassF(x,xx), D*y);
 
     localPY = zeros(length(A),4);
     avgPY = zeros(length(A),4);
 
-    parfor ii = 1:length(A)
+    for ii = 1:length(A)
         localPYz = zeros(1,4);
         avgPYz = zeros(1,4);
         
-        temp = ffSpat([A(ii) GasConc],0);
+        [~, temp] = ffSpat([A(ii) GasConc],0);
         localPYz(1) = temp(1);
         avgPYz(1) = mean(temp.*xx);
         
-        temp = ffSpat([A(ii) GasConc],0.1);
+        [~, temp] = ffSpat([A(ii) GasConc],0.1);
         localPYz(2) = temp(1);
         avgPYz(2) = mean(temp.*xx);
 
-        temp = ffSpat([A(ii) GasConc],1);
+        [~, temp] = ffSpat([A(ii) GasConc],1);
         localPYz(3) = temp(1);
         avgPYz(3) = mean(temp.*xx);
         
-        temp = ffSpat([A(ii) GasConc],10);
+        [~, temp] = ffSpat([A(ii) GasConc],10);
         localPYz(4) = temp(1);
         avgPYz(4) = mean(temp.*xx);
         
@@ -88,7 +83,7 @@ if DO_SPATIAL_PRED
     semilogx(A,avgPY(:,2)/avgPY(1,2),'g-');
     semilogx(A,avgPY(:,3)/avgPY(1,3),'b-');
     semilogx(A,avgPY(:,4)/avgPY(1,4),'r-');
-    axis([min(A) max(A) 0 2.2]);
+    axis([min(A) max(A) 0 4]);
     title('Average predictions');
     
     
@@ -97,21 +92,18 @@ if DO_SPATIAL_PRED
     subplot(2,2,4);
 
     names = {'A','A1','A2','A12','D1','D2'};
-    ttt = [1 0 0 0 0 0 1 0 0 0 0 0 0;...
-           0 1 0 0 0 0 0 1 0 0 0 0 0;...
-           0 0 1 0 0 0 0 0 1 0 0 0 0;...
-           0 0 0 1 0 0 0 0 0 1 0 0 0;...
-           0 0 0 0 1 0 0 0 0 0 1 0 0;...
-           0 0 0 0 0 1 0 0 0 0 0 1 0];
+    ttt = [1 0 0 0 0 0 0.5 0 0 0 0 0 0;...
+           0 1 0 0 0 0 0 0.5 0 0 0 0 0;...
+           0 0 1 0 0 0 0 0 0.5 0 0 0 0;...
+           0 0 0 1 0 0 0 0 0 0.5 0 0 0;...
+           0 0 0 0 1 0 0 0 0 0 0.5 0 0;...
+           0 0 0 0 0 1 0 0 0 0 0 0.5 0];
 
     meanify = @(x) 2*x'*xx'/length(xx);
-
-    ffSpat = @(x) cLib_diff_profile (30, params, GassF(x,xx), D*10);
-
-    clc;
     
-    parfor ii = 1:length(A)
-        Bdetail(:,ii) = meanify(ffSpat([A(ii) GasConc]));
+    for ii = 1:length(A)
+        temp = ffSpat([A(ii) GasConc], 10);
+        Bdetail(:,ii) = meanify(temp);
         B(ii,:) = ttt*Bdetail(:,ii);
         
         disp(ii);
@@ -125,3 +117,37 @@ if DO_SPATIAL_PRED
     axis([min(A) max(A) min(min(B)) max(max(B))]);
     legend(names);
 end
+
+end
+
+function [outter, pY, tot, surf] = cLib_diff_profile (tps, params, GasIn, Din)
+    Nspecies = 13;
+
+    if ~libisloaded('libOptimizeDiff')
+        loadlibrary('libOptimizeDiff.dylib','BlasHeader.h')
+    end
+
+    dataPtr = libpointer('doublePtr',1:(length(tps)*length(GasIn)*Nspecies));
+    dataPtrpY = libpointer('doublePtr',1:(length(tps)*length(GasIn)));
+    dataPtrTot = libpointer('doublePtr',1:(length(tps)*length(GasIn)));
+    dataPtrSurf = libpointer('doublePtr',1:(length(tps)*length(GasIn)));
+
+    x = calllib('libOptimizeDiff','diffCalc',dataPtr, dataPtrpY, dataPtrTot, ...
+        dataPtrSurf, libpointer('doublePtr',GasIn), length(GasIn), ...
+        libpointer('doublePtr',params), ...
+        libpointer('doublePtr',tps), length(tps), ...
+        libpointer('doublePtr',Din));
+
+    if x == 0
+        outter = dataPtr.Value;
+        pY = dataPtrpY.Value;
+        tot = dataPtrTot.Value;
+        surf = dataPtrSurf.Value;
+
+        outter = reshape(outter,length(GasIn),[],length(tps));
+    else
+        error('Error!');
+    end
+end
+
+

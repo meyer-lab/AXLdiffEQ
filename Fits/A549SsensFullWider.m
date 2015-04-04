@@ -15,10 +15,10 @@ Dopts = psoptimset('TimeLimit',45*60,'Display','off','CompletePoll','on',...
 parpool(11);
 
 for xxxx = 1:100
-    parfor_progress(slices*length(maxx));
+    %parfor_progress(slices*length(maxx));
     
     parfor ii = 0:(slices*length(maxx) - 1)
-        IDX = 5;%mod(ii,length(maxx))+1;
+        IDX = mod(ii,length(maxx))+1;
         vv = linspace(minn(IDX),maxx(IDX),slices+1); %#ok<PFBNS>
 
         vIDX = floor(ii/length(maxx)) + 1;
@@ -37,11 +37,11 @@ for xxxx = 1:100
             fitIDXglobal(ii+1) = 1E6;
         end
         
-        parfor_progress;
+        %parfor_progress;
         
     end
     
-    parfor_progress(0);
+    %parfor_progress(0);
     
     fitStruct{xxxx}.paramOpt = paramOpt; %#ok<AGROW>
     fitStruct{xxxx}.fitIDXglobal = fitIDXglobal; %#ok<AGROW>
