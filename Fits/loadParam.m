@@ -11,7 +11,7 @@ fitStruct2 = fitStruct;
 load WithpYnewBalance_3YD;
 fitStruct = [fitStruct, fitStruct2];
 
-names = {'U2','xFwd1','xRev4','int1','int2','kRec','kDeg','fElse','AXL','Gas'};
+names = {'U2','xFwd1','xRev4','int1','int2','kRec','kDeg','fElse','AXL','Gas','pD'};
 
 fitt = [];
 params = [];
@@ -24,7 +24,7 @@ end
 disp(min(fitt(params(:,end) > 0.5)));
 disp(min(fitt(params(:,end) < 0.5)));
 
-cutoff = min(fitt)+9;
+cutoff = min(fitt)+3;
 
 params(fitt > cutoff,:) = [];
 fitt(fitt > cutoff) = [];

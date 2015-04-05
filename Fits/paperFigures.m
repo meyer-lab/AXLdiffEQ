@@ -33,6 +33,7 @@ if DO_SPATIAL_PRED
     plot(BB);
     title('Gas6 profile');
     
+    
     % Next
 
     ffSpat = @(x,y) cLib_diff_profile (10, params, GassF(x,xx), D*y);
@@ -91,13 +92,15 @@ if DO_SPATIAL_PRED
     
     subplot(2,2,4);
 
+    inC = 0;
+    
     names = {'A','A1','A2','A12','D1','D2'};
-    ttt = [1 0 0 0 0 0 0.5 0 0 0 0 0 0;...
-           0 1 0 0 0 0 0 0.5 0 0 0 0 0;...
-           0 0 1 0 0 0 0 0 0.5 0 0 0 0;...
-           0 0 0 1 0 0 0 0 0 0.5 0 0 0;...
-           0 0 0 0 1 0 0 0 0 0 0.5 0 0;...
-           0 0 0 0 0 1 0 0 0 0 0 0.5 0];
+    ttt = [1 0 0 0 0 0 inC 0 0 0 0 0 0;...
+           0 1 0 0 0 0 0 inC 0 0 0 0 0;...
+           0 0 1 0 0 0 0 0 inC 0 0 0 0;...
+           0 0 0 1 0 0 0 0 0 inC 0 0 0;...
+           0 0 0 0 1 0 0 0 0 0 inC 0 0;...
+           0 0 0 0 0 1 0 0 0 0 0 inC 0];
 
     meanify = @(x) 2*x'*xx'/length(xx);
     
@@ -113,7 +116,7 @@ if DO_SPATIAL_PRED
     %    B(:,ii) = B(:,ii) - B(1,ii); %#ok<SAGROW>
     %end
 
-    semilogx(A,B);
+    loglog(A,B);
     axis([min(A) max(A) min(min(B)) max(max(B))]);
     legend(names);
 end
@@ -123,8 +126,8 @@ end
 function [outter, pY, tot, surf] = cLib_diff_profile (tps, params, GasIn, Din)
     Nspecies = 13;
 
-    if ~libisloaded('libOptimizeDiff')
-        loadlibrary('libOptimizeDiff.dylib','BlasHeader.h')
+    if ~libisloaded('libOptimize')
+        loadlibrary('libOptimize.dylib','BlasHeader.h')
     end
 
     dataPtr = libpointer('doublePtr',1:(length(tps)*length(GasIn)*Nspecies));
@@ -132,7 +135,7 @@ function [outter, pY, tot, surf] = cLib_diff_profile (tps, params, GasIn, Din)
     dataPtrTot = libpointer('doublePtr',1:(length(tps)*length(GasIn)));
     dataPtrSurf = libpointer('doublePtr',1:(length(tps)*length(GasIn)));
 
-    x = calllib('libOptimizeDiff','diffCalc',dataPtr, dataPtrpY, dataPtrTot, ...
+    x = calllib('libOptimize','diffCalc',dataPtr, dataPtrpY, dataPtrTot, ...
         dataPtrSurf, libpointer('doublePtr',GasIn), length(GasIn), ...
         libpointer('doublePtr',params), ...
         libpointer('doublePtr',tps), length(tps), ...
