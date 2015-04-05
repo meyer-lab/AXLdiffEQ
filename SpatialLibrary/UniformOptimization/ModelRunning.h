@@ -21,7 +21,7 @@
 #define Nspecies 13
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */
 #define maxR 1.0
-#define Nparams 11
+#define Nparams 8
 
 struct rates {
     double Binding1;   ///< Forward binding rate for Ig1
@@ -47,6 +47,7 @@ struct rates {
     double kDeg;       ///< Degradation rate.
     double fElse;      ///< Recycling fraction for non-D2 species.
     double fD2;        ///< Recycling fraction for D2.
+    double fPhase;
     int pD1;
     double internalFrac;
     double internalV;

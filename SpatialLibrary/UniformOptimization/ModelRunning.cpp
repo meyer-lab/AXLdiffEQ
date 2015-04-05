@@ -67,7 +67,7 @@ static int AXL_react(double, double *x_d, double *dxdt_d, void *user_data) {
     dxdt_d[10] = -dR41 + dR37 + dR36                          ; // AXLdimer1i
     dxdt_d[11] = dR41 + dR40 + dR39 + dR38                   ; // AXLdimer2i
     
-    dxdt_d[12] = -dR41 - dR32 - dR33 - dR34 - dR35 - r->kDeg*x_d[12];
+    dxdt_d[12] = -dR41 - dR32 - dR33 - dR34 - dR35 - r->kDeg*x_d[12] + r->fPhase*fmax(r->gasCur*r->internalV - x_d[12], 0);
     
     
     dxdt_d[0] += -x_d[0]*(r->internalize) + r->kRec*(1-r->fElse)*x_d[6]*r->internalFrac; // Endocytosis, recycling
@@ -154,17 +154,18 @@ struct rates Param(const double * const params) {
         
         out.xRev4 = params[2];
         
-        out.internalize = params[3];
-        out.pYinternalize = params[4];
-        out.kRec = params[5];
-        out.kDeg = params[6];
-        out.fElse = params[7];
-        out.expression = params[8];
-        out.autocrine = params[9];
+        out.internalize = 0.03;
+        out.pYinternalize = 0.3;
+        out.kRec = 0.058;
+        out.kDeg = params[3];
+        out.fElse = 0.1;
+        out.fPhase = params[4];
+        out.expression = params[5];
+        out.autocrine = params[6];
         out.fD2 = 1;
         out.internalFrac = 0.5;
         out.internalV = 623;
-        out.pD1 = (int) params[10];
+        out.pD1 = (int) params[7];
         
         const double KD1 = out.Unbinding1 / out.Binding1;
         const double KD2 = out.Unbinding2 / out.Binding2;
@@ -174,8 +175,6 @@ struct rates Param(const double * const params) {
         out.xRev5 = out.xRev4*KD1*KD1/KD2/KD2; // Checked
         out.xRev6 = KD1*out.xFwd6*out.xRev4/out.xRev1; // Checked
         out.xRev3 = out.xRev4*KD1/KD2; // Checked
-        
-        
         
         return out;
 }

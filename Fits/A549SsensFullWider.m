@@ -5,9 +5,9 @@ symbols = ['a':'z' 'A':'Z' '0':'9'];
 rng('shuffle');
 fname = symbols(randi(numel(symbols),[1 3]));
 
-minn = log10([0.6 ,1E-20, 1E-5,0.003,0.03,1E-3,1E-2, 1E-2,100,1E-3, 1]);
-maxx = log10([6E3 ,    1,  1E5, 0.3,    1,   1,   1,    1,1E5,   1,  10]);
-             %U2  ,xFwd ,xRev4,int1, int2,kRec,kDeg,fElse,AXL,Gas
+minn = log10([0.6 ,1E-20, 1E-5,1E-3, 1E-10,100,1E-3, 1]);
+maxx = log10([6E3 ,    1,  1E5,   1,  1E10,1E5,   1,  10]);
+             %U2  ,xFwd ,xRev4,kDeg,fPhase,AXL,Gas
              
 Dopts = psoptimset('TimeLimit',45*60,'Display','off','CompletePoll','on',...
     'CompleteSearch','on','Vectorized','on');
@@ -15,8 +15,6 @@ Dopts = psoptimset('TimeLimit',45*60,'Display','off','CompletePoll','on',...
 parpool(11);
 
 for xxxx = 1:100
-    %parfor_progress(slices*length(maxx));
-    
     parfor ii = 0:(slices*length(maxx) - 1)
         IDX = mod(ii,length(maxx))+1;
         vv = linspace(minn(IDX),maxx(IDX),slices+1); %#ok<PFBNS>
@@ -36,12 +34,9 @@ for xxxx = 1:100
             paramOpt(ii+1,:) = params;
             fitIDXglobal(ii+1) = 1E6;
         end
-        
-        %parfor_progress;
-        
     end
     
-    %parfor_progress(0);
+    disp(xxxx);
     
     fitStruct{xxxx}.paramOpt = paramOpt; %#ok<AGROW>
     fitStruct{xxxx}.fitIDXglobal = fitIDXglobal; %#ok<AGROW>

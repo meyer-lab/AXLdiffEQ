@@ -6,20 +6,13 @@ figure(1);
 
 plotD = @(idx1, idx2) plotData(names, minn, maxx, params, fitt, idx1, idx2);
 
-subplot(2,3,1);
-plotD(2, 3); % 
 
-subplot(2,3,2);
-plotD(1, 5);
-
-subplot(2,3,3);
-plotD(4, 6); %
-
-subplot(2,3,4);
-plotD(9, 10); %
-
-subplot(2,3,5);
-plotD(7, 8); %
+for ii = 1:length(minn)
+    for jj = 1:length(minn)
+        subplot(length(minn),length(minn),(ii-1)*length(minn) + jj);
+        plotD(jj, ii);
+    end
+end
 
 %%
 
@@ -91,7 +84,7 @@ figure(4)
 bar(surfFrac);
 
 figure(5)
-imagesc(speciesList)
+semilogy(speciesList(:,end)/623)
 
 end
 

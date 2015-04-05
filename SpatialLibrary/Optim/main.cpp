@@ -35,13 +35,25 @@ double optimFunc (const unsigned n, const double *x, double *, void *) {
     return out;
 }
 
+
+//out.Unbinding2 = params[0];
+//out.xFwd1 = params[1];
+//out.xRev4 = params[2];
+//out.kDeg = params[3];
+//out.fPhase = params[4];
+//out.expression = params[5];
+//out.autocrine = params[6];
+//out.pD1 = (int) params[7];
+
+
+
 int main() {
     default_random_engine gen((unsigned int) chrono::system_clock::now().time_since_epoch().count());
     uniform_real_distribution<double> randN(0, 1);
     
-    const int len = 11;
-    double minn[] = {0.6 ,1E-15,1E-5,1E-3,1E-3,1E-4,1E-4,1E-2,100,1E-3, 1};
-    double maxx[] = {600 ,1E2  , 600,   1,   1, 0.1,   1,   1,1E5,   1, 10};
+    const int len = 8;
+    double minn[] = {0.6 ,1E-15,1E-5,1E-3,1E-10,100,1E-3, 1};
+    double maxx[] = {600 ,1E2  , 600,   1,    1,1E5,   1, 10};
     double init[len];
     double out;
     

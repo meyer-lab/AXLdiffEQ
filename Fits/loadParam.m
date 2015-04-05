@@ -1,17 +1,17 @@
 function [fitt, params, names, params2, cutoff, minn, maxx] = loadParam ()
 
-load WithpYnewBalance_Z48;
-fitStruct2 = fitStruct; %#ok<NODEF>
-load WithpYnewBalance_56v
-fitStruct = [fitStruct, fitStruct2];
-fitStruct2 = fitStruct;
-load WithpYnewBalance_B2a;
-fitStruct = [fitStruct, fitStruct2];
-fitStruct2 = fitStruct;
-load WithpYnewBalance_3YD;
-fitStruct = [fitStruct, fitStruct2];
+load WithpYnewBalance_FP7;
+% fitStruct2 = fitStruct; %#ok<NODEF>
+% load WithpYnewBalance_56v
+% fitStruct = [fitStruct, fitStruct2];
+% fitStruct2 = fitStruct;
+% load WithpYnewBalance_B2a;
+% fitStruct = [fitStruct, fitStruct2];
+% fitStruct2 = fitStruct;
+% load WithpYnewBalance_3YD;
+% fitStruct = [fitStruct, fitStruct2];
 
-names = {'U2','xFwd1','xRev4','int1','int2','kRec','kDeg','fElse','AXL','Gas'};
+names = {'U2','xFwd1','xRev4','kDeg','fPhase','AXL','Gas','pD'};
 
 fitt = [];
 params = [];
@@ -24,7 +24,7 @@ end
 disp(min(fitt(params(:,end) > 0.5)));
 disp(min(fitt(params(:,end) < 0.5)));
 
-cutoff = min(fitt)+9;
+cutoff = min(fitt)+3;
 
 params(fitt > cutoff,:) = [];
 fitt(fitt > cutoff) = [];
