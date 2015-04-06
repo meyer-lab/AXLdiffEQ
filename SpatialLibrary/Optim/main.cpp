@@ -12,6 +12,8 @@
 #include <cmath>
 #include <random>
 
+#define NELEMS(x)  (sizeof(x) / sizeof(x[0]))
+
 double optimFunc (unsigned, const double *, double *, void *);
 
 using namespace std;
@@ -84,7 +86,7 @@ int main() {
     
     double params[] = {27.003, 5.0203e-06, 4.4569, 0.0018128, 4.467, 0.07214, 0.0010026, 0.0017783, 0.19216, 0.13615, 10190, 0.038456, 1};
     
-    double GasIn[100];
+    double GasIn[80];
     double tps[1] = {10};
     double dIn[20];
     double dataVoid[400];
@@ -97,7 +99,7 @@ int main() {
     }
     
     
-    diffCalc(dataVoid, dataVoid, dataVoid, dataVoid, GasIn, 100, params, tps, 1, dIn);
+    diffCalc(dataVoid, dataVoid, dataVoid, dataVoid, GasIn, NELEMS(GasIn), params, tps, NELEMS(tps), dIn);
     
     
     

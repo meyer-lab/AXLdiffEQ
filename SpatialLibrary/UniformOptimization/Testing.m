@@ -9,6 +9,7 @@
 #import <XCTest/XCTest.h>
 #import "BlasHeader.h"
 
+#define NELEMS(x)  (sizeof(x) / sizeof(x[0]))
 
 @interface Testing : XCTestCase
 
@@ -63,7 +64,7 @@
     double dIn[20];
     double *pdIn = &dIn[0];
     
-    double dataPtr[1] = {0};
+    double dataPtr[5000];
     double *pDataPtr = &dataPtr[0];
     
     dIn[0] = 10;
@@ -76,7 +77,7 @@
     
     
     [self measureBlock:^{
-        matlabDiffTPS_pYavg(pDataPtr, pGasIn, 100, pparams, ptps, 1, pdIn, 1);
+        diffCalc(pDataPtr, pDataPtr, pDataPtr, pDataPtr, pGasIn, 50, pparams, ptps, 1, pdIn);
     }];
 }
 

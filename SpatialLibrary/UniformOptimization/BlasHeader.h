@@ -17,7 +17,8 @@ extern "C" {
     int calcProfileMatlab(double *, double *, double *, double *, double *, double *, unsigned int, double, double *);
     void pyEntryVec(double *pIn, double *pOut, int n);
     
-    extern "C" int diffCalc(double *, double *, double *, double *, double *, unsigned int, double *, double *, unsigned int, double *);
+    int diffCalc(double *, double *, double *, double *, double *, unsigned int, double *, double *, unsigned int, double *);
+    int getNspecies ();
     
 #ifdef __cplusplus
 }

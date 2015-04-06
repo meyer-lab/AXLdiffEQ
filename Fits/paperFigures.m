@@ -6,8 +6,8 @@ clc;
 params = params(end,:);
 
 sshape = @(x,xx) cos(xx*pi/3).^x(1);
-GasConc = -1.204;
-GassF = @(x,xx) 2*sshape(x,xx)/mean(sshape(x,xx).*xx)*(10^x(2));
+GasConc = 32;
+GassF = @(x,xx) 2*sshape(x,xx)/max(sshape(x,xx))*(x(2));
 
 shapeParam = 60;
 
@@ -22,8 +22,8 @@ DO_SPATIAL_PRED = 1;
 % This script generated Figure 2B
 
 if DO_SPATIAL_PRED
-    xx = linspace(0,1,40);
-    A = logspace(-2,3,20);
+    xx = linspace(0,1,60);
+    A = logspace(-2,3,10);
 
     for ii = 1:length(A)
         BB(:,ii) = GassF([A(ii) GasConc shapeParam],xx);
@@ -57,7 +57,7 @@ if DO_SPATIAL_PRED
         localPYz(3) = temp(1);
         avgPYz(3) = mean(temp.*xx);
         
-        [~, temp] = ffSpat([A(ii) GasConc],10);
+        [spec{ii}, temp] = ffSpat([A(ii) GasConc],10); %#ok<AGROW>
         localPYz(4) = temp(1);
         avgPYz(4) = mean(temp.*xx);
         
@@ -105,16 +105,12 @@ if DO_SPATIAL_PRED
     meanify = @(x) 2*x'*xx'/length(xx);
     
     for ii = 1:length(A)
-        temp = ffSpat([A(ii) GasConc], 10);
+        temp = spec{ii};
         Bdetail(:,ii) = meanify(temp);
         B(ii,:) = ttt*Bdetail(:,ii);
         
         disp(ii);
     end
-    
-    %for ii = 1:size(B,2)
-    %    B(:,ii) = B(:,ii) - B(1,ii); %#ok<SAGROW>
-    %end
 
     loglog(A,B);
     axis([min(A) max(A) min(min(B)) max(max(B))]);
@@ -152,5 +148,3 @@ function [outter, pY, tot, surf] = cLib_diff_profile (tps, params, GasIn, Din)
         error('Error!');
     end
 end
-
-
