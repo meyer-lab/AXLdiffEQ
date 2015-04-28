@@ -19,6 +19,7 @@ extern "C" {
     
     int diffCalc(double *, double *, double *, double *, double *, unsigned int, double *, double *, unsigned int, double *);
     int getNspecies ();
+    void U87pyEntryVec(double *pIn, double *pOut, int n);
     
 #ifdef __cplusplus
 }

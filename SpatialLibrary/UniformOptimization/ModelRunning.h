@@ -64,6 +64,26 @@ static const double kTPS[5] = {0, 0.5, 1, 5, 10};
 static const double pYk[5] = {4.1, 3.6, 5.3, 11.3, 11.6};
 static const double pYkErr[5] = {1.0, 1.3, 1.1, 0.7, 0.4};
 
+static const double U87pYk[5] = {0.911, 0.904, 0.935, 1.08, 1.25};
+static const double U87pYkErr[5] = {0.134, 0.0991, 0.152, 0.135, 0.130};
+
+static const double U87pY[6][2] = { ///< pY measurements on short time scales.
+    {0.00, 0.00},
+    {0.89, 1.61},
+    {1.74, 1.10},
+    {1.35, 1.05},
+    {1.93, 1.33},
+    {1.00, 1.00}};
+
+static const double U87pYerror[6][2] = { ///< Error for short time scale pY measurements.
+    {1000, 1000},
+    {0.44, 0.20},
+    {0.30, 0.28},
+    {0.41, 0.12},
+    {0.17, 0.15},
+    {0.19, 0.19}};
+
+
 // Wrapping is outermost cell line, then Gas, then time
 static const double pY[6][2] = { ///< pY measurements on short time scales.
     {10.75952427, 8.305264139},
@@ -88,6 +108,26 @@ static const double tot[6][2] = {
     {2608.88, 3448.21},
     {2690.24, 3168.14},
     {2672.00, 2672.00}}; // A549
+
+
+static const double U87tot[6][2] = {
+    {1082.16, 1002},
+    {1108.88, 1002},
+    {1162.32, 908.48},
+    {961.92, 1015.36},
+    {1002, 1135.6},
+    {1336, 1108.88}};
+
+
+static const double U87totError[6][2] = {
+    {106.88, 53.44},
+    {53.44, 40.08},
+    {66.8, 146.96},
+    {187.04, 120.24},
+    {66.8, 66.8},
+    {160.32, 66.8}};
+
+
 
 static const double totError[6][2] = {
     {174.38, 132.10},
@@ -120,9 +160,10 @@ void calcProfile (N_Vector, N_Vector, N_Vector, N_Vector, N_Vector, struct rates
 void calcProfileSet (double *, double *, double *, double *, double *, struct rates *, unsigned int, double, double *);
 int AXL_react(double, N_Vector, N_Vector, void *);
 struct rates Param(const double *);
-double pYcalc (N_Vector state, struct rates *p);
-void diffusionSolution(double *, double *, unsigned int gridIn, double *params, double *, unsigned int, double *);
+double pYcalc (N_Vector, struct rates *);
+void diffusionSolution(double *, double *, unsigned int, double *, double *, unsigned int, double *);
 double totCalc (const N_Vector, const struct rates * const p);
-double surfCalc (N_Vector state);
+double surfCalc (N_Vector);
+double U87calcError (struct rates, double *);
 
 #endif /* defined(__UniformOptimization__ModelRunning__) */

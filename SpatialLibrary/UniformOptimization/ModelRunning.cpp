@@ -374,6 +374,31 @@ double calcError (struct rates inP, double *fitParam) {
     return error;
 }
 
+double U87calcError (struct rates inP, double *fitParam) {
+    double outData[NELEMS(Gass)*NELEMS(times)];
+    double totData[NELEMS(Gass)*NELEMS(times)];
+    double surfData[NELEMS(Gass)*NELEMS(times)];
+    double earlyPY[NELEMS(kTPS)];
+    
+    double error = 0;
+    
+    try {
+        calcKinetic(outData, totData, surfData, earlyPY, &inP);
+        
+        error += errorFuncOpt (outData, U87pY[0], U87pYerror[0], NELEMS(outData), &fitParam[0]);
+        error += errorFuncOpt (totData, tot[0], totError[0], NELEMS(totData), &fitParam[1]);
+        error += errorFuncOpt (earlyPY, U87pYk, U87pYkErr, NELEMS(earlyPY), &fitParam[2]);
+        
+    } catch (runtime_error &e) {
+        errorLogger(&e);
+        error = 1E8;
+    }
+    
+    return error;
+}
+
+
+
 // Calculate the initial state by waiting a long time with autocrine Gas
 void *initState( N_Vector init, struct rates *params) {
     double t;

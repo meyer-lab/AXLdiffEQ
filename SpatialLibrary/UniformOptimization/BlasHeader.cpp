@@ -28,6 +28,16 @@ extern "C" void pyEntryVec(double *pIn, double *pOut, int n) {
     }
 }
 
+
+extern "C" void U87pyEntryVec(double *pIn, double *pOut, int n) {
+    double nulll[3];
+    
+    for (int ii = 0; ii < n; ii++) {
+        pOut[ii] = U87calcError(Param(&pIn[ii*Nparams]), nulll);
+    }
+}
+
+
 extern "C" int calcProfileMatlab(double *pYData, double *totData, double *surfData, double *speciesData, double *params, double *tps, unsigned int nTps, double GasStim, double *convFac) {
     struct rates pInS = Param(params);
     
