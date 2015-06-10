@@ -66,6 +66,7 @@ static int AXL_react(double, double *x_d, double *dxdt_d, void *user_data) {
     const double dR40 = r->xFwd5 * x_d[8] * x_d[8] - r->xRev5 * x_d[11];  //A2i + A2i <--> D2i
     const double dR41 = r->xFwd6 * x_d[10] * x_d[12] / r->internalV - r->xRev6 * x_d[11];  //D1 + Gas6 <--> D2
     
+    //overall rate of change (concentration/time) for each species
     dxdt_d[0] = - dR7 - dR6 - dR5 - dR1 - dR2 + r->expression; // AXL
     dxdt_d[1] = -2*(dR8) - dR5 + dR1 - dR3                   ; // A1
     dxdt_d[2] = -2*(dR9) - dR6 + dR2 - dR4                   ; // A2
@@ -123,6 +124,9 @@ struct rates Param(const double * const params) {
         out.Unbinding1 = 0.042;
         out.Unbinding2 = params[0];
         
+        /*Params contain reasonable estimates of what we might expect those values to be, as we haven't yet found a way
+        to measure them.  We hope to do so in future iterations using bayesian analysis.
+        */
         out.xFwd1 = params[1];
         out.xFwd2 = out.xFwd1;
         out.xFwd3 = out.xFwd1;
@@ -156,7 +160,7 @@ struct rates Param(const double * const params) {
         return out;
 }
 
-//sets x_d and dxdt_d using N_vectors
+//Inputs the data into x_d and dxdt_d from N_vectors
 int AXL_react(double t, N_Vector xIn, N_Vector dxdtIn, void *user_data) {
     double* x_d = NV_DATA_S(xIn);
     double* dxdt_d = NV_DATA_S(dxdtIn);
@@ -170,12 +174,13 @@ double surfCalc (N_Vector state) {
 }
 
 
-// Based on the model state, calculates the relative amount of phosphorylated species byfinding the number of dimerized AXL receptors
-
+// Based on the model state, calculates the relative amount of phosphorylated species by finding the number of dimerized AXL receptors
 double pYcalc (N_Vector state, struct rates *p) {
+    //if p->pD1 is 1, this means that an AXL dimer bound by one ligand (D1) can become phosphorylated, an assumption that has been accurate thus far  
     if (p->pD1 == 1) {
         return 2*Ith(state,5) + 2*Ith(state,4) + p->internalFrac*(2*Ith(state,11) + 2*Ith(state,10));
-    } else {
+    } 
+    else {
         return 2*Ith(state,5) + p->internalFrac*(2*Ith(state,11));
     }
 }
@@ -240,11 +245,9 @@ static void calcKinetic (double *outData, double *totData, double *surfData, dou
         
         solverReset(cvode_mem, state);
         
-        /* In loop, call CVode, print results, and test for error.
-         Break out of loop when NOUT preset output times have been reached.  */
-        
-        for (unsigned int ii = 0; ii < NELEMS(times); ii++) {
+            for (unsigned int ii = 0; ii < NELEMS(times); ii++) {
             int flag = CVode(cvode_mem, times[ii], state, &t, CV_NORMAL);
+            //Calls CVode and prints it's results
             
             if (flag < 0) {
                 N_VDestroy_Serial(state);
@@ -254,9 +257,11 @@ static void calcKinetic (double *outData, double *totData, double *surfData, dou
                 return;
             }
             //flag checks to make sure that no negative value was returned by CVode, indicating an error
+            
             outData[stimuli*NELEMS(times) + ii] = pYcalc(state,params);
             totData[stimuli*NELEMS(times) + ii] = totCalc(state,params);
             surfData[stimuli*NELEMS(times) + ii] = surfCalc(state);
+            /*[stimuli*NELEMS(times) + ii] indexes each one-dimensional array by stimulus and time */
         }
     }
     
@@ -278,6 +283,7 @@ static void calcKinetic (double *outData, double *totData, double *surfData, dou
     
     for (unsigned int ii = 1; ii < NELEMS(kTPS); ii++) {
         int flag = CVode(cvode_mem, kTPS[ii], state, &t, CV_NORMAL);
+        //Calls CVode and prints it's results
         
         if (flag < 0) {
             N_VDestroy_Serial(state);
@@ -287,7 +293,9 @@ static void calcKinetic (double *outData, double *totData, double *surfData, dou
             return;
         }
         //flag checks to make sure that no negative value was returned by CVode, indicating an error    
+        
         earlyPY[ii] = pYcalc(state,params);
+        //indexes kinetic response array for phosphorylation at each time point
     }
 
     N_VDestroy_Serial(state);
@@ -374,7 +382,7 @@ static double errorFuncOpt (const double *fitt, const double *pYmeas, const doub
     return ff;
 }
 
-//Calculates the cumulative error for all parts
+//Calculates the cumulative error for all parts (outData, totData, surfData, earlyPY)
 double calcError (struct rates inP, double *fitParam) {
     double outData[NELEMS(Gass)*NELEMS(times)];
     double totData[NELEMS(Gass)*NELEMS(times)];
@@ -425,7 +433,7 @@ double U87calcError (struct rates inP, double *fitParam) {
 
 
 
-// Calculate the initial state by waiting a long time with autocrine Gas
+// Calculate the initial state using CVode by waiting for the ligand concentration to reach steady state
 void *initState( N_Vector init, struct rates *params) {
     double t;
     
@@ -446,14 +454,14 @@ void *initState( N_Vector init, struct rates *params) {
     return cvode_mem;
 }
 
-/// Calculate phosphorylation at time points measured
+//Calculate phosphorylation at time points measured
 void calcProfileSet (double *pYData, double *totData, double *surfData, double *speciesData, double *tps, struct rates *params, unsigned int nTps, double GasStim, double *convFac) {
     calcError(*params, convFac);
     
     N_Vector state = N_VNew_Serial(Nspecies);
     struct rates paramTwo = *params;
     
-    double t; ///< Time position of the solver.
+    double t; //Time position of the solver.
     
     void *cvode_mem = NULL;
     int flag;
@@ -467,7 +475,7 @@ void calcProfileSet (double *pYData, double *totData, double *surfData, double *
     }
     
     
-    /* We've got the initial state, so now run through the kinetic data */
+    //Uses CVode to solve for kinetic response
     paramTwo.gasCur = paramTwo.gasCur + GasStim;
     CVodeSetUserData(cvode_mem, &paramTwo);
     t = 0;
@@ -484,6 +492,7 @@ void calcProfileSet (double *pYData, double *totData, double *surfData, double *
      Break out of loop when NOUT preset output times have been reached.  */
     size_t ii = 0;
     
+    //Finds the concentration of each species initially (at time point 0)
     if (tps[0] == 0) {
         pYData[ii] = pYcalc(state,params);
         totData[ii] = totCalc(state,params);
@@ -497,6 +506,7 @@ void calcProfileSet (double *pYData, double *totData, double *surfData, double *
         ii = 1;
     }
     
+    //Finds the concentration of each species for multiple
     for (; ii < nTps; ii++) {
         flag = CVode(cvode_mem, tps[ii], state, &t, CV_NORMAL);
         if (flag < 0) {
@@ -523,7 +533,7 @@ void calcProfileSet (double *pYData, double *totData, double *surfData, double *
 
 
 
-
+//Plots data on a grid
 static int AXL_react_diff(const double t, N_Vector xx , N_Vector dxxdt, void *user_data) {
     struct rates *pInD = (struct rates *) user_data;
     double reactIn[Nspecies];
