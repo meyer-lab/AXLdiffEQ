@@ -350,29 +350,7 @@ static double errorFuncFix (const double *fitt, const double *pYmeas, const doub
     return xx;
 }
 
-double calcError (struct rates inP, double *fitParam) {
-    double outData[NELEMS(Gass)*NELEMS(times)];
-    double totData[NELEMS(Gass)*NELEMS(times)];
-    double surfData[NELEMS(Gass)*NELEMS(times)];
-    double earlyPY[NELEMS(kTPS)];
-    
-    double error = 0;
-    
-    try {
-        calcKinetic(outData, totData, surfData, earlyPY, &inP);
-        
-        error += errorFuncOpt (outData, pY[0], pYerror[0], NELEMS(outData), &fitParam[0]);
-        error += errorFuncFix (totData, tot[0], totError[0], NELEMS(totData));
-        error += errorFuncOpt (surfData, surf[0], surfError[0], NELEMS(surfData), &fitParam[1]);
-        error += errorFuncOpt (earlyPY, pYk, pYkErr, NELEMS(earlyPY), &fitParam[2]);
-        
-    } catch (runtime_error &e) {
-        errorLogger(&e);
-        error = 1E8;
-    }
-    
-    return error;
-}
+
 
 double U87calcError (struct rates inP, double *fitParam) {
     double outData[NELEMS(Gass)*NELEMS(times)];
