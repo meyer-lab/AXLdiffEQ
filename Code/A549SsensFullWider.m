@@ -9,13 +9,11 @@ function A549SsensFullWider ()
     maxx = log10([6E3,    1,  1E5,  0.3,   1,   1,   1,    1,1E5,   1,  10]);
                  %U2 , xFwd,xRev4, int1,int2,kRec,kDeg,fElse,AXL, Gas, pD1
 
-    Dopts = psoptimset('TimeLimit',45*60,'Display','off','CompletePoll','on',...
+    Dopts = psoptimset('TimeLimit',45*60,'Display','iter','CompletePoll','on',...
         'CompleteSearch','on','Vectorized','on');
 
-    parpool(11);
-
     for xxxx = 1:100
-        parfor ii = 0:(slices*length(maxx) - 1)
+        for ii = 0:(slices*length(maxx) - 1)
             IDX = mod(ii,length(maxx))+1;
             vv = linspace(minn(IDX),maxx(IDX),slices+1); %#ok<PFBNS>
 
@@ -26,14 +24,14 @@ function A549SsensFullWider ()
 
             params = minn2 + (rand(size(minn2)) .* (maxx2 - minn2));
 
-            try
+            %try
                 [paramOpt(ii+1,:),fitIDXglobal(ii+1)] = ...
                     patternsearch(@(x) cLibLoc(x, length(minn)),params,[],[],[],[],...
                     minn2,maxx2,[],Dopts);
-            catch
-                paramOpt(ii+1,:) = params;
-                fitIDXglobal(ii+1) = 1E6;
-            end
+            %catch
+            %    paramOpt(ii+1,:) = params;
+            %    fitIDXglobal(ii+1) = 1E6;
+            %end
         end
 
         fitStruct{xxxx}.paramOpt = paramOpt; %#ok<AGROW>
@@ -49,7 +47,7 @@ function outter = cLibLoc (in, N)
     in2(:,end) = in(:,end) > 0.5;
 
     if ~libisloaded('libOptimize')
-        loadlibrary('libOptimize.dylib');
+        loadlibrary('libOptimize.so', 'libOptimize.h');
     end
 
     outP = libpointer('doublePtr',zeros(1,numel(in)/N));

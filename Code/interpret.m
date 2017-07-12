@@ -482,7 +482,7 @@ end
 function [pY, tot, surf, convF, species] = cLib_profile (tps, params, GasStim)
 
     if ~libisloaded('libOptimize')
-        loadlibrary('libOptimize.dylib')
+        loadlibrary('libOptimize.so', 'libOptimize.h')
     end
 
     out1 = libpointer('doublePtr',1:length(tps));

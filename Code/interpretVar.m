@@ -102,7 +102,7 @@ function paramGrid (params2)
     
     set(gcf, 'Position', [100 100 1200 1000])
     
-    export_fig('U87','-pdf');
+    %export_fig('U87','-pdf');
 end
 
 function fixFig (gcc)
@@ -180,7 +180,7 @@ end
 function [pY, tot, surf, convF, species] = cLib_profile (tps, params, GasStim)
 
     if ~libisloaded('libOptimize')
-        loadlibrary('libOptimize.dylib')
+        loadlibrary('libOptimize.so', 'libOptimize.h')
     end
 
     out1 = libpointer('doublePtr',1:length(tps));
