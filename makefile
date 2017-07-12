@@ -14,7 +14,7 @@ Code/libOptimize/cobyla.o: Code/libOptimize/cobyla.c
 	gcc -c -o $@ $<
 
 Code/libOptimize.so: Code/libOptimize/BlasHeader.o Code/libOptimize/ModelRunning.o Code/libOptimize/CVodeHelpers.o Code/libOptimize/cobyla.o
-	cd Code/libOptimize; g++ -shared -o ../libOptimize.so *.o -I. -lsundials_nvecserial -lsundials_cvode
+	cd Code/libOptimize; g++ -shared -fPIC -o ../libOptimize.so *.o -I. -lsundials_nvecserial -lsundials_cvode
 
 Code/libOptimize.h: Code/libOptimize/BlasHeader.h
 	grep "(double" $< > $@
@@ -22,4 +22,4 @@ Code/libOptimize.h: Code/libOptimize/BlasHeader.h
 all: Code/libOptimize.so Code/libOptimize.h Code/libOptimize.dylib
 
 clean:
-	rm -f Code/libOptimize/*.o Code/libOptimize.so Code/libOptimize.h
+	rm -f Code/libOptimize/*.o Code/libOptimize.so Code/libOptimize.h Code/libOptimize.dylib
