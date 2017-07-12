@@ -1,7 +1,7 @@
 .PHONY: all clean
 
 CC=g++
-CFLAGS=-I. -std=c++0x -Wall
+CFLAGS=-I. -std=c++0x -Wall -fPIC
 DEPS = Code/libOptimize/BlasHeader.h Code/libOptimize/ModelRunning.h Code/libOptimize/CVodeHelpers.h Code/libOptimize/cobyla.h
 
 %.o: %.c $(DEPS)
