@@ -9,9 +9,9 @@
 #ifndef __UniformOptimization__CVodeHelpers__
 #define __UniformOptimization__CVodeHelpers__
 
-#include "nvector_serial.h"  /* serial N_Vector types, fcts., macros */
-#include "cvode.h"
-#include "cvode_direct.h"
+#include <nvector/nvector_serial.h>  /* serial N_Vector types, fcts., macros */
+#include <cvode/cvode.h>
+#include <cvode/cvode_direct.h>
 
 
 #define print_CV_err 0

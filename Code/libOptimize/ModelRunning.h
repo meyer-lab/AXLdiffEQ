@@ -9,10 +9,10 @@
 #ifndef __UniformOptimization__ModelRunning__
 #define __UniformOptimization__ModelRunning__
 
-#include "sundials_nvector.h"
-#include "cvode_impl.h"
-#include "cvode.h"
-#include "sundials_dense.h"
+#include <sundials/sundials_nvector.h>
+#include <cvode/cvode_impl.h>
+#include <cvode/cvode.h>
+#include <sundials/sundials_dense.h>
 
 #define autocrineT 10000
 #define Ith(v,i)    NV_Ith_S(v,i)       /* Ith numbers components 1..NEQ */

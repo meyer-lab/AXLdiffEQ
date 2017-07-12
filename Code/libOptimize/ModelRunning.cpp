@@ -8,17 +8,17 @@
 
 //Includes files, libraries, and header files used to create N_vectors, throw exceptions, solve systems of ODEs, etc.
 
-#include "sundials_nvector.h"
-#include "cvode.h"
+#include <sundials/sundials_nvector.h>
+#include <cvode/cvode.h>
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <iostream>
 #include <stdexcept>
 #include <exception>
-#include "cobyla.h"
 #include <cmath>
-#include "cvode_impl.h"
+#include "cobyla.h"
+#include <cvode/cvode_impl.h>
 #include "ModelRunning.h"
 #include "CVodeHelpers.h"
 
@@ -381,17 +381,6 @@ static double errorFuncOpt (const double *fitt, const double *pYmeas, const doub
     
     return ff;
 }
-
-
-static double errorFuncFix (const double *fitt, const double *pYmeas, const double *errorMeas, size_t inN) {
-    double xx = 0;
-    
-    for (int ii = 0; ii < inN; ii++)
-        xx += errorFunc(fitt[ii], pYmeas[ii], errorMeas[ii]);
-    
-    return xx;
-}
-
 
 
 //Calculates the cumulative error for all parts (outData, totData, surfData, earlyPY)

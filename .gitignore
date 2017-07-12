@@ -1,9 +1,0 @@
-*.dylib
-*.so
-*.pyc
-*.o
-*.dia
-*.d
-*.log
-*.aux
-*.gz
